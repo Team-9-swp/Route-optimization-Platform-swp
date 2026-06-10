@@ -1,0 +1,6 @@
+# Core solver (greedy_only.py, solver.py)
+# Requires only Python 3.8+ standard library — no third-party packages.
+
+# Validator (validator.py)
+pandas>=1.0
+numpy>=1.0
