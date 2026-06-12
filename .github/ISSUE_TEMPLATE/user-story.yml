@@ -1,3 +1,4 @@
+name: User Story
 body:
   - type: input
     id: role
