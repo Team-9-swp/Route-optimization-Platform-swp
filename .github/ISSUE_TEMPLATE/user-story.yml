@@ -1,0 +1,34 @@
+name: User Story
+description: New user story
+body:
+  - type: input
+    id: role
+    attributes:
+      label: User role / persona
+    validations:
+      required: true
+  - type: input
+    id: action
+    attributes:
+      label: Desired action
+    validations:
+      required: true
+  - type: input
+    id: value
+    attributes:
+      label: Expected value
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+    validations:
+      required: false
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+    validations:
+      required: true
+  
