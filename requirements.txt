@@ -1,6 +1,11 @@
-# Core solver (greedy_only.py, solver.py)
-# Requires only Python 3.8+ standard library — no third-party packages.
+# Runtime dependencies
+pandas>=1.0,<3.0
+numpy>=1.0,<2.0
+fastapi>=0.110.0,<1.0
+uvicorn[standard]>=0.27.0,<1.0
+pydantic>=2.0.0,<3.0
+httpx>=0.27.0,<1.0
 
-# Validator (validator.py)
-pandas>=1.0
-numpy>=1.0
+# Test dependencies
+pytest>=8.0.0,<9.0
+pytest-asyncio>=0.23.0,<1.0
