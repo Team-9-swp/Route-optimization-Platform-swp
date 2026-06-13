@@ -146,15 +146,13 @@ so that I can analyze solution quality faster.
 
 Visualization is not required for the core solver and can be added as an additional analysis feature.
 
----
-
 ## Initial proposed MVP v1 scope
 
-The initial proposed MVP v1 scope includes the following active **Must Have** user stories:
+The following active `Must Have` stories are selected for the initial MVP v1 prototype:
 
-- [US-01: Vehicle route and schedule](#us-01-vehicle-route-and-schedule)
-- [US-02: Loader route](#us-02-loader-route)
-- [US-03: Hard constraint validation](#us-03-hard-constraint-validation)
-- [US-04: Docker execution](#us-04-docker-execution)
+1. [US-01: Vehicle route and schedule](#us-01-vehicle-route-and-schedule)
+2. [US-02: Loader route](#us-02-loader-route)
+3. [US-03: Hard constraint validation](#us-03-hard-constraint-validation)
+4. [US-04: Docker execution](#us-04-docker-execution)
 
-This scope is intentionally small and focused on the core solver foundation. It will be refined, estimated, and finalized in Assignment 3.
+This scope is intentionally small and will be refined, estimated, and finalized in Assignment 3.

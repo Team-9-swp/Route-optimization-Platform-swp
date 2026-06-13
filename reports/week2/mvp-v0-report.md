@@ -17,9 +17,9 @@ MVP v0 establishes a runnable technical foundation for the Route Optimization Pl
 ## What MVP v0 does not include
 
 - Persistent database (jobs are stored in memory and lost on restart).
-- Web frontend (planned for MVP v1).
-- Validation endpoint and auto-validation (planned for the next backend iteration).
-- Pagination and job listing endpoint (planned for the frontend iteration).
+- Web frontend (planned for MVP v1; the Figma prototype covers the intended UX).
+- Validation endpoint and auto-validation on the backend (validation can be run independently via the validator script).
+- Pagination and production-ready job listing endpoint.
 
 ## Repository and runnable artifact
 

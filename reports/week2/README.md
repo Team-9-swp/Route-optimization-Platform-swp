@@ -133,7 +133,7 @@ The selected web interface and REST API represent the following user stories:
    The solution can be checked using the validation script and, in the web UI, through the dedicated Validate page.
 
 4. [US-04: Docker execution](./user-stories.md#us-04-docker-execution)
-   The solver and planned frontend can be started together with Docker Compose.
+   The solver can be started with Docker Compose; the web frontend is planned for MVP v1.
 
 5. [US-05: Algorithm time limit](./user-stories.md#us-05-algorithm-time-limit)
    The API is intended to accept a configurable execution time limit.

@@ -41,7 +41,9 @@ Then open Swagger UI at `http://localhost:8000/docs`.
 
 ### Frontend (planned)
 
-A React + TypeScript SPA is planned for MVP v1.
+A React + TypeScript SPA is planned for MVP v1. The interactive prototype is available on Figma:
+
+**[Figma prototype — Route Optimizer](https://carry-race-78764713.figma.site/)**
 
 ## Assignment reports
 

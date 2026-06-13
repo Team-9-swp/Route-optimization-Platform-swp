@@ -16,7 +16,7 @@
 
 ## Needs Clarification
 
-* Which environment and university computing resources will be used for deployment.
+* ~~Which environment and university computing resources will be used for deployment.~~ Resolved: the MVP v0 service is hosted on the university VM at `http://10.93.26.188:8000`.
 * Which approach will produce the best results on large scenarios: PyVRP, OR-Tools, or the current algorithm.
 * How loader schedules should be integrated with vehicle routes when using an external VRP solver.
 * ~~Whether the customer will grant public permission to publish the sanitized meeting transcript.~~ Permission was granted.

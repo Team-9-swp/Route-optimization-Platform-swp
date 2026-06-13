@@ -4,10 +4,10 @@
 
 The product exposes two interfaces:
 
-1. **Web user interface (primary, planned for MVP v1)** — a React + TypeScript single-page application for dispatchers and managers.
+1. **Web user interface (primary interface for MVP v1)** — a React + TypeScript single-page application for dispatchers and managers. The interactive prototype is published on Figma.
 2. **REST API (supporting)** — a FastAPI service that the web UI consumes. The API can also be used directly by technical users and integrations.
 
-The current MVP v0 implements the REST API. The web UI is in design and will be implemented in the next iteration.
+The current MVP v0 implements the REST API. The web UI is in design (Figma prototype) and will be implemented in the next iteration.
 
 ### Interactive prototype
 
