@@ -1,0 +1,119 @@
+{
+  "info": {
+    "name": "Route Optimization Solver API",
+    "description": "Postman collection for the Route Optimization Platform MVP v0 API.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Submit job",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/solve?seed=42",
+          "host": ["{{base_url}}"],
+          "path": ["solve"],
+          "query": [
+            {
+              "key": "seed",
+              "value": "42"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"vehicle_capacity\": 1000,\n  \"vehicle_speed\": 3,\n  \"loader_speed\": 1,\n  \"vehicle_shift_size\": 720,\n  \"loader_shift_size\": 720,\n  \"depot\": {\n    \"id\": 0,\n    \"x\": 100,\n    \"y\": 100,\n    \"load_time\": 40\n  },\n  \"orders\": [\n    {\n      \"id\": 1,\n      \"x\": 134,\n      \"y\": 6,\n      \"volume\": 20,\n      \"time_window\": [988, 1031],\n      \"vehicle_service_time\": 10,\n      \"loader_cnt\": 0,\n      \"loader_service_time\": 0,\n      \"optional\": 0\n    }\n  ],\n  \"weights\": {\n    \"order_penalty\": 250,\n    \"take_vehicle\": 200,\n    \"add_loader\": 200,\n    \"fuel_cost\": 2,\n    \"loader_work\": 1\n  }\n}"
+        }
+      },
+      "response": [
+        {
+          "name": "202 Accepted",
+          "originalRequest": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{base_url}}/solve?seed=42",
+              "host": ["{{base_url}}"],
+              "path": ["solve"],
+              "query": [
+                {
+                  "key": "seed",
+                  "value": "42"
+                }
+              ]
+            }
+          },
+          "status": "Accepted",
+          "code": 202,
+          "body": "{\n  \"job_id\": \"0192c6a0-1234-5678-9abc-def012345678\",\n  \"status\": \"pending\",\n  \"created_at\": \"2026-06-13T13:00:00Z\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "Get job",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/jobs/{{job_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["jobs", "{{job_id}}"]
+        }
+      },
+      "response": [
+        {
+          "name": "200 OK completed",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/jobs/{{job_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["jobs", "{{job_id}}"]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "body": "{\n  \"job_id\": \"0192c6a0-1234-5678-9abc-def012345678\",\n  \"status\": \"completed\",\n  \"created_at\": \"2026-06-13T13:00:00Z\",\n  \"started_at\": \"2026-06-13T13:00:01Z\",\n  \"finished_at\": \"2026-06-13T13:00:05Z\",\n  \"result\": {\n    \"vehicles\": [\n      {\n        \"id\": 1,\n        \"route\": [0, 1, 0],\n        \"time\": [38.0]\n      }\n    ],\n    \"loaders\": []\n  },\n  \"error\": null\n}"
+        },
+        {
+          "name": "404 Not Found",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/jobs/not-a-real-id",
+              "host": ["{{base_url}}"],
+              "path": ["jobs", "not-a-real-id"]
+            }
+          },
+          "status": "Not Found",
+          "code": 404,
+          "body": "{\n  \"detail\": \"Job not found\"\n}"
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "job_id",
+      "value": "0192c6a0-1234-5678-9abc-def012345678",
+      "type": "string"
+    }
+  ]
+}

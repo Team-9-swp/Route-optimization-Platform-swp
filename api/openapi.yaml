@@ -1,0 +1,159 @@
+openapi: 3.1.0
+info:
+  title: Route Optimization Solver API
+  description: Async REST wrapper around the main_mvp.py CVRPTW solver.
+  version: 0.1.0
+  license:
+    name: MIT
+servers:
+  - url: http://localhost:8000
+    description: Local development server
+paths:
+  /solve:
+    post:
+      summary: Submit a problem instance to the solver
+      operationId: submitJob
+      parameters:
+        - name: seed
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+            default: 42
+          description: Random seed for reproducible runs.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: Problem instance in the format defined by Assignment 02.
+            example:
+              vehicle_capacity: 1000
+              vehicle_speed: 3
+              loader_speed: 1
+              vehicle_shift_size: 720
+              loader_shift_size: 720
+              depot:
+                id: 0
+                x: 100
+                y: 100
+                load_time: 40
+              orders:
+                - id: 1
+                  x: 134
+                  y: 6
+                  volume: 20
+                  time_window: [988, 1031]
+                  vehicle_service_time: 10
+                  loader_cnt: 0
+                  loader_service_time: 0
+                  optional: 0
+              weights:
+                order_penalty: 250
+                take_vehicle: 200
+                add_loader: 200
+                fuel_cost: 2
+                loader_work: 1
+      responses:
+        "202":
+          description: Job accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SolveResponse"
+        "422":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPValidationError"
+  /jobs/{job_id}:
+    get:
+      summary: Get job status and result
+      operationId: getJob
+      parameters:
+        - name: job_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Job found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JobResponse"
+        "404":
+          description: Job not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+components:
+  schemas:
+    JobStatus:
+      type: string
+      enum:
+        - pending
+        - running
+        - completed
+        - failed
+    SolveResponse:
+      type: object
+      required:
+        - job_id
+        - status
+        - created_at
+      properties:
+        job_id:
+          type: string
+          format: uuid
+        status:
+          $ref: "#/components/schemas/JobStatus"
+        created_at:
+          type: string
+          format: date-time
+    JobResponse:
+      type: object
+      required:
+        - job_id
+        - status
+        - created_at
+      properties:
+        job_id:
+          type: string
+          format: uuid
+        status:
+          $ref: "#/components/schemas/JobStatus"
+        created_at:
+          type: string
+          format: date-time
+        started_at:
+          type: string
+          format: date-time
+          nullable: true
+        finished_at:
+          type: string
+          format: date-time
+          nullable: true
+        result:
+          type: object
+          nullable: true
+        error:
+          type: string
+          nullable: true
+    HTTPError:
+      type: object
+      properties:
+        detail:
+          type: string
+    HTTPValidationError:
+      type: object
+      properties:
+        detail:
+          type: array
+          items:
+            type: object

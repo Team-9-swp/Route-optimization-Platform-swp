@@ -35,6 +35,6 @@
 * The customer permitted recording the meeting.
 * The customer confirmed that the user stories and priorities were acceptable.
 * Written confirmation may be collected through Telegram.
-* Permission to publish the sanitized transcript in the public repository requires separate confirmation.
+* Permission to publish the sanitized transcript in the public repository was granted.
 
 
