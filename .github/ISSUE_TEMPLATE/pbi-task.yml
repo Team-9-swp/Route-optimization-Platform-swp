@@ -1,0 +1,21 @@
+name: Other PBI/ Course Task
+description: Product backlog item or course task
+body: 
+  - type: input
+    id: type
+    attributes:
+      label: Issue type
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+    validations:
+      required: true
+  - type: textarea
+    id: criteria
+    attributes:
+      label: Completion / acceptance criteria
+    validations:
+      required: true
