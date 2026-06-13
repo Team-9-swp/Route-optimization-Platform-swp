@@ -5,11 +5,6 @@ from typing import Any
 from pydantic import BaseModel, Field
 
 
-class SolveRequest(BaseModel):
-    instance: dict[str, Any]
-    seed: int = Field(default=42, ge=0)
-
-
 class JobStatus(str, Enum):
     PENDING = "pending"
     RUNNING = "running"

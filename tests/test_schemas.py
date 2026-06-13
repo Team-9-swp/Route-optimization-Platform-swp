@@ -1,23 +1,8 @@
+from datetime import datetime, timezone
+
 import pytest
-from pydantic import ValidationError
 
-from app.schemas import JobRecord, JobResponse, JobStatus, SolveRequest, SolveResponse
-
-
-def test_solve_request_defaults():
-    req = SolveRequest(instance={"orders": []})
-    assert req.instance == {"orders": []}
-    assert req.seed == 42
-
-
-def test_solve_request_accepts_seed():
-    req = SolveRequest(instance={}, seed=7)
-    assert req.seed == 7
-
-
-def test_solve_request_rejects_negative_seed():
-    with pytest.raises(ValidationError):
-        SolveRequest(instance={}, seed=-1)
+from app.schemas import JobRecord, JobResponse, JobStatus, SolveResponse
 
 
 def test_job_status_values():
@@ -28,8 +13,6 @@ def test_job_status_values():
 
 
 def test_job_record_completed():
-    from datetime import datetime, timezone
-
     now = datetime.now(timezone.utc)
     job = JobRecord(
         job_id="abc",
@@ -44,8 +27,6 @@ def test_job_record_completed():
 
 
 def test_solve_response():
-    from datetime import datetime, timezone
-
     now = datetime.now(timezone.utc)
     resp = SolveResponse(job_id="abc", status=JobStatus.PENDING, created_at=now)
     assert resp.job_id == "abc"
@@ -53,8 +34,6 @@ def test_solve_response():
 
 
 def test_job_response():
-    from datetime import datetime, timezone
-
     now = datetime.now(timezone.utc)
     resp = JobResponse(job_id="abc", status=JobStatus.COMPLETED, created_at=now)
     assert resp.result is None

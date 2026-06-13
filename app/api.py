@@ -1,6 +1,6 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Body, HTTPException, Query
 
-from app.schemas import JobResponse, SolveRequest, SolveResponse
+from app.schemas import JobResponse, SolveResponse
 from app.service import SolverService
 
 router = APIRouter()
@@ -8,8 +8,11 @@ service = SolverService()
 
 
 @router.post("/solve", response_model=SolveResponse, status_code=202)
-async def solve(request: SolveRequest) -> SolveResponse:
-    return await service.submit_job(request.instance, request.seed)
+async def solve(
+    instance: dict = Body(...),
+    seed: int = Query(default=42, ge=0),
+) -> SolveResponse:
+    return await service.submit_job(instance, seed)
 
 
 @router.get("/jobs/{job_id}", response_model=JobResponse)

@@ -21,7 +21,7 @@ async def test_solve_t1_instance(client):
     with open("test_cases/t1.json") as f:
         instance = json.load(f)
 
-    response = await client.post("/solve", json={"instance": instance, "seed": 42})
+    response = await client.post("/solve?seed=42", json=instance)
     assert response.status_code == 202
     job_id = response.json()["job_id"]
 
