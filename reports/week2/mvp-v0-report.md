@@ -83,7 +83,7 @@ When running the smoke check against the hosted VM, replace `http://localhost:80
 
 A public video demonstration of MVP v0 is available here:
 
-**[MVP v0 smoke-check demonstration](https://drive.google.com/file/d/1L0qfgObksK1pZG03NED1RLrKNeGpqQqS/view?usp=sharing)**
+**[MVP v0 smoke-check demonstration](https://drive.google.com/file/d/1ekyB5AxjEktODtdnami7XVQTZnE18d6a/view?usp=sharing)**
 
 The video is shorter than two minutes and shows the smoke-check scenario: starting the service, submitting a test instance via `POST /solve`, polling the job status, and confirming the completed result.
 

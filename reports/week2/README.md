@@ -40,7 +40,7 @@ The web interface allows users to:
 2. **Runnable artifact:** `docker compose up --build` from the repository root.
 3. **Hosted instance:** `http://10.93.26.188:8000` (accessible from the university network).
 4. **Run instructions:** provided in the [MVP v0 Report](./mvp-v0-report.md).
-5. **Public MVP v0 video:** [MVP v0 smoke-check demonstration](https://drive.google.com/file/d/1L0qfgObksK1pZG03NED1RLrKNeGpqQqS/view?usp=sharing)
+5. **Public MVP v0 video:** [MVP v0 smoke-check demonstration](https://drive.google.com/file/d/1ekyB5AxjEktODtdnami7XVQTZnE18d6a/view?usp=sharing)
 
 MVP v0 provides the runnable technical foundation of the product. It exposes the existing solver as an asynchronous FastAPI service: the user submits a JSON instance, the service runs the solver in the background, and the user polls for the completed result containing vehicle and loader routes.
 ## 5. Pull Request Workflow
