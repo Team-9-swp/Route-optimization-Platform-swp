@@ -16,5 +16,5 @@ jobs:
       - name: Run Lychee
         uses: lycheeverse/lychee-action@v1
         with:
-          args: --timeout 30 --retry 3 -- ./**/*.md
+          args: --timeout 30 -- ./**/*.md
           fail: true
