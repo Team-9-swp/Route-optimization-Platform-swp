@@ -81,11 +81,11 @@ When running the smoke check against the hosted VM, replace `http://localhost:80
 
 ## Video demonstration
 
-A public video demonstration of MVP v0 has been recorded (shorter than two minutes). The public link will be inserted here once it is available from the hosting platform:
+A public video demonstration of MVP v0 is available here:
 
-```
-[VIDEO_LINK_PLACEHOLDER]
-```
+**[MVP v0 smoke-check demonstration](https://drive.google.com/file/d/1L0qfgObksK1pZG03NED1RLrKNeGpqQqS/view?usp=sharing)**
+
+The video is shorter than two minutes and shows the smoke-check scenario: starting the service, submitting a test instance via `POST /solve`, polling the job status, and confirming the completed result.
 
 ## Relationship to MVP v1
 
