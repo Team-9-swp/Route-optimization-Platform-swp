@@ -48,15 +48,16 @@ MVP v0 provides the runnable technical foundation of the product. It exposes the
 1. [Pull Request Template](../../.github/pull_request_template.md)
 2. [PR #1 — Week 2 report and documentation](https://github.com/Team-9-swp/Route-optimization-Platform-swp/pull/1)
 3. [PR #2 — Issue and Pull Request templates](https://github.com/Team-9-swp/Route-optimization-Platform-swp/pull/2)
-4. **Reviewed and approved PR:** pending — add a link after another team member submits an `Approve` review.
-5. **Merged PR:** pending — update after the reviewed PR is merged into `main`.
+4. **Reviewed and approved PR:** [PR #3 — Mvp](https://github.com/Team-9-swp/Route-optimization-Platform-swp/pull/3)
+5. **Merged PR:** [PR #3 — Mvp](https://github.com/Team-9-swp/Route-optimization-Platform-swp/pull/3)
 
 The required review must be completed by another team member. A self-review does not count.
 
 ## 6. Lychee Link Checking
 
 1. [Lychee Workflow Configuration](../../.github/workflows/lychee.yml)
-2. **Latest successful run on the protected `main` branch:** pending — add the GitHub Actions run link after the workflow is configured.
+2. **Latest successful run on the protected `main` branch:** [Link Check #1](https://github.com/Team-9-swp/Route-optimization-Platform-swp/actions/runs/27504187447/job/81292357107)
+
 
 Lychee must check Markdown links:
 
@@ -73,7 +74,7 @@ If exclusions are added later, each excluded link must be listed here together w
 2. confirmation that it was manually opened in a browser;
 3. the manual verification date.
 
-**Manual verification date:** pending — add date before submission.
+**Manual verification date:** 2026-06-14
 ## 8. Screenshots
 
 All screenshots must be stored in `reports/week2/images/` in PNG format.
@@ -199,9 +200,9 @@ The report describes the use of Whisper for meeting transcription and ChatGPT fo
 
 1. ✅ Create and complete `docs/interface.md`.
 2. ✅ Create and configure `.github/workflows/lychee.yml`.
-3. ⬜ Run Lychee successfully on the protected `main` branch (blocked until the workflow is merged into `main`).
-4. ⬜ Obtain an `Approve` review from another team member.
-5. ⬜ Merge the reviewed PR into `main`.
+3. ✅ Run Lychee successfully on the protected `main` branch.
+4. ✅ Obtain an `Approve` review from another team member.
+5. ✅ Merge the reviewed PR into `main`.
 6. ✅ Add the runnable MVP v0 artifact (Docker Compose).
 7. ✅ Record and publish the MVP v0 video shorter than two minutes.
 8. ✅ Add or update all required PNG screenshots, including the new web interface mockups.
