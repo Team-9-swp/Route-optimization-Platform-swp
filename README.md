@@ -49,7 +49,7 @@ A React + TypeScript SPA is planned for MVP v1. The interactive prototype is ava
 
 - [Week 2 report index](./reports/week2/README.md)
 - [MVP v0 report](./reports/week2/mvp-v0-report.md)
-- [User stories](./reports/week2/user-stories.md)
+- [User-stories](docs/user-stories.md)
 
 ## License
 
