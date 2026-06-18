@@ -1,34 +1,100 @@
 name: User Story
-description: New user story
+description: Create a new product user story
+title: "[US-XX] "
 body:
+  - type: input
+    id: stable_id
+    attributes:
+      label: Stable ID
+      placeholder: "US-13"
+    validations:
+      required: true
+
   - type: input
     id: role
     attributes:
       label: User role / persona
     validations:
       required: true
+
   - type: input
     id: action
     attributes:
       label: Desired action
     validations:
       required: true
+
   - type: input
     id: value
     attributes:
       label: Expected value
     validations:
       required: true
+
   - type: textarea
-    id: description
+    id: statement
     attributes:
-      label: Description
+      label: User-story statement
+      placeholder: "As a ..., I want ..., so that ..."
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: MoSCoW priority
+      options:
+        - Must Have
+        - Should Have
+        - Could Have
+        - Won't Have
+    validations:
+      required: true
+
+  - type: dropdown
+    id: story_points
+    attributes:
+      label: Story Points
+      options:
+        - "1"
+        - "2"
+        - "3"
+        - "5"
+        - "8"
+        - "13"
+        - "20"
+        - "40"
+        - "100"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: work_status
+    attributes:
+      label: Work Status
+      options:
+        - To Do
+        - Ready
+        - In Progress
+        - In Review
+        - Done
+    validations:
+      required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes, constraints, assumptions, and open questions
     validations:
       required: false
+
   - type: textarea
     id: acceptance
     attributes:
       label: Acceptance criteria
+      placeholder: |
+        - [ ] First criterion
+        - [ ] Second criterion
+        - [ ] Third criterion
     validations:
       required: true
-  
