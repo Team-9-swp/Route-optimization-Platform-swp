@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Interactive Figma prototype of the planned web interface
 - Lychee link-checking GitHub Actions workflow
 - Week 2 assignment reports under `reports/week2/`
+- Create `docs/definition-of-done.md`
 
 ### Changed
 - Root `README.md` now describes both backend and frontend local development
