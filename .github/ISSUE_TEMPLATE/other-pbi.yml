@@ -1,0 +1,95 @@
+name: Other PBI
+description: Create a product backlog item that is not a user story
+title: "[PBI] "
+body:
+  - type: dropdown
+    id: type
+    attributes:
+      label: PBI type
+      options:
+        - Technical Work
+        - Infrastructure
+        - Testing
+        - Documentation
+        - Deployment
+        - Product Improvement
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Describe the work that must be completed.
+      placeholder: Explain what needs to be implemented or changed.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected_value
+    attributes:
+      label: Expected value
+      description: Explain why this item is useful for the product.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: MoSCoW priority
+      options:
+        - Must Have
+        - Should Have
+        - Could Have
+        - Won't Have
+    validations:
+      required: true
+
+  - type: dropdown
+    id: story_points
+    attributes:
+      label: Story Points
+      options:
+        - "1"
+        - "2"
+        - "3"
+        - "5"
+        - "8"
+        - "13"
+        - "20"
+        - "40"
+        - "100"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: work_status
+    attributes:
+      label: Work Status
+      options:
+        - To Do
+        - Ready
+        - In Progress
+        - In Review
+        - Done
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: Provide measurable completion criteria as a checklist.
+      placeholder: |
+        - [ ] First criterion
+        - [ ] Second criterion
+        - [ ] Third criterion
+    validations:
+      required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes, constraints, or dependencies
+    validations:
+      required: false
