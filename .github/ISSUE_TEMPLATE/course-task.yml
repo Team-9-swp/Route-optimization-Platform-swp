@@ -1,0 +1,52 @@
+name: Course Task
+description: Create work required for the Software Project course
+title: "[Course Task] "
+body:
+  - type: input
+    id: assignment_part
+    attributes:
+      label: Assignment part
+      description: Specify the related Assignment 3 part.
+      placeholder: "Part 6"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Task description
+      description: Describe the course-related work that must be completed.
+    validations:
+      required: true
+
+  - type: textarea
+    id: completion
+    attributes:
+      label: Completion criteria
+      placeholder: |
+        - [ ] Required file or artifact is created
+        - [ ] Content satisfies the assignment requirements
+        - [ ] Evidence or links are included
+    validations:
+      required: true
+
+  - type: dropdown
+    id: work_status
+    attributes:
+      label: Work Status
+      options:
+        - To Do
+        - Ready
+        - In Progress
+        - In Review
+        - Done
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Required evidence or links
+      description: List the expected PR, report, screenshot, board, or other evidence.
+    validations:
+      required: false

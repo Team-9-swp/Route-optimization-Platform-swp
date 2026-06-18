@@ -1,41 +1,35 @@
-name: User Story
-description: Create a new product user story
-title: "[US-XX] "
+name: Other PBI
+description: Create a product backlog item that is not a user story
+title: "[PBI] "
 body:
-  - type: input
-    id: stable_id
+  - type: dropdown
+    id: type
     attributes:
-      label: Stable ID
-      placeholder: "US-13"
-    validations:
-      required: true
-
-  - type: input
-    id: role
-    attributes:
-      label: User role / persona
-    validations:
-      required: true
-
-  - type: input
-    id: action
-    attributes:
-      label: Desired action
-    validations:
-      required: true
-
-  - type: input
-    id: value
-    attributes:
-      label: Expected value
+      label: PBI type
+      options:
+        - Technical Work
+        - Infrastructure
+        - Testing
+        - Documentation
+        - Deployment
+        - Product Improvement
     validations:
       required: true
 
   - type: textarea
-    id: statement
+    id: description
     attributes:
-      label: User-story statement
-      placeholder: "As a ..., I want ..., so that ..."
+      label: Description
+      description: Describe the work that must be completed.
+      placeholder: Explain what needs to be implemented or changed.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected_value
+    attributes:
+      label: Expected value
+      description: Explain why this item is useful for the product.
     validations:
       required: true
 
@@ -82,19 +76,20 @@ body:
       required: true
 
   - type: textarea
-    id: notes
-    attributes:
-      label: Notes, constraints, assumptions, and open questions
-    validations:
-      required: false
-
-  - type: textarea
     id: acceptance
     attributes:
       label: Acceptance criteria
+      description: Provide measurable completion criteria as a checklist.
       placeholder: |
         - [ ] First criterion
         - [ ] Second criterion
         - [ ] Third criterion
     validations:
       required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes, constraints, or dependencies
+    validations:
+      required: false
