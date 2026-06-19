@@ -149,24 +149,28 @@ function RouteMap({
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
-    let originalOverflow = "";
+    let originalBodyOverflow = "";
+    let originalHtmlOverflow = "";
     let originalPaddingRight = "";
     let locked = false;
     const lock = () => {
       if (locked) return;
       locked = true;
-      originalOverflow = document.body.style.overflow;
+      originalBodyOverflow = document.body.style.overflow;
+      originalHtmlOverflow = document.documentElement.style.overflow;
       originalPaddingRight = document.body.style.paddingRight;
       const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
       if (scrollbarWidth > 0) {
         document.body.style.paddingRight = `${scrollbarWidth}px`;
       }
       document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
     };
     const unlock = () => {
       if (!locked) return;
       locked = false;
-      document.body.style.overflow = originalOverflow;
+      document.body.style.overflow = originalBodyOverflow;
+      document.documentElement.style.overflow = originalHtmlOverflow;
       document.body.style.paddingRight = originalPaddingRight;
     };
     container.addEventListener("mouseenter", lock);
