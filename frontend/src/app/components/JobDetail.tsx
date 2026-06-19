@@ -102,6 +102,7 @@ function RouteMap({
   visibleLoaderIds: Set<number>;
 }) {
   const transform = useDisplayTransform(inputData);
+  const containerRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const [viewBox, setViewBox] = useState<ViewBox>({ x: 0, y: 0, w: VIEW_W, h: VIEW_H });
   const isDragging = useRef(false);
@@ -142,12 +143,15 @@ function RouteMap({
     setViewBox({ x: 0, y: 0, w: VIEW_W, h: VIEW_H });
   }, []);
 
-  // Native wheel listener with { passive: false } so we can prevent page scroll.
+  // Native wheel listener on the container so scrolling anywhere over the map
+  // zooms the SVG and does not scroll the page.
   useEffect(() => {
+    const container = containerRef.current;
     const svg = svgRef.current;
-    if (!svg) return;
+    if (!container || !svg) return;
     const handler = (e: WheelEvent) => {
       e.preventDefault();
+      e.stopPropagation();
       const rect = svg.getBoundingClientRect();
       const pt = svg.createSVGPoint();
       pt.x = e.clientX - rect.left;
@@ -158,8 +162,8 @@ function RouteMap({
       const factor = e.deltaY > 0 ? 1.08 : 0.92;
       zoom(factor, svgP.x, svgP.y);
     };
-    svg.addEventListener("wheel", handler, { passive: false });
-    return () => svg.removeEventListener("wheel", handler);
+    container.addEventListener("wheel", handler, { passive: false });
+    return () => container.removeEventListener("wheel", handler);
   }, [zoom]);
 
   const handleMouseDown = useCallback(
@@ -219,7 +223,11 @@ function RouteMap({
   };
 
   return (
-    <div className="w-full h-full relative">
+    <div
+      ref={containerRef}
+      className="w-full h-full relative"
+      style={{ touchAction: "none" }}
+    >
       <svg
         ref={svgRef}
         className="w-full h-full cursor-grab active:cursor-grabbing"
@@ -325,15 +333,16 @@ function RouteFilter({
 
   return (
     <div
+      onWheel={(e) => e.stopPropagation()}
       style={{
         background: "rgba(255,255,255,0.95)",
         border: "1px solid #E5E7EB",
         borderRadius: 6,
         padding: "8px 10px",
         fontSize: 11,
-        maxHeight: 200,
+        maxHeight: 180,
         overflow: "auto",
-        maxWidth: 160,
+        maxWidth: 170,
       }}
     >
       <p style={{ fontWeight: 600, margin: "0 0 6px 0", color: "#111827" }}>Routes</p>
@@ -352,12 +361,21 @@ function RouteFilter({
             />
             All vehicles
           </label>
-          {vehicles.map((v) => (
+          {vehicles.map((v, i) => (
             <label key={v.id} style={{ ...labelStyle, paddingLeft: 12 }}>
               <input
                 type="checkbox"
                 checked={visibleVehicleIds.has(v.id)}
                 onChange={(e) => onToggleVehicle(v.id, e.target.checked)}
+              />
+              <span
+                style={{
+                  width: 10,
+                  height: 10,
+                  borderRadius: "50%",
+                  background: VEHICLE_COLORS[i % VEHICLE_COLORS.length],
+                  flexShrink: 0,
+                }}
               />
               V-{v.id}
             </label>
@@ -379,52 +397,27 @@ function RouteFilter({
             />
             All loaders
           </label>
-          {loaders.map((l) => (
+          {loaders.map((l, i) => (
             <label key={l.id} style={{ ...labelStyle, paddingLeft: 12 }}>
               <input
                 type="checkbox"
                 checked={visibleLoaderIds.has(l.id)}
                 onChange={(e) => onToggleLoader(l.id, e.target.checked)}
               />
+              <span
+                style={{
+                  width: 10,
+                  height: 10,
+                  borderRadius: "50%",
+                  background: LOADER_COLORS[i % LOADER_COLORS.length],
+                  flexShrink: 0,
+                }}
+              />
               L-{l.id}
             </label>
           ))}
         </div>
       )}
-    </div>
-  );
-}
-
-function MapLegend({
-  vehicles,
-  loaders,
-  visibleVehicleIds,
-  visibleLoaderIds,
-}: {
-  vehicles: VehicleRoute[];
-  loaders: LoaderRoute[];
-  visibleVehicleIds: Set<number>;
-  visibleLoaderIds: Set<number>;
-}) {
-  const itemStyle = { display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: "#374151" };
-  const lineStyle = (color: string) => ({ width: 16, height: 3, background: color, borderRadius: 2 });
-  const visibleVehicles = vehicles.filter((v) => visibleVehicleIds.has(v.id));
-  const visibleLoaders = loaders.filter((l) => visibleLoaderIds.has(l.id));
-  return (
-    <div style={{ background: "rgba(255,255,255,0.95)", border: "1px solid #E5E7EB", borderRadius: 6, padding: "8px 10px", maxWidth: 180 }}>
-      <p style={{ fontSize: 11, fontWeight: 600, color: "#111827", margin: "0 0 6px 0" }}>Legend</p>
-      {visibleVehicles.map((v, i) => (
-        <div key={`vl-${v.id}`} style={itemStyle}>
-          <div style={lineStyle(VEHICLE_COLORS[i % VEHICLE_COLORS.length])} />
-          <span>V-{v.id}</span>
-        </div>
-      ))}
-      {visibleLoaders.map((l, i) => (
-        <div key={`ll-${l.id}`} style={itemStyle}>
-          <div style={lineStyle(LOADER_COLORS[i % LOADER_COLORS.length])} />
-          <span>L-{l.id}</span>
-        </div>
-      ))}
     </div>
   );
 }
@@ -706,15 +699,6 @@ export function JobDetail({ id, navigate }: Props) {
           >
             <MapPin size={12} style={{ color: "#2563EB" }} />
             Route Map
-          </div>
-
-          <div className="absolute bottom-3 left-3">
-            <MapLegend
-              vehicles={vehicles}
-              loaders={loaders}
-              visibleVehicleIds={visibleVehicleIds}
-              visibleLoaderIds={visibleLoaderIds}
-            />
           </div>
 
           <div className="absolute bottom-3 right-3">
