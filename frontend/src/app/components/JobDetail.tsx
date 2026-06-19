@@ -143,15 +143,19 @@ function RouteMap({
     setViewBox({ x: 0, y: 0, w: VIEW_W, h: VIEW_H });
   }, []);
 
-  // Native wheel listener on the container so scrolling anywhere over the map
-  // zooms the SVG and does not scroll the page.
+  // Capture-phase wheel listener on the container so scrolling anywhere over the
+  // map zooms the SVG and does not scroll the page. Elements marked with
+  // data-route-filter are ignored so the route filter list can still scroll.
   useEffect(() => {
     const container = containerRef.current;
-    const svg = svgRef.current;
-    if (!container || !svg) return;
+    if (!container) return;
     const handler = (e: WheelEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (target?.closest("[data-route-filter]")) return;
       e.preventDefault();
       e.stopPropagation();
+      const svg = svgRef.current;
+      if (!svg) return;
       const rect = svg.getBoundingClientRect();
       const pt = svg.createSVGPoint();
       pt.x = e.clientX - rect.left;
@@ -162,8 +166,8 @@ function RouteMap({
       const factor = e.deltaY > 0 ? 1.08 : 0.92;
       zoom(factor, svgP.x, svgP.y);
     };
-    container.addEventListener("wheel", handler, { passive: false });
-    return () => container.removeEventListener("wheel", handler);
+    container.addEventListener("wheel", handler, { passive: false, capture: true });
+    return () => container.removeEventListener("wheel", handler, { capture: true });
   }, [zoom]);
 
   const handleMouseDown = useCallback(
@@ -226,7 +230,7 @@ function RouteMap({
     <div
       ref={containerRef}
       className="w-full h-full relative"
-      style={{ touchAction: "none" }}
+      style={{ touchAction: "none", overscrollBehavior: "contain" }}
     >
       <svg
         ref={svgRef}
@@ -333,6 +337,7 @@ function RouteFilter({
 
   return (
     <div
+      data-route-filter
       onWheel={(e) => e.stopPropagation()}
       style={{
         background: "rgba(255,255,255,0.95)",
