@@ -45,8 +45,6 @@ const VIEW_W = 800;
 const VIEW_H = 560;
 const PADDING = 40;
 
-type MapMode = "vehicles" | "loaders" | "both";
-
 function useDisplayTransform(inputData?: Record<string, unknown>) {
   const data = inputData as InputData | undefined;
   const depot = data?.depot;
@@ -94,12 +92,14 @@ function RouteMap({
   inputData,
   vehicles,
   loaders,
-  mode,
+  visibleVehicleIds,
+  visibleLoaderIds,
 }: {
   inputData?: Record<string, unknown>;
   vehicles: VehicleRoute[];
   loaders: LoaderRoute[];
-  mode: MapMode;
+  visibleVehicleIds: Set<number>;
+  visibleLoaderIds: Set<number>;
 }) {
   const transform = useDisplayTransform(inputData);
   const svgRef = useRef<SVGSVGElement>(null);
@@ -109,7 +109,7 @@ function RouteMap({
 
   useEffect(() => {
     setViewBox({ x: 0, y: 0, w: VIEW_W, h: VIEW_H });
-  }, [inputData, mode]);
+  }, [inputData]);
 
   const clampViewBox = useCallback((vb: ViewBox): ViewBox => {
     const aspect = VIEW_H / VIEW_W;
@@ -142,11 +142,12 @@ function RouteMap({
     setViewBox({ x: 0, y: 0, w: VIEW_W, h: VIEW_H });
   }, []);
 
-  const handleWheel = useCallback(
-    (e: React.WheelEvent) => {
+  // Native wheel listener with { passive: false } so we can prevent page scroll.
+  useEffect(() => {
+    const svg = svgRef.current;
+    if (!svg) return;
+    const handler = (e: WheelEvent) => {
       e.preventDefault();
-      const svg = svgRef.current;
-      if (!svg) return;
       const rect = svg.getBoundingClientRect();
       const pt = svg.createSVGPoint();
       pt.x = e.clientX - rect.left;
@@ -156,9 +157,10 @@ function RouteMap({
       const svgP = pt.matrixTransform(ctm.inverse());
       const factor = e.deltaY > 0 ? 1.08 : 0.92;
       zoom(factor, svgP.x, svgP.y);
-    },
-    [zoom]
-  );
+    };
+    svg.addEventListener("wheel", handler, { passive: false });
+    return () => svg.removeEventListener("wheel", handler);
+  }, [zoom]);
 
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
@@ -191,10 +193,8 @@ function RouteMap({
     isDragging.current = false;
   }, []);
 
-  const showVehicles = mode !== "loaders";
-  const showLoaders = mode !== "vehicles";
-  const visibleVehicles = showVehicles ? vehicles : [];
-  const visibleLoaders = showLoaders ? loaders : [];
+  const visibleVehicles = vehicles.filter((v) => visibleVehicleIds.has(v.id));
+  const visibleLoaders = loaders.filter((l) => visibleLoaderIds.has(l.id));
 
   if (!transform || (visibleVehicles.length === 0 && visibleLoaders.length === 0)) {
     return (
@@ -225,7 +225,6 @@ function RouteMap({
         className="w-full h-full cursor-grab active:cursor-grabbing"
         viewBox={`${viewBox.x} ${viewBox.y} ${viewBox.w} ${viewBox.h}`}
         preserveAspectRatio="xMidYMid meet"
-        onWheel={handleWheel}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
@@ -301,31 +300,148 @@ function RouteMap({
   );
 }
 
-function MapLegend({ vehicles, loaders, mode }: { vehicles: VehicleRoute[]; loaders: LoaderRoute[]; mode: MapMode }) {
-  const itemStyle = { display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: "#374151" };
-  const lineStyle = (color: string) => ({ width: 16, height: 3, background: color, borderRadius: 2 });
+function RouteFilter({
+  vehicles,
+  loaders,
+  visibleVehicleIds,
+  visibleLoaderIds,
+  onToggleVehicle,
+  onToggleLoader,
+}: {
+  vehicles: VehicleRoute[];
+  loaders: LoaderRoute[];
+  visibleVehicleIds: Set<number>;
+  visibleLoaderIds: Set<number>;
+  onToggleVehicle: (id: number | "all", checked: boolean) => void;
+  onToggleLoader: (id: number | "all", checked: boolean) => void;
+}) {
+  const vehicleAll = vehicles.length > 0 && vehicles.every((v) => visibleVehicleIds.has(v.id));
+  const vehicleSome = vehicles.some((v) => visibleVehicleIds.has(v.id)) && !vehicleAll;
+  const loaderAll = loaders.length > 0 && loaders.every((l) => visibleLoaderIds.has(l.id));
+  const loaderSome = loaders.some((l) => visibleLoaderIds.has(l.id)) && !loaderAll;
+
+  const groupTitleStyle = { fontSize: 11, fontWeight: 600, color: "#111827", margin: "0 0 4px 0" };
+  const labelStyle = { display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: "#374151", cursor: "pointer", marginBottom: 2 };
+
   return (
-    <div style={{ background: "rgba(255,255,255,0.95)", border: "1px solid #E5E7EB", borderRadius: 6, padding: "8px 10px", maxWidth: 180 }}>
-      <p style={{ fontSize: 11, fontWeight: 600, color: "#111827", margin: "0 0 6px 0" }}>Legend</p>
-      {mode !== "loaders" &&
-        vehicles.map((v, i) => (
-          <div key={`vl-${v.id}`} style={itemStyle}>
-            <div style={lineStyle(VEHICLE_COLORS[i % VEHICLE_COLORS.length])} />
-            <span>V-{v.id}</span>
-          </div>
-        ))}
-      {mode !== "vehicles" &&
-        loaders.map((l, i) => (
-          <div key={`ll-${l.id}`} style={itemStyle}>
-            <div style={lineStyle(LOADER_COLORS[i % LOADER_COLORS.length])} />
-            <span>L-{l.id}</span>
-          </div>
-        ))}
+    <div
+      style={{
+        background: "rgba(255,255,255,0.95)",
+        border: "1px solid #E5E7EB",
+        borderRadius: 6,
+        padding: "8px 10px",
+        fontSize: 11,
+        maxHeight: 200,
+        overflow: "auto",
+        maxWidth: 160,
+      }}
+    >
+      <p style={{ fontWeight: 600, margin: "0 0 6px 0", color: "#111827" }}>Routes</p>
+
+      {vehicles.length > 0 && (
+        <div style={{ marginBottom: 8 }}>
+          <p style={groupTitleStyle}>Vehicles</p>
+          <label style={labelStyle}>
+            <input
+              type="checkbox"
+              checked={vehicleAll}
+              ref={(el) => {
+                if (el) el.indeterminate = vehicleSome;
+              }}
+              onChange={(e) => onToggleVehicle("all", e.target.checked)}
+            />
+            All vehicles
+          </label>
+          {vehicles.map((v) => (
+            <label key={v.id} style={{ ...labelStyle, paddingLeft: 12 }}>
+              <input
+                type="checkbox"
+                checked={visibleVehicleIds.has(v.id)}
+                onChange={(e) => onToggleVehicle(v.id, e.target.checked)}
+              />
+              V-{v.id}
+            </label>
+          ))}
+        </div>
+      )}
+
+      {loaders.length > 0 && (
+        <div>
+          <p style={groupTitleStyle}>Loaders</p>
+          <label style={labelStyle}>
+            <input
+              type="checkbox"
+              checked={loaderAll}
+              ref={(el) => {
+                if (el) el.indeterminate = loaderSome;
+              }}
+              onChange={(e) => onToggleLoader("all", e.target.checked)}
+            />
+            All loaders
+          </label>
+          {loaders.map((l) => (
+            <label key={l.id} style={{ ...labelStyle, paddingLeft: 12 }}>
+              <input
+                type="checkbox"
+                checked={visibleLoaderIds.has(l.id)}
+                onChange={(e) => onToggleLoader(l.id, e.target.checked)}
+              />
+              L-{l.id}
+            </label>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
 
-function MapRouteList({ vehicles, loaders, mode }: { vehicles: VehicleRoute[]; loaders: LoaderRoute[]; mode: MapMode }) {
+function MapLegend({
+  vehicles,
+  loaders,
+  visibleVehicleIds,
+  visibleLoaderIds,
+}: {
+  vehicles: VehicleRoute[];
+  loaders: LoaderRoute[];
+  visibleVehicleIds: Set<number>;
+  visibleLoaderIds: Set<number>;
+}) {
+  const itemStyle = { display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: "#374151" };
+  const lineStyle = (color: string) => ({ width: 16, height: 3, background: color, borderRadius: 2 });
+  const visibleVehicles = vehicles.filter((v) => visibleVehicleIds.has(v.id));
+  const visibleLoaders = loaders.filter((l) => visibleLoaderIds.has(l.id));
+  return (
+    <div style={{ background: "rgba(255,255,255,0.95)", border: "1px solid #E5E7EB", borderRadius: 6, padding: "8px 10px", maxWidth: 180 }}>
+      <p style={{ fontSize: 11, fontWeight: 600, color: "#111827", margin: "0 0 6px 0" }}>Legend</p>
+      {visibleVehicles.map((v, i) => (
+        <div key={`vl-${v.id}`} style={itemStyle}>
+          <div style={lineStyle(VEHICLE_COLORS[i % VEHICLE_COLORS.length])} />
+          <span>V-{v.id}</span>
+        </div>
+      ))}
+      {visibleLoaders.map((l, i) => (
+        <div key={`ll-${l.id}`} style={itemStyle}>
+          <div style={lineStyle(LOADER_COLORS[i % LOADER_COLORS.length])} />
+          <span>L-{l.id}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function MapRouteList({
+  vehicles,
+  loaders,
+  visibleVehicleIds,
+  visibleLoaderIds,
+}: {
+  vehicles: VehicleRoute[];
+  loaders: LoaderRoute[];
+  visibleVehicleIds: Set<number>;
+  visibleLoaderIds: Set<number>;
+}) {
+  const visibleVehicles = vehicles.filter((v) => visibleVehicleIds.has(v.id));
+  const visibleLoaders = loaders.filter((l) => visibleLoaderIds.has(l.id));
   return (
     <div
       style={{
@@ -339,20 +455,18 @@ function MapRouteList({ vehicles, loaders, mode }: { vehicles: VehicleRoute[]; l
       }}
     >
       <p style={{ fontSize: 11, fontWeight: 600, color: "#111827", margin: "0 0 6px 0" }}>Routes</p>
-      {mode !== "loaders" &&
-        vehicles.map((v, i) => (
-          <div key={`rlv-${v.id}`} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: "#374151", marginBottom: 3 }}>
-            <div style={{ width: 10, height: 10, borderRadius: "50%", background: VEHICLE_COLORS[i % VEHICLE_COLORS.length] }} />
-            <span>V-{v.id}: {v.route.filter((id) => id !== 0).length} orders</span>
-          </div>
-        ))}
-      {mode !== "vehicles" &&
-        loaders.map((l, i) => (
-          <div key={`rll-${l.id}`} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: "#374151", marginBottom: 3 }}>
-            <div style={{ width: 10, height: 10, borderRadius: "50%", background: LOADER_COLORS[i % LOADER_COLORS.length] }} />
-            <span>L-{l.id}: {l.route.filter((id) => id !== 0).length} orders</span>
-          </div>
-        ))}
+      {visibleVehicles.map((v, i) => (
+        <div key={`rlv-${v.id}`} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: "#374151", marginBottom: 3 }}>
+          <div style={{ width: 10, height: 10, borderRadius: "50%", background: VEHICLE_COLORS[i % VEHICLE_COLORS.length] }} />
+          <span>V-{v.id}: {v.route.filter((id) => id !== 0).length} orders</span>
+        </div>
+      ))}
+      {visibleLoaders.map((l, i) => (
+        <div key={`rll-${l.id}`} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: "#374151", marginBottom: 3 }}>
+          <div style={{ width: 10, height: 10, borderRadius: "50%", background: LOADER_COLORS[i % LOADER_COLORS.length] }} />
+          <span>L-{l.id}: {l.route.filter((id) => id !== 0).length} orders</span>
+        </div>
+      ))}
     </div>
   );
 }
@@ -362,7 +476,8 @@ export function JobDetail({ id, navigate }: Props) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<Tab>("Routes");
-  const [mapMode, setMapMode] = useState<MapMode>("vehicles");
+  const [visibleVehicleIds, setVisibleVehicleIds] = useState<Set<number>>(new Set());
+  const [visibleLoaderIds, setVisibleLoaderIds] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     let cancelled = false;
@@ -393,6 +508,44 @@ export function JobDetail({ id, navigate }: Props) {
       clearInterval(interval);
     };
   }, [id, job?.status]);
+
+  // Initialise route filters when a job is loaded.
+  useEffect(() => {
+    if (job) {
+      const vehicles = (job.result?.vehicles as VehicleRoute[] | undefined) ?? [];
+      const loaders = (job.result?.loaders as LoaderRoute[] | undefined) ?? [];
+      setVisibleVehicleIds(new Set(vehicles.map((v) => v.id)));
+      setVisibleLoaderIds(new Set(loaders.map((l) => l.id)));
+    }
+  }, [job?.job_id]);
+
+  const handleToggleVehicle = useCallback((id: number | "all", checked: boolean) => {
+    if (id === "all") {
+      const vehicles = (job?.result?.vehicles as VehicleRoute[] | undefined) ?? [];
+      setVisibleVehicleIds(checked ? new Set(vehicles.map((v) => v.id)) : new Set());
+    } else {
+      setVisibleVehicleIds((prev) => {
+        const next = new Set(prev);
+        if (checked) next.add(id);
+        else next.delete(id);
+        return next;
+      });
+    }
+  }, [job]);
+
+  const handleToggleLoader = useCallback((id: number | "all", checked: boolean) => {
+    if (id === "all") {
+      const loaders = (job?.result?.loaders as LoaderRoute[] | undefined) ?? [];
+      setVisibleLoaderIds(checked ? new Set(loaders.map((l) => l.id)) : new Set());
+    } else {
+      setVisibleLoaderIds((prev) => {
+        const next = new Set(prev);
+        if (checked) next.add(id);
+        else next.delete(id);
+        return next;
+      });
+    }
+  }, [job]);
 
   if (isLoading) return <p className="p-6 text-gray-600">Loading job…</p>;
   if (error || !job) return <p className="p-6 text-red-600">{error || "Job not found"}</p>;
@@ -528,28 +681,23 @@ export function JobDetail({ id, navigate }: Props) {
           className="rounded-xl mb-5 relative overflow-hidden"
           style={{ background: "#F0F4FF", border: "1px solid #DBEAFE", height: 420, boxShadow: "0 1px 4px rgba(0,0,0,0.05)" }}
         >
-          <RouteMap inputData={job.input_data} vehicles={vehicles} loaders={loaders} mode={mapMode} />
+          <RouteMap
+            inputData={job.input_data}
+            vehicles={vehicles}
+            loaders={loaders}
+            visibleVehicleIds={visibleVehicleIds}
+            visibleLoaderIds={visibleLoaderIds}
+          />
 
-          <div
-            className="absolute top-3 left-3 flex items-center gap-1"
-            style={{ background: "#fff", border: "1px solid #E5E7EB", borderRadius: 6, padding: 2, fontSize: 12 }}
-          >
-            {(["vehicles", "loaders", "both"] as MapMode[]).map((m) => (
-              <button
-                key={m}
-                onClick={() => setMapMode(m)}
-                className="px-2 py-1 rounded capitalize"
-                style={{
-                  background: mapMode === m ? "#2563EB" : "transparent",
-                  color: mapMode === m ? "#fff" : "#374151",
-                  border: "none",
-                  cursor: "pointer",
-                  fontWeight: mapMode === m ? 600 : 400,
-                }}
-              >
-                {m}
-              </button>
-            ))}
+          <div className="absolute top-3 left-3">
+            <RouteFilter
+              vehicles={vehicles}
+              loaders={loaders}
+              visibleVehicleIds={visibleVehicleIds}
+              visibleLoaderIds={visibleLoaderIds}
+              onToggleVehicle={handleToggleVehicle}
+              onToggleLoader={handleToggleLoader}
+            />
           </div>
 
           <div
@@ -561,11 +709,21 @@ export function JobDetail({ id, navigate }: Props) {
           </div>
 
           <div className="absolute bottom-3 left-3">
-            <MapLegend vehicles={vehicles} loaders={loaders} mode={mapMode} />
+            <MapLegend
+              vehicles={vehicles}
+              loaders={loaders}
+              visibleVehicleIds={visibleVehicleIds}
+              visibleLoaderIds={visibleLoaderIds}
+            />
           </div>
 
           <div className="absolute bottom-3 right-3">
-            <MapRouteList vehicles={vehicles} loaders={loaders} mode={mapMode} />
+            <MapRouteList
+              vehicles={vehicles}
+              loaders={loaders}
+              visibleVehicleIds={visibleVehicleIds}
+              visibleLoaderIds={visibleLoaderIds}
+            />
           </div>
         </div>
 
