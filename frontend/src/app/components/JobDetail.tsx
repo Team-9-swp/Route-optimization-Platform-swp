@@ -143,45 +143,40 @@ function RouteMap({
     setViewBox({ x: 0, y: 0, w: VIEW_W, h: VIEW_H });
   }, []);
 
-  // Lock body scroll while the mouse is over the map so wheel events zoom the
-  // SVG instead of scrolling the page. This mirrors how map UIs (including the
-  // orgbrain graph in practice) keep the viewport stable during interaction.
+  const scrollLockedRef = useRef(false);
+  const originalBodyOverflow = useRef("");
+  const originalHtmlOverflow = useRef("");
+  const originalPaddingRight = useRef("");
+
+  const lockScroll = useCallback(() => {
+    if (scrollLockedRef.current) return;
+    scrollLockedRef.current = true;
+    originalBodyOverflow.current = document.body.style.overflow;
+    originalHtmlOverflow.current = document.documentElement.style.overflow;
+    originalPaddingRight.current = document.body.style.paddingRight;
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+    if (scrollbarWidth > 0) {
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
+    }
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+  }, []);
+
+  const unlockScroll = useCallback(() => {
+    if (!scrollLockedRef.current) return;
+    scrollLockedRef.current = false;
+    document.body.style.overflow = originalBodyOverflow.current;
+    document.documentElement.style.overflow = originalHtmlOverflow.current;
+    document.body.style.paddingRight = originalPaddingRight.current;
+  }, []);
+
   useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-    let originalBodyOverflow = "";
-    let originalHtmlOverflow = "";
-    let originalPaddingRight = "";
-    let locked = false;
-    const lock = () => {
-      if (locked) return;
-      locked = true;
-      originalBodyOverflow = document.body.style.overflow;
-      originalHtmlOverflow = document.documentElement.style.overflow;
-      originalPaddingRight = document.body.style.paddingRight;
-      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-      if (scrollbarWidth > 0) {
-        document.body.style.paddingRight = `${scrollbarWidth}px`;
-      }
-      document.body.style.overflow = "hidden";
-      document.documentElement.style.overflow = "hidden";
-    };
-    const unlock = () => {
-      if (!locked) return;
-      locked = false;
-      document.body.style.overflow = originalBodyOverflow;
-      document.documentElement.style.overflow = originalHtmlOverflow;
-      document.body.style.paddingRight = originalPaddingRight;
-    };
-    container.addEventListener("mouseenter", lock);
-    container.addEventListener("mouseleave", unlock);
-    const onBlur = () => unlock();
-    window.addEventListener("blur", onBlur);
     return () => {
-      container.removeEventListener("mouseenter", lock);
-      container.removeEventListener("mouseleave", unlock);
-      window.removeEventListener("blur", onBlur);
-      unlock();
+      if (scrollLockedRef.current) {
+        document.body.style.overflow = originalBodyOverflow.current;
+        document.documentElement.style.overflow = originalHtmlOverflow.current;
+        document.body.style.paddingRight = originalPaddingRight.current;
+      }
     };
   }, []);
 
@@ -264,6 +259,8 @@ function RouteMap({
       ref={containerRef}
       className="w-full h-full relative"
       style={{ touchAction: "none", overscrollBehavior: "contain" }}
+      onMouseEnter={lockScroll}
+      onMouseLeave={unlockScroll}
     >
       <svg
         ref={svgRef}
