@@ -4,8 +4,9 @@ import io
 import traceback
 from datetime import datetime, timezone
 
-from app.schemas import JobStatus
+from app.schemas import JobStatus, ValidationStatus
 from app.store import JobStore
+from app.validation import validate_solution
 
 
 def _solve_sync(instance: dict, seed: int) -> dict | None:
@@ -14,7 +15,18 @@ def _solve_sync(instance: dict, seed: int) -> dict | None:
     return main_mvp.solve(instance, seed)
 
 
-async def run_solver(job_id: str, store: JobStore) -> None:
+def _extract_objective_value(result: dict | None) -> float | None:
+    if result is None:
+        return None
+    return result.get("objective_value")
+
+
+async def run_solver(
+    job_id: str,
+    store: JobStore,
+    *,
+    auto_validate: bool = False,
+) -> None:
     record = store.get_job(job_id)
     if record is None:
         return
@@ -43,12 +55,22 @@ async def run_solver(job_id: str, store: JobStore) -> None:
             )
             return
 
+        objective_value = _extract_objective_value(result)
         store.update_job(
             job_id,
             status=JobStatus.COMPLETED,
             finished_at=datetime.now(timezone.utc),
             result=result,
+            objective_value=objective_value,
         )
+
+        if auto_validate:
+            validation = validate_solution(record.input_data, result)
+            store.update_job(
+                job_id,
+                validation_status=ValidationStatus.PASSED if validation["passed"] else ValidationStatus.FAILED,
+                validation_report=validation,
+            )
     except Exception as exc:
         store.update_job(
             job_id,
