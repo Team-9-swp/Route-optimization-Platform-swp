@@ -2,7 +2,7 @@ import threading
 
 import pytest
 
-from app.schemas import JobStatus
+from app.schemas import JobStatus, ValidationStatus
 from app.store import JobStore
 
 
@@ -67,3 +67,28 @@ def test_concurrent_create():
 
     assert not errors
     assert len(ids) == 100
+
+
+def test_store_updates_extended_fields():
+    store = JobStore()
+    record = store.create_job({"orders": []}, seed=1, name="job-name")
+    store.update_job(
+        record.job_id,
+        status=JobStatus.COMPLETED,
+        objective_value=42.0,
+        validation_status=ValidationStatus.PASSED,
+        validation_report={"ok": True},
+    )
+    updated = store.get_job(record.job_id)
+    assert updated.name == "job-name"
+    assert updated.objective_value == 42.0
+    assert updated.validation_status == ValidationStatus.PASSED
+
+
+def test_store_lists_jobs_sorted_by_created_at():
+    store = JobStore()
+    a = store.create_job({"orders": []}, seed=1)
+    b = store.create_job({"orders": []}, seed=1)
+    items, total = store.list_jobs(page=1, page_size=10)
+    assert total == 2
+    assert items[0].created_at >= items[1].created_at
