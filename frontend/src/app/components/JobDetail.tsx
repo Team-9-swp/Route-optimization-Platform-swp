@@ -81,6 +81,8 @@ function useDisplayTransform(inputData?: Record<string, unknown>) {
   return { depot, orders, orderById: new Map(orders.map((o) => [o.id, o])), toSvg, scale };
 }
 
+const ZOOM_STEP = 0.25;
+
 function MapZoomControls() {
   const { zoomIn, zoomOut, resetTransform } = useControls();
   const btnStyle = {
@@ -95,9 +97,9 @@ function MapZoomControls() {
   };
   return (
     <div className="flex items-center gap-1">
-      <button style={btnStyle} onClick={() => zoomOut()}>-</button>
+      <button style={btnStyle} onClick={() => zoomOut(ZOOM_STEP)}>-</button>
       <button style={btnStyle} onClick={() => resetTransform()}>Reset</button>
-      <button style={btnStyle} onClick={() => zoomIn()}>+</button>
+      <button style={btnStyle} onClick={() => zoomIn(ZOOM_STEP)}>+</button>
     </div>
   );
 }
@@ -419,7 +421,15 @@ export function JobDetail({ id, navigate }: Props) {
           className="rounded-xl mb-5 relative overflow-hidden"
           style={{ background: "#F0F4FF", border: "1px solid #DBEAFE", height: 420, boxShadow: "0 1px 4px rgba(0,0,0,0.05)" }}
         >
-          <TransformWrapper wheel={{ step: 0.15 }} pinch={{ step: 5 }} doubleClick={{ mode: "reset" }}>
+          <TransformWrapper
+            initialScale={1}
+            minScale={0.5}
+            maxScale={8}
+            wheel={{ step: 0.04, smoothStep: 0.007 }}
+            pinch={{ step: 10 }}
+            doubleClick={{ mode: "reset" }}
+            limitToBounds={false}
+          >
             <MapZoomControls />
             <TransformComponent wrapperStyle={{ width: "100%", height: "100%" }} contentStyle={{ width: "100%", height: "100%" }}>
               <RouteMap inputData={job.input_data} vehicles={vehicles} loaders={loaders} mode={mapMode} />
