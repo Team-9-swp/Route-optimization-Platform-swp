@@ -28,3 +28,15 @@ def test_post_solve_default_seed(client):
 def test_get_job_not_found(client):
     response = client.get("/jobs/does-not-exist")
     assert response.status_code == 404
+
+
+def test_cors_preflight(client):
+    response = client.options(
+        "/solve",
+        headers={
+            "Origin": "http://localhost:5173",
+            "Access-Control-Request-Method": "POST",
+        },
+    )
+    assert response.status_code == 200
+    assert "access-control-allow-origin" in response.headers
