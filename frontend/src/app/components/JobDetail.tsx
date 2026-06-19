@@ -143,19 +143,49 @@ function RouteMap({
     setViewBox({ x: 0, y: 0, w: VIEW_W, h: VIEW_H });
   }, []);
 
-  // Capture-phase document wheel listener: if the wheel happens over the map
-  // container (but not over the route filter), zoom the SVG and prevent the
-  // page from scrolling. This matches the orgbrain graph behaviour and avoids
-  // passive-listener issues.
+  // Lock body scroll while the mouse is over the map so wheel events zoom the
+  // SVG instead of scrolling the page. This mirrors how map UIs (including the
+  // orgbrain graph in practice) keep the viewport stable during interaction.
   useEffect(() => {
     const container = containerRef.current;
-    const svg = svgRef.current;
-    if (!container || !svg) return;
-    const handler = (e: WheelEvent) => {
-      if (!container.contains(e.target as Node)) return;
-      if ((e.target as HTMLElement | null)?.closest("[data-route-filter]")) return;
+    if (!container) return;
+    let originalOverflow = "";
+    let originalPaddingRight = "";
+    let locked = false;
+    const lock = () => {
+      if (locked) return;
+      locked = true;
+      originalOverflow = document.body.style.overflow;
+      originalPaddingRight = document.body.style.paddingRight;
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+      if (scrollbarWidth > 0) {
+        document.body.style.paddingRight = `${scrollbarWidth}px`;
+      }
+      document.body.style.overflow = "hidden";
+    };
+    const unlock = () => {
+      if (!locked) return;
+      locked = false;
+      document.body.style.overflow = originalOverflow;
+      document.body.style.paddingRight = originalPaddingRight;
+    };
+    container.addEventListener("mouseenter", lock);
+    container.addEventListener("mouseleave", unlock);
+    const onBlur = () => unlock();
+    window.addEventListener("blur", onBlur);
+    return () => {
+      container.removeEventListener("mouseenter", lock);
+      container.removeEventListener("mouseleave", unlock);
+      window.removeEventListener("blur", onBlur);
+      unlock();
+    };
+  }, []);
+
+  const handleWheel = useCallback(
+    (e: React.WheelEvent) => {
       e.preventDefault();
-      e.stopPropagation();
+      const svg = svgRef.current;
+      if (!svg) return;
       const rect = svg.getBoundingClientRect();
       const pt = svg.createSVGPoint();
       pt.x = e.clientX - rect.left;
@@ -165,10 +195,9 @@ function RouteMap({
       const svgP = pt.matrixTransform(ctm.inverse());
       const factor = e.deltaY > 0 ? 1.1 : 0.9;
       zoom(factor, svgP.x, svgP.y);
-    };
-    document.addEventListener("wheel", handler, { passive: false, capture: true });
-    return () => document.removeEventListener("wheel", handler, { capture: true });
-  }, [zoom]);
+    },
+    [zoom]
+  );
 
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
@@ -237,6 +266,7 @@ function RouteMap({
         className="w-full h-full cursor-grab active:cursor-grabbing"
         viewBox={`${viewBox.x} ${viewBox.y} ${viewBox.w} ${viewBox.h}`}
         preserveAspectRatio="xMidYMid meet"
+        onWheel={handleWheel}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
