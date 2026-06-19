@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ArrowLeft, CheckCircle2, Download, RotateCcw, MapPin, XCircle, Loader2 } from "lucide-react";
-import { TransformWrapper, TransformComponent, useControls } from "react-zoom-pan-pinch";
 import { getJob } from "../../api/jobs";
 import type { Job } from "../../types";
 import type { Page } from "../App";
@@ -81,28 +80,15 @@ function useDisplayTransform(inputData?: Record<string, unknown>) {
   return { depot, orders, orderById: new Map(orders.map((o) => [o.id, o])), toSvg, scale };
 }
 
-const ZOOM_STEP = 0.25;
-
-function MapZoomControls() {
-  const { zoomIn, zoomOut, resetTransform } = useControls();
-  const btnStyle = {
-    background: "#fff",
-    border: "1px solid #E5E7EB",
-    borderRadius: 4,
-    color: "#374151",
-    cursor: "pointer",
-    fontSize: 12,
-    fontWeight: 600,
-    padding: "4px 8px",
-  };
-  return (
-    <div className="flex items-center gap-1">
-      <button style={btnStyle} onClick={() => zoomOut(ZOOM_STEP)}>-</button>
-      <button style={btnStyle} onClick={() => resetTransform()}>Reset</button>
-      <button style={btnStyle} onClick={() => zoomIn(ZOOM_STEP)}>+</button>
-    </div>
-  );
+interface ViewBox {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
 }
+
+const MIN_VIEW_W = 140;
+const MAX_VIEW_W = VIEW_W * 6;
 
 function RouteMap({
   inputData,
@@ -116,6 +102,94 @@ function RouteMap({
   mode: MapMode;
 }) {
   const transform = useDisplayTransform(inputData);
+  const svgRef = useRef<SVGSVGElement>(null);
+  const [viewBox, setViewBox] = useState<ViewBox>({ x: 0, y: 0, w: VIEW_W, h: VIEW_H });
+  const isDragging = useRef(false);
+  const dragStart = useRef({ x: 0, y: 0, vbX: 0, vbY: 0 });
+
+  useEffect(() => {
+    setViewBox({ x: 0, y: 0, w: VIEW_W, h: VIEW_H });
+  }, [inputData, mode]);
+
+  const clampViewBox = useCallback((vb: ViewBox): ViewBox => {
+    const aspect = VIEW_H / VIEW_W;
+    const w = Math.min(Math.max(vb.w, MIN_VIEW_W), MAX_VIEW_W);
+    const h = w * aspect;
+    const x = Math.min(Math.max(vb.x, -w * 0.5), VIEW_W - w * 0.5);
+    const y = Math.min(Math.max(vb.y, -h * 0.5), VIEW_H - h * 0.5);
+    return { x, y, w, h };
+  }, []);
+
+  const zoom = useCallback(
+    (factor: number, centerX?: number, centerY?: number) => {
+      setViewBox((prev) => {
+        const cx = centerX ?? prev.x + prev.w / 2;
+        const cy = centerY ?? prev.y + prev.h / 2;
+        const newW = prev.w * factor;
+        const newH = newW * (VIEW_H / VIEW_W);
+        return clampViewBox({
+          x: cx - (newW * (cx - prev.x)) / prev.w,
+          y: cy - (newH * (cy - prev.y)) / prev.h,
+          w: newW,
+          h: newH,
+        });
+      });
+    },
+    [clampViewBox]
+  );
+
+  const resetView = useCallback(() => {
+    setViewBox({ x: 0, y: 0, w: VIEW_W, h: VIEW_H });
+  }, []);
+
+  const handleWheel = useCallback(
+    (e: React.WheelEvent) => {
+      e.preventDefault();
+      const svg = svgRef.current;
+      if (!svg) return;
+      const rect = svg.getBoundingClientRect();
+      const pt = svg.createSVGPoint();
+      pt.x = e.clientX - rect.left;
+      pt.y = e.clientY - rect.top;
+      const ctm = svg.getScreenCTM();
+      if (!ctm) return;
+      const svgP = pt.matrixTransform(ctm.inverse());
+      const factor = e.deltaY > 0 ? 1.08 : 0.92;
+      zoom(factor, svgP.x, svgP.y);
+    },
+    [zoom]
+  );
+
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      isDragging.current = true;
+      dragStart.current = { x: e.clientX, y: e.clientY, vbX: viewBox.x, vbY: viewBox.y };
+    },
+    [viewBox]
+  );
+
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent) => {
+      if (!isDragging.current) return;
+      const svg = svgRef.current;
+      if (!svg) return;
+      const rect = svg.getBoundingClientRect();
+      const scaleX = viewBox.w / rect.width;
+      const scaleY = viewBox.h / rect.height;
+      setViewBox((prev) =>
+        clampViewBox({
+          ...prev,
+          x: dragStart.current.vbX - (e.clientX - dragStart.current.x) * scaleX,
+          y: dragStart.current.vbY - (e.clientY - dragStart.current.y) * scaleY,
+        })
+      );
+    },
+    [viewBox, clampViewBox]
+  );
+
+  const handleMouseUp = useCallback(() => {
+    isDragging.current = false;
+  }, []);
 
   const showVehicles = mode !== "loaders";
   const showLoaders = mode !== "vehicles";
@@ -133,64 +207,97 @@ function RouteMap({
   const { depot, orders, orderById, toSvg } = transform;
   const depotPt = toSvg(depot);
 
+  const btnStyle = {
+    background: "#fff",
+    border: "1px solid #E5E7EB",
+    borderRadius: 4,
+    color: "#374151",
+    cursor: "pointer",
+    fontSize: 12,
+    fontWeight: 600,
+    padding: "4px 10px",
+  };
+
   return (
-    <svg width="100%" height="100%" viewBox={`0 0 ${VIEW_W} ${VIEW_H}`} preserveAspectRatio="xMidYMid meet">
-      <defs>
-        <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-          <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#2563EB" strokeWidth="0.5" />
-        </pattern>
-      </defs>
-      <rect width="100%" height="100%" fill="url(#grid)" opacity={0.15} />
+    <div className="w-full h-full relative">
+      <svg
+        ref={svgRef}
+        className="w-full h-full cursor-grab active:cursor-grabbing"
+        viewBox={`${viewBox.x} ${viewBox.y} ${viewBox.w} ${viewBox.h}`}
+        preserveAspectRatio="xMidYMid meet"
+        onWheel={handleWheel}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
+      >
+        <defs>
+          <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#2563EB" strokeWidth="0.5" />
+          </pattern>
+        </defs>
+        <rect x={viewBox.x} y={viewBox.y} width={viewBox.w} height={viewBox.h} fill="url(#grid)" opacity={0.15} />
 
-      {visibleVehicles.map((vehicle, vi) => {
-        const coords = [depot, ...vehicle.route.filter((id) => id !== 0).map((id) => orderById.get(id)).filter(Boolean) as InputOrder[], depot];
-        const pts = coords.map(toSvg);
-        const pointsAttr = pts.map((p) => `${p.cx},${p.cy}`).join(" ");
-        const color = VEHICLE_COLORS[vi % VEHICLE_COLORS.length];
-        return (
-          <g key={`v-${vehicle.id}`}>
-            <polyline points={pointsAttr} fill="none" stroke={color} strokeWidth={2} opacity={0.85} strokeDasharray="5,3" />
-          </g>
-        );
-      })}
+        {visibleVehicles.map((vehicle, vi) => {
+          const coords = [depot, ...vehicle.route.filter((id) => id !== 0).map((id) => orderById.get(id)).filter(Boolean) as InputOrder[], depot];
+          const pts = coords.map(toSvg);
+          const pointsAttr = pts.map((p) => `${p.cx},${p.cy}`).join(" ");
+          const color = VEHICLE_COLORS[vi % VEHICLE_COLORS.length];
+          return (
+            <g key={`v-${vehicle.id}`}>
+              <polyline points={pointsAttr} fill="none" stroke={color} strokeWidth={2} opacity={0.85} strokeDasharray="5,3" />
+            </g>
+          );
+        })}
 
-      {visibleLoaders.map((loader, li) => {
-        const loaderOrders = loader.route
-          .filter((id) => id !== 0)
-          .map((id) => orderById.get(id))
-          .filter(Boolean) as InputOrder[];
-        if (loaderOrders.length === 0) return null;
-        const coords = [...loaderOrders, loaderOrders[0]];
-        const pts = coords.map(toSvg);
-        const pointsAttr = pts.map((p) => `${p.cx},${p.cy}`).join(" ");
-        const color = LOADER_COLORS[li % LOADER_COLORS.length];
-        return (
-          <g key={`l-${loader.id}`}>
-            <polyline points={pointsAttr} fill="none" stroke={color} strokeWidth={2} opacity={0.85} />
-          </g>
-        );
-      })}
+        {visibleLoaders.map((loader, li) => {
+          const loaderOrders = loader.route
+            .filter((id) => id !== 0)
+            .map((id) => orderById.get(id))
+            .filter(Boolean) as InputOrder[];
+          if (loaderOrders.length === 0) return null;
+          const coords = [...loaderOrders, loaderOrders[0]];
+          const pts = coords.map(toSvg);
+          const pointsAttr = pts.map((p) => `${p.cx},${p.cy}`).join(" ");
+          const color = LOADER_COLORS[li % LOADER_COLORS.length];
+          return (
+            <g key={`l-${loader.id}`}>
+              <polyline points={pointsAttr} fill="none" stroke={color} strokeWidth={2} opacity={0.85} />
+            </g>
+          );
+        })}
 
-      {orders.map((order) => {
-        const pt = toSvg(order);
-        return (
-          <g key={`o-${order.id}`}>
-            <circle cx={pt.cx} cy={pt.cy} r={3.5} fill="#CA8A04" stroke="#fff" strokeWidth={1} />
-            <text x={pt.cx} y={pt.cy - 6} fontSize={10} fill="#374151" textAnchor="middle" fontWeight={500}>
-              {order.id}
-            </text>
-          </g>
-        );
-      })}
+        {orders.map((order) => {
+          const pt = toSvg(order);
+          return (
+            <g key={`o-${order.id}`}>
+              <circle cx={pt.cx} cy={pt.cy} r={3.5} fill="#CA8A04" stroke="#fff" strokeWidth={1} />
+              <text x={pt.cx} y={pt.cy - 6} fontSize={10} fill="#374151" textAnchor="middle" fontWeight={500}>
+                {order.id}
+              </text>
+            </g>
+          );
+        })}
 
-      <g>
-        <circle cx={depotPt.cx} cy={depotPt.cy} r={6} fill="#2563EB" stroke="#fff" strokeWidth={1.5} />
-        <circle cx={depotPt.cx} cy={depotPt.cy} r={10} fill="#2563EB" fillOpacity={0.15} />
-        <text x={depotPt.cx} y={depotPt.cy - 13} fontSize={10} fill="#2563EB" textAnchor="middle" fontWeight={600}>
-          Depot
-        </text>
-      </g>
-    </svg>
+        <g>
+          <circle cx={depotPt.cx} cy={depotPt.cy} r={6} fill="#2563EB" stroke="#fff" strokeWidth={1.5} />
+          <circle cx={depotPt.cx} cy={depotPt.cy} r={10} fill="#2563EB" fillOpacity={0.15} />
+          <text x={depotPt.cx} y={depotPt.cy - 13} fontSize={10} fill="#2563EB" textAnchor="middle" fontWeight={600}>
+            Depot
+          </text>
+        </g>
+      </svg>
+
+      <div className="absolute top-3 right-3 flex items-center gap-1">
+        <button style={btnStyle} onClick={() => zoom(1.1)} title="Zoom out">-</button>
+        <button style={btnStyle} onClick={resetView} title="Reset view">Reset</button>
+        <button style={btnStyle} onClick={() => zoom(0.9)} title="Zoom in">+</button>
+      </div>
+
+      <div className="pointer-events-none absolute bottom-3 left-3 text-[10px] text-gray-400">
+        Scroll to zoom · Drag to pan
+      </div>
+    </div>
   );
 }
 
@@ -421,20 +528,7 @@ export function JobDetail({ id, navigate }: Props) {
           className="rounded-xl mb-5 relative overflow-hidden"
           style={{ background: "#F0F4FF", border: "1px solid #DBEAFE", height: 420, boxShadow: "0 1px 4px rgba(0,0,0,0.05)" }}
         >
-          <TransformWrapper
-            initialScale={1}
-            minScale={0.5}
-            maxScale={8}
-            wheel={{ step: 0.04, smoothStep: 0.007 }}
-            pinch={{ step: 10 }}
-            doubleClick={{ mode: "reset" }}
-            limitToBounds={false}
-          >
-            <MapZoomControls />
-            <TransformComponent wrapperStyle={{ width: "100%", height: "100%" }} contentStyle={{ width: "100%", height: "100%" }}>
-              <RouteMap inputData={job.input_data} vehicles={vehicles} loaders={loaders} mode={mapMode} />
-            </TransformComponent>
-          </TransformWrapper>
+          <RouteMap inputData={job.input_data} vehicles={vehicles} loaders={loaders} mode={mapMode} />
 
           <div
             className="absolute top-3 left-3 flex items-center gap-1"
