@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { ArrowLeft, CheckCircle2, Download, RotateCcw, MapPin, XCircle, Loader2 } from "lucide-react";
+import { TransformWrapper, TransformComponent, useControls } from "react-zoom-pan-pinch";
 import { getJob } from "../../api/jobs";
 import type { Job } from "../../types";
 import type { Page } from "../App";
@@ -41,7 +42,65 @@ interface InputData {
 const VEHICLE_COLORS = ["#2563EB", "#16A34A", "#CA8A04", "#9333EA", "#DC2626", "#0891B2"];
 const LOADER_COLORS = ["#DB2777", "#7C3AED", "#EA580C", "#0D9488", "#65A30D", "#4F46E5"];
 
+const VIEW_W = 800;
+const VIEW_H = 560;
+const PADDING = 40;
+
 type MapMode = "vehicles" | "loaders" | "both";
+
+function useDisplayTransform(inputData?: Record<string, unknown>) {
+  const data = inputData as InputData | undefined;
+  const depot = data?.depot;
+  const orders = data?.orders ?? [];
+
+  if (!depot || orders.length === 0) {
+    return null;
+  }
+
+  const points = [depot, ...orders];
+  const xs = points.map((p) => p.x);
+  const ys = points.map((p) => p.y);
+  const minX = Math.min(...xs);
+  const maxX = Math.max(...xs);
+  const minY = Math.min(...ys);
+  const maxY = Math.max(...ys);
+
+  const dataW = Math.max(maxX - minX, 1);
+  const dataH = Math.max(maxY - minY, 1);
+  const scale = Math.min((VIEW_W - PADDING * 2) / dataW, (VIEW_H - PADDING * 2) / dataH);
+  const offsetX = PADDING + (VIEW_W - PADDING * 2 - dataW * scale) / 2;
+  const offsetY = PADDING + (VIEW_H - PADDING * 2 - dataH * scale) / 2;
+
+  function toSvg(point: { x: number; y: number }) {
+    return {
+      cx: offsetX + (point.x - minX) * scale,
+      cy: offsetY + (maxY - point.y) * scale,
+    };
+  }
+
+  return { depot, orders, orderById: new Map(orders.map((o) => [o.id, o])), toSvg, scale };
+}
+
+function MapZoomControls() {
+  const { zoomIn, zoomOut, resetTransform } = useControls();
+  const btnStyle = {
+    background: "#fff",
+    border: "1px solid #E5E7EB",
+    borderRadius: 4,
+    color: "#374151",
+    cursor: "pointer",
+    fontSize: 12,
+    fontWeight: 600,
+    padding: "4px 8px",
+  };
+  return (
+    <div className="flex items-center gap-1">
+      <button style={btnStyle} onClick={() => zoomOut()}>-</button>
+      <button style={btnStyle} onClick={() => resetTransform()}>Reset</button>
+      <button style={btnStyle} onClick={() => zoomIn()}>+</button>
+    </div>
+  );
+}
 
 function RouteMap({
   inputData,
@@ -54,14 +113,14 @@ function RouteMap({
   loaders: LoaderRoute[];
   mode: MapMode;
 }) {
-  const data = inputData as InputData | undefined;
-  const depot = data?.depot;
-  const orders = data?.orders ?? [];
+  const transform = useDisplayTransform(inputData);
 
-  const hasVehicles = mode !== "loaders" && vehicles.length > 0;
-  const hasLoaders = mode !== "vehicles" && loaders.length > 0;
+  const showVehicles = mode !== "loaders";
+  const showLoaders = mode !== "vehicles";
+  const visibleVehicles = showVehicles ? vehicles : [];
+  const visibleLoaders = showLoaders ? loaders : [];
 
-  if (!depot || (!hasVehicles && !hasLoaders)) {
+  if (!transform || (visibleVehicles.length === 0 && visibleLoaders.length === 0)) {
     return (
       <div className="flex items-center justify-center h-full text-gray-500 text-sm">
         No route data available for the selected layer.
@@ -69,85 +128,123 @@ function RouteMap({
     );
   }
 
-  const orderById = new Map(orders.map((o) => [o.id, o]));
-  const points: { x: number; y: number }[] = [depot, ...orders];
-  const xs = points.map((p) => p.x);
-  const ys = points.map((p) => p.y);
-  const minX = Math.min(...xs);
-  const maxX = Math.max(...xs);
-  const minY = Math.min(...ys);
-  const maxY = Math.max(...ys);
-  const padX = Math.max((maxX - minX) * 0.1, 5);
-  const padY = Math.max((maxY - minY) * 0.1, 5);
-  const vbMinX = minX - padX;
-  const vbMaxX = maxX + padX;
-  const vbMinY = minY - padY;
-  const vbMaxY = maxY + padY;
-  const width = vbMaxX - vbMinX;
-  const height = vbMaxY - vbMinY;
-
-  function toSvg(point: { x: number; y: number }) {
-    return {
-      cx: point.x - vbMinX,
-      cy: vbMaxY - point.y,
-    };
-  }
-
+  const { depot, orders, orderById, toSvg } = transform;
   const depotPt = toSvg(depot);
-  const strokeWidth = Math.max(width / 120, 1.5);
-  const pointRadius = Math.max(width / 80, 3);
-  const fontSize = Math.max(width / 40, 10);
 
   return (
-    <svg className="absolute inset-0 w-full h-full" viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="xMidYMid meet">
-      {hasVehicles &&
-        vehicles.map((vehicle, vi) => {
-          const coords = [depot, ...vehicle.route.filter((id) => id !== 0).map((id) => orderById.get(id)).filter(Boolean) as InputOrder[], depot];
-          const pts = coords.map(toSvg);
-          const pointsAttr = pts.map((p) => `${p.cx},${p.cy}`).join(" ");
-          const color = VEHICLE_COLORS[vi % VEHICLE_COLORS.length];
-          return (
-            <g key={`v-${vehicle.id}`}>
-              <polyline points={pointsAttr} fill="none" stroke={color} strokeWidth={strokeWidth} opacity={0.8} strokeDasharray="6,3" />
-            </g>
-          );
-        })}
-      {hasLoaders &&
-        loaders.map((loader, li) => {
-          const loaderOrders = loader.route
-            .filter((id) => id !== 0)
-            .map((id) => orderById.get(id))
-            .filter(Boolean) as InputOrder[];
-          if (loaderOrders.length === 0) return null;
-          const coords = [...loaderOrders, loaderOrders[0]];
-          const pts = coords.map(toSvg);
-          const pointsAttr = pts.map((p) => `${p.cx},${p.cy}`).join(" ");
-          const color = LOADER_COLORS[li % LOADER_COLORS.length];
-          return (
-            <g key={`l-${loader.id}`}>
-              <polyline points={pointsAttr} fill="none" stroke={color} strokeWidth={strokeWidth} opacity={0.8} />
-            </g>
-          );
-        })}
+    <svg width="100%" height="100%" viewBox={`0 0 ${VIEW_W} ${VIEW_H}`} preserveAspectRatio="xMidYMid meet">
+      <defs>
+        <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+          <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#2563EB" strokeWidth="0.5" />
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#grid)" opacity={0.15} />
+
+      {visibleVehicles.map((vehicle, vi) => {
+        const coords = [depot, ...vehicle.route.filter((id) => id !== 0).map((id) => orderById.get(id)).filter(Boolean) as InputOrder[], depot];
+        const pts = coords.map(toSvg);
+        const pointsAttr = pts.map((p) => `${p.cx},${p.cy}`).join(" ");
+        const color = VEHICLE_COLORS[vi % VEHICLE_COLORS.length];
+        return (
+          <g key={`v-${vehicle.id}`}>
+            <polyline points={pointsAttr} fill="none" stroke={color} strokeWidth={2} opacity={0.85} strokeDasharray="5,3" />
+          </g>
+        );
+      })}
+
+      {visibleLoaders.map((loader, li) => {
+        const loaderOrders = loader.route
+          .filter((id) => id !== 0)
+          .map((id) => orderById.get(id))
+          .filter(Boolean) as InputOrder[];
+        if (loaderOrders.length === 0) return null;
+        const coords = [...loaderOrders, loaderOrders[0]];
+        const pts = coords.map(toSvg);
+        const pointsAttr = pts.map((p) => `${p.cx},${p.cy}`).join(" ");
+        const color = LOADER_COLORS[li % LOADER_COLORS.length];
+        return (
+          <g key={`l-${loader.id}`}>
+            <polyline points={pointsAttr} fill="none" stroke={color} strokeWidth={2} opacity={0.85} />
+          </g>
+        );
+      })}
+
       {orders.map((order) => {
         const pt = toSvg(order);
         return (
           <g key={`o-${order.id}`}>
-            <circle cx={pt.cx} cy={pt.cy} r={pointRadius} fill="#CA8A04" />
-            <text x={pt.cx} y={pt.cy - pointRadius - 1} fontSize={fontSize} fill="#374151" textAnchor="middle">
+            <circle cx={pt.cx} cy={pt.cy} r={3.5} fill="#CA8A04" stroke="#fff" strokeWidth={1} />
+            <text x={pt.cx} y={pt.cy - 6} fontSize={10} fill="#374151" textAnchor="middle" fontWeight={500}>
               {order.id}
             </text>
           </g>
         );
       })}
+
       <g>
-        <circle cx={depotPt.cx} cy={depotPt.cy} r={Math.max(width / 60, 5)} fill="#2563EB" />
-        <circle cx={depotPt.cx} cy={depotPt.cy} r={Math.max(width / 35, 8)} fill="#2563EB" fillOpacity={0.15} />
-        <text x={depotPt.cx} y={depotPt.cy - Math.max(width / 35, 9)} fontSize={fontSize} fill="#2563EB" textAnchor="middle" fontWeight={600}>
+        <circle cx={depotPt.cx} cy={depotPt.cy} r={6} fill="#2563EB" stroke="#fff" strokeWidth={1.5} />
+        <circle cx={depotPt.cx} cy={depotPt.cy} r={10} fill="#2563EB" fillOpacity={0.15} />
+        <text x={depotPt.cx} y={depotPt.cy - 13} fontSize={10} fill="#2563EB" textAnchor="middle" fontWeight={600}>
           Depot
         </text>
       </g>
     </svg>
+  );
+}
+
+function MapLegend({ vehicles, loaders, mode }: { vehicles: VehicleRoute[]; loaders: LoaderRoute[]; mode: MapMode }) {
+  const itemStyle = { display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: "#374151" };
+  const lineStyle = (color: string) => ({ width: 16, height: 3, background: color, borderRadius: 2 });
+  return (
+    <div style={{ background: "rgba(255,255,255,0.95)", border: "1px solid #E5E7EB", borderRadius: 6, padding: "8px 10px", maxWidth: 180 }}>
+      <p style={{ fontSize: 11, fontWeight: 600, color: "#111827", margin: "0 0 6px 0" }}>Legend</p>
+      {mode !== "loaders" &&
+        vehicles.map((v, i) => (
+          <div key={`vl-${v.id}`} style={itemStyle}>
+            <div style={lineStyle(VEHICLE_COLORS[i % VEHICLE_COLORS.length])} />
+            <span>V-{v.id}</span>
+          </div>
+        ))}
+      {mode !== "vehicles" &&
+        loaders.map((l, i) => (
+          <div key={`ll-${l.id}`} style={itemStyle}>
+            <div style={lineStyle(LOADER_COLORS[i % LOADER_COLORS.length])} />
+            <span>L-{l.id}</span>
+          </div>
+        ))}
+    </div>
+  );
+}
+
+function MapRouteList({ vehicles, loaders, mode }: { vehicles: VehicleRoute[]; loaders: LoaderRoute[]; mode: MapMode }) {
+  return (
+    <div
+      style={{
+        background: "rgba(255,255,255,0.95)",
+        border: "1px solid #E5E7EB",
+        borderRadius: 6,
+        padding: "8px 10px",
+        maxHeight: 120,
+        overflow: "auto",
+        maxWidth: 180,
+      }}
+    >
+      <p style={{ fontSize: 11, fontWeight: 600, color: "#111827", margin: "0 0 6px 0" }}>Routes</p>
+      {mode !== "loaders" &&
+        vehicles.map((v, i) => (
+          <div key={`rlv-${v.id}`} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: "#374151", marginBottom: 3 }}>
+            <div style={{ width: 10, height: 10, borderRadius: "50%", background: VEHICLE_COLORS[i % VEHICLE_COLORS.length] }} />
+            <span>V-{v.id}: {v.route.filter((id) => id !== 0).length} orders</span>
+          </div>
+        ))}
+      {mode !== "vehicles" &&
+        loaders.map((l, i) => (
+          <div key={`rll-${l.id}`} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: "#374151", marginBottom: 3 }}>
+            <div style={{ width: 10, height: 10, borderRadius: "50%", background: LOADER_COLORS[i % LOADER_COLORS.length] }} />
+            <span>L-{l.id}: {l.route.filter((id) => id !== 0).length} orders</span>
+          </div>
+        ))}
+    </div>
   );
 }
 
@@ -319,18 +416,16 @@ export function JobDetail({ id, navigate }: Props) {
 
         {/* Route map */}
         <div
-          className="rounded-xl mb-5 relative overflow-hidden flex items-center justify-center"
-          style={{ background: "#F0F4FF", border: "1px solid #DBEAFE", height: 280, boxShadow: "0 1px 4px rgba(0,0,0,0.05)" }}
+          className="rounded-xl mb-5 relative overflow-hidden"
+          style={{ background: "#F0F4FF", border: "1px solid #DBEAFE", height: 420, boxShadow: "0 1px 4px rgba(0,0,0,0.05)" }}
         >
-          <svg className="absolute inset-0 w-full h-full" style={{ opacity: 0.15 }} xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#2563EB" strokeWidth="0.5" />
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#grid)" />
-          </svg>
-          <RouteMap inputData={job.input_data} vehicles={vehicles} loaders={loaders} mode={mapMode} />
+          <TransformWrapper wheel={{ step: 0.15 }} pinch={{ step: 5 }} doubleClick={{ mode: "reset" }}>
+            <MapZoomControls />
+            <TransformComponent wrapperStyle={{ width: "100%", height: "100%" }} contentStyle={{ width: "100%", height: "100%" }}>
+              <RouteMap inputData={job.input_data} vehicles={vehicles} loaders={loaders} mode={mapMode} />
+            </TransformComponent>
+          </TransformWrapper>
+
           <div
             className="absolute top-3 left-3 flex items-center gap-1"
             style={{ background: "#fff", border: "1px solid #E5E7EB", borderRadius: 6, padding: 2, fontSize: 12 }}
@@ -352,12 +447,21 @@ export function JobDetail({ id, navigate }: Props) {
               </button>
             ))}
           </div>
+
           <div
-            className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1 rounded-md"
+            className="absolute top-3 right-3 flex items-center gap-2 px-2.5 py-1 rounded-md"
             style={{ background: "#fff", border: "1px solid #E5E7EB", fontSize: 12, color: "#6B7280" }}
           >
             <MapPin size={12} style={{ color: "#2563EB" }} />
             Route Map
+          </div>
+
+          <div className="absolute bottom-3 left-3">
+            <MapLegend vehicles={vehicles} loaders={loaders} mode={mapMode} />
+          </div>
+
+          <div className="absolute bottom-3 right-3">
+            <MapRouteList vehicles={vehicles} loaders={loaders} mode={mapMode} />
           </div>
         </div>
 
