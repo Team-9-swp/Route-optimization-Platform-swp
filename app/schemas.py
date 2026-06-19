@@ -25,6 +25,8 @@ class JobRecord(BaseModel):
     name: str | None = None
     input_data: dict[str, Any] = Field(default_factory=dict)
     seed: int = 42
+    time_limit: float | None = None
+    max_restarts: int | None = None
     started_at: datetime | None = None
     finished_at: datetime | None = None
     result: dict[str, Any] | None = None

@@ -93,7 +93,7 @@ def _valid_instance():
 
 @pytest.mark.asyncio
 async def test_runner_extracts_objective_value(monkeypatch, store):
-    def fake_solve(instance, seed):
+    def fake_solve(instance, seed, *args, **kwargs):
         return {"objective_value": 99.5, "vehicles": [], "loaders": []}
 
     monkeypatch.setattr("app.runner._solve_sync", fake_solve)
@@ -107,7 +107,7 @@ async def test_runner_extracts_objective_value(monkeypatch, store):
 
 @pytest.mark.asyncio
 async def test_runner_auto_validate(monkeypatch, store):
-    def fake_solve(instance, seed):
+    def fake_solve(instance, seed, *args, **kwargs):
         return {
             "objective_value": 99.5,
             "vehicles": [{"id": 1, "route": [0, 1, 0], "time": [5.0]}],

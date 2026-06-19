@@ -23,8 +23,12 @@ class SolverService:
         *,
         name: str | None = None,
         auto_validate: bool = False,
+        time_limit: float | None = None,
+        max_restarts: int | None = None,
     ) -> SolveResponse:
-        record = self._store.create_job(instance, seed, name=name)
+        record = self._store.create_job(
+            instance, seed, name=name, time_limit=time_limit, max_restarts=max_restarts
+        )
         asyncio.create_task(self._runner(record.job_id, self._store, auto_validate=auto_validate))
         return SolveResponse(
             job_id=record.job_id,
