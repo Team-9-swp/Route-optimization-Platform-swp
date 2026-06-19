@@ -143,19 +143,19 @@ function RouteMap({
     setViewBox({ x: 0, y: 0, w: VIEW_W, h: VIEW_H });
   }, []);
 
-  // Capture-phase wheel listener on the container so scrolling anywhere over the
-  // map zooms the SVG and does not scroll the page. Elements marked with
-  // data-route-filter are ignored so the route filter list can still scroll.
+  // Capture-phase document wheel listener: if the wheel happens over the map
+  // container (but not over the route filter), zoom the SVG and prevent the
+  // page from scrolling. This matches the orgbrain graph behaviour and avoids
+  // passive-listener issues.
   useEffect(() => {
     const container = containerRef.current;
-    if (!container) return;
+    const svg = svgRef.current;
+    if (!container || !svg) return;
     const handler = (e: WheelEvent) => {
-      const target = e.target as HTMLElement | null;
-      if (target?.closest("[data-route-filter]")) return;
+      if (!container.contains(e.target as Node)) return;
+      if ((e.target as HTMLElement | null)?.closest("[data-route-filter]")) return;
       e.preventDefault();
       e.stopPropagation();
-      const svg = svgRef.current;
-      if (!svg) return;
       const rect = svg.getBoundingClientRect();
       const pt = svg.createSVGPoint();
       pt.x = e.clientX - rect.left;
@@ -163,11 +163,11 @@ function RouteMap({
       const ctm = svg.getScreenCTM();
       if (!ctm) return;
       const svgP = pt.matrixTransform(ctm.inverse());
-      const factor = e.deltaY > 0 ? 1.08 : 0.92;
+      const factor = e.deltaY > 0 ? 1.1 : 0.9;
       zoom(factor, svgP.x, svgP.y);
     };
-    container.addEventListener("wheel", handler, { passive: false, capture: true });
-    return () => container.removeEventListener("wheel", handler, { capture: true });
+    document.addEventListener("wheel", handler, { passive: false, capture: true });
+    return () => document.removeEventListener("wheel", handler, { capture: true });
   }, [zoom]);
 
   const handleMouseDown = useCallback(
