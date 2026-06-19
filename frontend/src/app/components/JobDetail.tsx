@@ -27,6 +27,93 @@ function formatRoute(route: number[]): string {
   return ["Depot", ...route.filter((n) => n !== 0).map(String), "Depot"].join(" → ");
 }
 
+interface InputOrder {
+  id: number;
+  x: number;
+  y: number;
+}
+
+interface InputData {
+  depot?: { x: number; y: number };
+  orders?: InputOrder[];
+}
+
+const VEHICLE_COLORS = ["#2563EB", "#16A34A", "#CA8A04", "#9333EA", "#DC2626", "#0891B2"];
+
+function RouteMap({ inputData, vehicles }: { inputData?: Record<string, unknown>; vehicles: VehicleRoute[] }) {
+  const data = inputData as InputData | undefined;
+  const depot = data?.depot;
+  const orders = data?.orders ?? [];
+
+  if (!depot || vehicles.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-full text-gray-500 text-sm">
+        No route data available for the map.
+      </div>
+    );
+  }
+
+  const orderById = new Map(orders.map((o) => [o.id, o]));
+  const points: { x: number; y: number }[] = [depot, ...orders];
+  const xs = points.map((p) => p.x);
+  const ys = points.map((p) => p.y);
+  const minX = Math.min(...xs);
+  const maxX = Math.max(...xs);
+  const minY = Math.min(...ys);
+  const maxY = Math.max(...ys);
+  const padX = Math.max((maxX - minX) * 0.1, 5);
+  const padY = Math.max((maxY - minY) * 0.1, 5);
+  const vbMinX = minX - padX;
+  const vbMaxX = maxX + padX;
+  const vbMinY = minY - padY;
+  const vbMaxY = maxY + padY;
+  const width = vbMaxX - vbMinX;
+  const height = vbMaxY - vbMinY;
+
+  function toSvg(point: { x: number; y: number }) {
+    return {
+      cx: point.x - vbMinX,
+      cy: vbMaxY - point.y,
+    };
+  }
+
+  const depotPt = toSvg(depot);
+
+  return (
+    <svg className="absolute inset-0 w-full h-full" viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="xMidYMid meet">
+      {vehicles.map((vehicle, vi) => {
+        const coords = [depot, ...vehicle.route.filter((id) => id !== 0).map((id) => orderById.get(id)).filter(Boolean) as InputOrder[], depot];
+        const pts = coords.map(toSvg);
+        const pointsAttr = pts.map((p) => `${p.cx},${p.cy}`).join(" ");
+        const color = VEHICLE_COLORS[vi % VEHICLE_COLORS.length];
+        return (
+          <g key={vehicle.id}>
+            <polyline points={pointsAttr} fill="none" stroke={color} strokeWidth={Math.max(width / 120, 1.5)} opacity={0.8} strokeDasharray="6,3" />
+          </g>
+        );
+      })}
+      {orders.map((order) => {
+        const pt = toSvg(order);
+        return (
+          <g key={order.id}>
+            <circle cx={pt.cx} cy={pt.cy} r={Math.max(width / 80, 3)} fill="#CA8A04" />
+            <text x={pt.cx} y={pt.cy - Math.max(width / 80, 4)} fontSize={Math.max(width / 40, 10)} fill="#374151" textAnchor="middle">
+              {order.id}
+            </text>
+          </g>
+        );
+      })}
+      <g>
+        <circle cx={depotPt.cx} cy={depotPt.cy} r={Math.max(width / 60, 5)} fill="#2563EB" />
+        <circle cx={depotPt.cx} cy={depotPt.cy} r={Math.max(width / 35, 8)} fill="#2563EB" fillOpacity={0.15} />
+        <text x={depotPt.cx} y={depotPt.cy - Math.max(width / 35, 9)} fontSize={Math.max(width / 40, 10)} fill="#2563EB" textAnchor="middle" fontWeight={600}>
+          Depot
+        </text>
+      </g>
+    </svg>
+  );
+}
+
 export function JobDetail({ id, navigate }: Props) {
   const [job, setJob] = useState<Job | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -192,7 +279,7 @@ export function JobDetail({ id, navigate }: Props) {
           </div>
         </div>
 
-        {/* Map placeholder */}
+        {/* Route map */}
         <div
           className="rounded-xl mb-5 relative overflow-hidden flex items-center justify-center"
           style={{ background: "#F0F4FF", border: "1px solid #DBEAFE", height: 280, boxShadow: "0 1px 4px rgba(0,0,0,0.05)" }}
@@ -205,6 +292,7 @@ export function JobDetail({ id, navigate }: Props) {
             </defs>
             <rect width="100%" height="100%" fill="url(#grid)" />
           </svg>
+          <RouteMap inputData={job.input_data} vehicles={vehicles} />
           <div
             className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1 rounded-md"
             style={{ background: "#fff", border: "1px solid #E5E7EB", fontSize: 12, color: "#6B7280" }}
