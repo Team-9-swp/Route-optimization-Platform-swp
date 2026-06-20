@@ -34,3 +34,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - `POST /solve` accepts optional `name`, `auto_validate`, `time_limit` and `max_restarts` parameters
 - Root `README.md` now describes both backend and frontend local development
+
+### Fixed
+- JobDetail route map: custom SVG zoom/pan, per-route visibility filter, color legend and body-scroll lock on hover
