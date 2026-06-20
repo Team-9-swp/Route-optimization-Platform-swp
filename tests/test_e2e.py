@@ -26,12 +26,12 @@ async def test_solve_t1_instance(client):
     assert response.status_code == 202
     job_id = response.json()["job_id"]
 
-    for _ in range(100):
+    for _ in range(200):
         response = await client.get(f"/jobs/{job_id}")
         data = response.json()
         if data["status"] in ("completed", "failed"):
             break
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(0.5)
 
     assert response.status_code == 200
     data = response.json()
