@@ -15,9 +15,9 @@ def _solve_sync(
     time_budget: float = 30.0,
     max_restarts: int | None = None,
 ) -> dict | None:
-    import main_mvp
+    import solver
 
-    return main_mvp.solve(instance, seed, time_budget=time_budget, max_restarts=max_restarts)
+    return solver.solve(instance, seed, time_budget=time_budget, max_restarts=max_restarts)
 
 
 def _extract_objective_value(result: dict | None) -> float | None:
