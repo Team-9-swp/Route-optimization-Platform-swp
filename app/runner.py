@@ -23,7 +23,12 @@ def _solve_sync(
 def _extract_objective_value(result: dict | None) -> float | None:
     if result is None:
         return None
-    return result.get("objective_value")
+    if "objective_value" in result:
+        return result["objective_value"]
+    if "_cost" in result:
+        result["objective_value"] = result["_cost"]
+        return result["objective_value"]
+    return None
 
 
 async def run_solver(
