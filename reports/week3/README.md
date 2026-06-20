@@ -121,6 +121,7 @@ All MVP v1 PBIs have been implemented, reviewed and merged into the `validator-m
 - DevOps/docs PRs
   - #59 — frontend Dockerfile/nginx (#43)
   - #60 — release v1.0.0 / Docker Compose and docs (#44)
+  - #63 — Docker frontend build fix (#43)
   - #61 — route map zoom/pan/scroll-lock polish (#44)
 
 ## Delivered MVP v1
