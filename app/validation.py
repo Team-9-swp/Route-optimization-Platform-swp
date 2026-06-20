@@ -1,6 +1,6 @@
 from typing import Any
 
-from validator import validate_solution as _validate_solution
+from backup.validator import validate_solution as _validate_solution
 
 
 def validate_solution(instance: dict[str, Any], solution: dict[str, Any]) -> dict[str, Any]:

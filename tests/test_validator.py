@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from validator import validate_solution, Validator
+from backup.validator import validate_solution, Validator
 
 
 def _minimal_instance():
@@ -108,7 +108,7 @@ def test_validator_cli():
         process = subprocess.run(
             [
                 "python",
-                "validator.py",
+                "backup/validator.py",
                 "--dir",
                 str(tmpdir),
                 "--input_file",
@@ -127,7 +127,7 @@ def test_validator_cli():
 @pytest.mark.integration
 def test_validator_on_t1_generated_solution():
     """Generate a solution with main_mvp and validate it."""
-    import main_mvp
+    from backup import main_mvp
 
     with open("test_cases/t1.json") as f:
         instance = json.load(f)

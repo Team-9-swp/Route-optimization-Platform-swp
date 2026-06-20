@@ -11,41 +11,26 @@ def store():
 
 
 @pytest.mark.asyncio
-async def test_run_solver_success(store):
+async def test_run_solver_success(store, monkeypatch):
+    def _fast_solve(instance, seed, time_budget, max_restarts):
+        return {
+            "vehicles": [{"id": 1, "route": [0, 1, 0], "time": [0.0]}],
+            "loaders": [],
+            "objective_value": 42.0,
+        }
+
+    monkeypatch.setattr("app.runner._solve_sync", _fast_solve)
+
     record = store.create_job(
-        instance={
-            "vehicle_capacity": 100,
-            "vehicle_speed": 1,
-            "loader_speed": 1,
-            "vehicle_shift_size": 240,
-            "loader_shift_size": 240,
-            "depot": {"x": 0, "y": 0, "load_time": 0},
-            "orders": [
-                {
-                    "id": 1,
-                    "x": 1,
-                    "y": 0,
-                    "volume": 1,
-                    "time_window": [0, 100],
-                    "vehicle_service_time": 1,
-                    "loader_cnt": 0,
-                    "loader_service_time": 0,
-                    "optional": 0,
-                }
-            ],
-            "weights": {
-                "vehicle_salary": 1,
-                "loader_salary": 1,
-                "fuel_cost": 1,
-                "loader_work": 1,
-                "optional_order_penalty": 1,
-            },
-        },
+        instance={"orders": []},
         seed=42,
+        time_limit=2,
     )
     await run_solver(record.job_id, store)
     updated = store.get_job(record.job_id)
     assert updated.status == JobStatus.COMPLETED
+    assert updated.objective_value == 42.0
+    assert updated.result["vehicles"][0]["id"] == 1
     assert "vehicles" in updated.result
     assert "loaders" in updated.result
 

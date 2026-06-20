@@ -15,9 +15,9 @@ def _solve_sync(
     time_budget: float = 30.0,
     max_restarts: int | None = None,
 ) -> dict | None:
-    import solver
+    from beta_code.pipeline.orchestrate import solve as _solve
 
-    return solver.solve(instance, seed, time_budget=time_budget, max_restarts=max_restarts)
+    return _solve(instance, time_limit=time_budget, seed=seed)
 
 
 def _extract_objective_value(result: dict | None) -> float | None:

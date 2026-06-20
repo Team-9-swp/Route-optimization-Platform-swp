@@ -16,6 +16,7 @@ async def client():
         yield c
 
 
+@pytest.mark.slow
 @pytest.mark.asyncio
 async def test_solve_t1_instance(client):
     with open("test_cases/t1.json") as f:
