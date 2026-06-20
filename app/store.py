@@ -10,7 +10,14 @@ class JobStore:
         self._jobs: dict[str, JobRecord] = {}
         self._lock = Lock()
 
-    def create_job(self, instance: dict, seed: int, name: str | None = None) -> JobRecord:
+    def create_job(
+        self,
+        instance: dict,
+        seed: int,
+        name: str | None = None,
+        time_limit: float | None = None,
+        max_restarts: int | None = None,
+    ) -> JobRecord:
         job_id = str(uuid.uuid4())
         record = JobRecord(
             job_id=job_id,
@@ -19,6 +26,8 @@ class JobStore:
             name=name,
             input_data=instance,
             seed=seed,
+            time_limit=time_limit,
+            max_restarts=max_restarts,
         )
         with self._lock:
             self._jobs[job_id] = record

@@ -9,10 +9,15 @@ from app.store import JobStore
 from app.validation import validate_solution
 
 
-def _solve_sync(instance: dict, seed: int) -> dict | None:
+def _solve_sync(
+    instance: dict,
+    seed: int,
+    time_budget: float = 30.0,
+    max_restarts: int | None = None,
+) -> dict | None:
     import main_mvp
 
-    return main_mvp.solve(instance, seed)
+    return main_mvp.solve(instance, seed, time_budget=time_budget, max_restarts=max_restarts)
 
 
 def _extract_objective_value(result: dict | None) -> float | None:
@@ -44,6 +49,8 @@ async def run_solver(
                 _solve_sync,
                 record.input_data,
                 record.seed,
+                record.time_limit if record.time_limit is not None else 30.0,
+                record.max_restarts,
             )
 
         if result is None:
