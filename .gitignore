@@ -222,3 +222,7 @@ __marimo__/
 .streamlit/secrets.toml
 
 .DS_Store
+
+# Local agent/tool state
+.superpowers/
+frontend/.vite/
