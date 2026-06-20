@@ -46,6 +46,8 @@ class SolverService:
             status=record.status,
             name=record.name,
             created_at=record.created_at,
+            input_data=record.input_data,
+            seed=record.seed,
             started_at=record.started_at,
             finished_at=record.finished_at,
             result=record.result,
