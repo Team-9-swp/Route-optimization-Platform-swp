@@ -1,8 +1,8 @@
-FROM node:20-alpine AS builder
+FROM node:20-slim AS builder
 WORKDIR /app
 COPY package*.json ./
 ENV NODE_ENV=development
-RUN npm ci
+RUN npm ci --no-audit --no-fund
 COPY . .
 RUN npm run build
 
