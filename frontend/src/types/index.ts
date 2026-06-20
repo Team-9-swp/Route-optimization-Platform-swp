@@ -6,6 +6,8 @@ export interface Job {
   status: JobStatus;
   name?: string;
   created_at: string;
+  input_data?: Record<string, unknown>;
+  seed?: number;
   started_at?: string;
   finished_at?: string;
   result?: Record<string, unknown>;
@@ -13,7 +15,6 @@ export interface Job {
   objective_value?: number;
   validation_status?: ValidationStatus;
   validation_report?: Record<string, unknown>;
-  seed?: number;
 }
 
 export interface JobListResponse {

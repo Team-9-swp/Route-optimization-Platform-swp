@@ -48,6 +48,8 @@ class JobResponse(BaseModel):
     status: JobStatus
     name: str | None = None
     created_at: datetime
+    input_data: dict[str, Any] = Field(default_factory=dict)
+    seed: int = 42
     started_at: datetime | None = None
     finished_at: datetime | None = None
     result: dict[str, Any] | None = None
