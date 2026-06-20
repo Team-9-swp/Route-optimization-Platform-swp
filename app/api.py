@@ -13,8 +13,17 @@ async def solve(
     seed: int = Query(default=42, ge=0),
     name: str | None = Query(default=None),
     auto_validate: bool = Query(default=False),
+    time_limit: float | None = Query(default=None, gt=0),
+    max_restarts: int | None = Query(default=None, ge=1),
 ) -> SolveResponse:
-    return await service.submit_job(instance, seed, name=name, auto_validate=auto_validate)
+    return await service.submit_job(
+        instance,
+        seed,
+        name=name,
+        auto_validate=auto_validate,
+        time_limit=time_limit,
+        max_restarts=max_restarts,
+    )
 
 
 @router.get("/jobs/{job_id}", response_model=JobResponse)
