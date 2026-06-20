@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ArrowLeft, CheckCircle2, Download, RotateCcw, MapPin, XCircle, Loader2 } from "lucide-react";
 import { getJob } from "../../api/jobs";
 import type { Job } from "../../types";
@@ -41,27 +41,198 @@ interface InputData {
 const VEHICLE_COLORS = ["#2563EB", "#16A34A", "#CA8A04", "#9333EA", "#DC2626", "#0891B2"];
 const LOADER_COLORS = ["#DB2777", "#7C3AED", "#EA580C", "#0D9488", "#65A30D", "#4F46E5"];
 
-type MapMode = "vehicles" | "loaders" | "both";
+const VIEW_W = 800;
+const VIEW_H = 560;
+const PADDING = 40;
+
+function useDisplayTransform(inputData?: Record<string, unknown>) {
+  const data = inputData as InputData | undefined;
+  const depot = data?.depot;
+  const orders = data?.orders ?? [];
+
+  if (!depot || orders.length === 0) {
+    return null;
+  }
+
+  const points = [depot, ...orders];
+  const xs = points.map((p) => p.x);
+  const ys = points.map((p) => p.y);
+  const minX = Math.min(...xs);
+  const maxX = Math.max(...xs);
+  const minY = Math.min(...ys);
+  const maxY = Math.max(...ys);
+
+  const dataW = Math.max(maxX - minX, 1);
+  const dataH = Math.max(maxY - minY, 1);
+  const scale = Math.min((VIEW_W - PADDING * 2) / dataW, (VIEW_H - PADDING * 2) / dataH);
+  const offsetX = PADDING + (VIEW_W - PADDING * 2 - dataW * scale) / 2;
+  const offsetY = PADDING + (VIEW_H - PADDING * 2 - dataH * scale) / 2;
+
+  function toSvg(point: { x: number; y: number }) {
+    return {
+      cx: offsetX + (point.x - minX) * scale,
+      cy: offsetY + (maxY - point.y) * scale,
+    };
+  }
+
+  return { depot, orders, orderById: new Map(orders.map((o) => [o.id, o])), toSvg, scale };
+}
+
+interface ViewBox {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+
+const MIN_VIEW_W = 140;
+const MAX_VIEW_W = VIEW_W * 6;
 
 function RouteMap({
   inputData,
   vehicles,
   loaders,
-  mode,
+  visibleVehicleIds,
+  visibleLoaderIds,
 }: {
   inputData?: Record<string, unknown>;
   vehicles: VehicleRoute[];
   loaders: LoaderRoute[];
-  mode: MapMode;
+  visibleVehicleIds: Set<number>;
+  visibleLoaderIds: Set<number>;
 }) {
-  const data = inputData as InputData | undefined;
-  const depot = data?.depot;
-  const orders = data?.orders ?? [];
+  const transform = useDisplayTransform(inputData);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
+  const [viewBox, setViewBox] = useState<ViewBox>({ x: 0, y: 0, w: VIEW_W, h: VIEW_H });
+  const isDragging = useRef(false);
+  const dragStart = useRef({ x: 0, y: 0, vbX: 0, vbY: 0 });
 
-  const hasVehicles = mode !== "loaders" && vehicles.length > 0;
-  const hasLoaders = mode !== "vehicles" && loaders.length > 0;
+  useEffect(() => {
+    setViewBox({ x: 0, y: 0, w: VIEW_W, h: VIEW_H });
+  }, [inputData]);
 
-  if (!depot || (!hasVehicles && !hasLoaders)) {
+  const clampViewBox = useCallback((vb: ViewBox): ViewBox => {
+    const aspect = VIEW_H / VIEW_W;
+    const w = Math.min(Math.max(vb.w, MIN_VIEW_W), MAX_VIEW_W);
+    const h = w * aspect;
+    const x = Math.min(Math.max(vb.x, -w * 0.5), VIEW_W - w * 0.5);
+    const y = Math.min(Math.max(vb.y, -h * 0.5), VIEW_H - h * 0.5);
+    return { x, y, w, h };
+  }, []);
+
+  const zoom = useCallback(
+    (factor: number, centerX?: number, centerY?: number) => {
+      setViewBox((prev) => {
+        const cx = centerX ?? prev.x + prev.w / 2;
+        const cy = centerY ?? prev.y + prev.h / 2;
+        const newW = prev.w * factor;
+        const newH = newW * (VIEW_H / VIEW_W);
+        return clampViewBox({
+          x: cx - (newW * (cx - prev.x)) / prev.w,
+          y: cy - (newH * (cy - prev.y)) / prev.h,
+          w: newW,
+          h: newH,
+        });
+      });
+    },
+    [clampViewBox]
+  );
+
+  const resetView = useCallback(() => {
+    setViewBox({ x: 0, y: 0, w: VIEW_W, h: VIEW_H });
+  }, []);
+
+  const scrollLockedRef = useRef(false);
+  const originalBodyOverflow = useRef("");
+  const originalHtmlOverflow = useRef("");
+  const originalPaddingRight = useRef("");
+
+  const lockScroll = useCallback(() => {
+    if (scrollLockedRef.current) return;
+    scrollLockedRef.current = true;
+    originalBodyOverflow.current = document.body.style.overflow;
+    originalHtmlOverflow.current = document.documentElement.style.overflow;
+    originalPaddingRight.current = document.body.style.paddingRight;
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+    if (scrollbarWidth > 0) {
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
+    }
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+  }, []);
+
+  const unlockScroll = useCallback(() => {
+    if (!scrollLockedRef.current) return;
+    scrollLockedRef.current = false;
+    document.body.style.overflow = originalBodyOverflow.current;
+    document.documentElement.style.overflow = originalHtmlOverflow.current;
+    document.body.style.paddingRight = originalPaddingRight.current;
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (scrollLockedRef.current) {
+        document.body.style.overflow = originalBodyOverflow.current;
+        document.documentElement.style.overflow = originalHtmlOverflow.current;
+        document.body.style.paddingRight = originalPaddingRight.current;
+      }
+    };
+  }, []);
+
+  const handleWheel = useCallback(
+    (e: React.WheelEvent) => {
+      e.preventDefault();
+      const svg = svgRef.current;
+      if (!svg) return;
+      const rect = svg.getBoundingClientRect();
+      const pt = svg.createSVGPoint();
+      pt.x = e.clientX - rect.left;
+      pt.y = e.clientY - rect.top;
+      const ctm = svg.getScreenCTM();
+      if (!ctm) return;
+      const svgP = pt.matrixTransform(ctm.inverse());
+      const factor = e.deltaY > 0 ? 1.1 : 0.9;
+      zoom(factor, svgP.x, svgP.y);
+    },
+    [zoom]
+  );
+
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      isDragging.current = true;
+      dragStart.current = { x: e.clientX, y: e.clientY, vbX: viewBox.x, vbY: viewBox.y };
+    },
+    [viewBox]
+  );
+
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent) => {
+      if (!isDragging.current) return;
+      const svg = svgRef.current;
+      if (!svg) return;
+      const rect = svg.getBoundingClientRect();
+      const scaleX = viewBox.w / rect.width;
+      const scaleY = viewBox.h / rect.height;
+      setViewBox((prev) =>
+        clampViewBox({
+          ...prev,
+          x: dragStart.current.vbX - (e.clientX - dragStart.current.x) * scaleX,
+          y: dragStart.current.vbY - (e.clientY - dragStart.current.y) * scaleY,
+        })
+      );
+    },
+    [viewBox, clampViewBox]
+  );
+
+  const handleMouseUp = useCallback(() => {
+    isDragging.current = false;
+  }, []);
+
+  const visibleVehicles = vehicles.filter((v) => visibleVehicleIds.has(v.id));
+  const visibleLoaders = loaders.filter((l) => visibleLoaderIds.has(l.id));
+
+  if (!transform || (visibleVehicles.length === 0 && visibleLoaders.length === 0)) {
     return (
       <div className="flex items-center justify-center h-full text-gray-500 text-sm">
         No route data available for the selected layer.
@@ -69,51 +240,59 @@ function RouteMap({
     );
   }
 
-  const orderById = new Map(orders.map((o) => [o.id, o]));
-  const points: { x: number; y: number }[] = [depot, ...orders];
-  const xs = points.map((p) => p.x);
-  const ys = points.map((p) => p.y);
-  const minX = Math.min(...xs);
-  const maxX = Math.max(...xs);
-  const minY = Math.min(...ys);
-  const maxY = Math.max(...ys);
-  const padX = Math.max((maxX - minX) * 0.1, 5);
-  const padY = Math.max((maxY - minY) * 0.1, 5);
-  const vbMinX = minX - padX;
-  const vbMaxX = maxX + padX;
-  const vbMinY = minY - padY;
-  const vbMaxY = maxY + padY;
-  const width = vbMaxX - vbMinX;
-  const height = vbMaxY - vbMinY;
-
-  function toSvg(point: { x: number; y: number }) {
-    return {
-      cx: point.x - vbMinX,
-      cy: vbMaxY - point.y,
-    };
-  }
-
+  const { depot, orders, orderById, toSvg } = transform;
   const depotPt = toSvg(depot);
-  const strokeWidth = Math.max(width / 120, 1.5);
-  const pointRadius = Math.max(width / 80, 3);
-  const fontSize = Math.max(width / 40, 10);
+
+  const btnStyle = {
+    background: "#fff",
+    border: "1px solid #E5E7EB",
+    borderRadius: 4,
+    color: "#374151",
+    cursor: "pointer",
+    fontSize: 12,
+    fontWeight: 600,
+    padding: "4px 10px",
+  };
 
   return (
-    <svg className="absolute inset-0 w-full h-full" viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="xMidYMid meet">
-      {hasVehicles &&
-        vehicles.map((vehicle, vi) => {
+    <div
+      ref={containerRef}
+      className="w-full h-full relative"
+      style={{ touchAction: "none", overscrollBehavior: "contain" }}
+      onMouseEnter={lockScroll}
+      onMouseLeave={unlockScroll}
+    >
+      <svg
+        ref={svgRef}
+        className="w-full h-full cursor-grab active:cursor-grabbing"
+        viewBox={`${viewBox.x} ${viewBox.y} ${viewBox.w} ${viewBox.h}`}
+        preserveAspectRatio="xMidYMid meet"
+        onWheel={handleWheel}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
+      >
+        <defs>
+          <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#2563EB" strokeWidth="0.5" />
+          </pattern>
+        </defs>
+        <rect x={viewBox.x} y={viewBox.y} width={viewBox.w} height={viewBox.h} fill="url(#grid)" opacity={0.15} />
+
+        {visibleVehicles.map((vehicle, vi) => {
           const coords = [depot, ...vehicle.route.filter((id) => id !== 0).map((id) => orderById.get(id)).filter(Boolean) as InputOrder[], depot];
           const pts = coords.map(toSvg);
           const pointsAttr = pts.map((p) => `${p.cx},${p.cy}`).join(" ");
           const color = VEHICLE_COLORS[vi % VEHICLE_COLORS.length];
           return (
             <g key={`v-${vehicle.id}`}>
-              <polyline points={pointsAttr} fill="none" stroke={color} strokeWidth={strokeWidth} opacity={0.8} strokeDasharray="6,3" />
+              <polyline points={pointsAttr} fill="none" stroke={color} strokeWidth={2} opacity={0.85} strokeDasharray="5,3" />
             </g>
           );
         })}
-      {hasLoaders &&
-        loaders.map((loader, li) => {
+
+        {visibleLoaders.map((loader, li) => {
           const loaderOrders = loader.route
             .filter((id) => id !== 0)
             .map((id) => orderById.get(id))
@@ -125,29 +304,199 @@ function RouteMap({
           const color = LOADER_COLORS[li % LOADER_COLORS.length];
           return (
             <g key={`l-${loader.id}`}>
-              <polyline points={pointsAttr} fill="none" stroke={color} strokeWidth={strokeWidth} opacity={0.8} />
+              <polyline points={pointsAttr} fill="none" stroke={color} strokeWidth={2} opacity={0.85} />
             </g>
           );
         })}
-      {orders.map((order) => {
-        const pt = toSvg(order);
-        return (
-          <g key={`o-${order.id}`}>
-            <circle cx={pt.cx} cy={pt.cy} r={pointRadius} fill="#CA8A04" />
-            <text x={pt.cx} y={pt.cy - pointRadius - 1} fontSize={fontSize} fill="#374151" textAnchor="middle">
-              {order.id}
-            </text>
-          </g>
-        );
-      })}
-      <g>
-        <circle cx={depotPt.cx} cy={depotPt.cy} r={Math.max(width / 60, 5)} fill="#2563EB" />
-        <circle cx={depotPt.cx} cy={depotPt.cy} r={Math.max(width / 35, 8)} fill="#2563EB" fillOpacity={0.15} />
-        <text x={depotPt.cx} y={depotPt.cy - Math.max(width / 35, 9)} fontSize={fontSize} fill="#2563EB" textAnchor="middle" fontWeight={600}>
-          Depot
-        </text>
-      </g>
-    </svg>
+
+        {orders.map((order) => {
+          const pt = toSvg(order);
+          return (
+            <g key={`o-${order.id}`}>
+              <circle cx={pt.cx} cy={pt.cy} r={3.5} fill="#CA8A04" stroke="#fff" strokeWidth={1} />
+              <text x={pt.cx} y={pt.cy - 6} fontSize={10} fill="#374151" textAnchor="middle" fontWeight={500}>
+                {order.id}
+              </text>
+            </g>
+          );
+        })}
+
+        <g>
+          <circle cx={depotPt.cx} cy={depotPt.cy} r={6} fill="#2563EB" stroke="#fff" strokeWidth={1.5} />
+          <circle cx={depotPt.cx} cy={depotPt.cy} r={10} fill="#2563EB" fillOpacity={0.15} />
+          <text x={depotPt.cx} y={depotPt.cy - 13} fontSize={10} fill="#2563EB" textAnchor="middle" fontWeight={600}>
+            Depot
+          </text>
+        </g>
+      </svg>
+
+      <div className="absolute top-3 right-3 flex items-center gap-1">
+        <button style={btnStyle} onClick={() => zoom(1.1)} title="Zoom out">-</button>
+        <button style={btnStyle} onClick={resetView} title="Reset view">Reset</button>
+        <button style={btnStyle} onClick={() => zoom(0.9)} title="Zoom in">+</button>
+      </div>
+
+      <div className="pointer-events-none absolute bottom-3 left-3 text-[10px] text-gray-400">
+        Scroll to zoom · Drag to pan
+      </div>
+    </div>
+  );
+}
+
+function RouteFilter({
+  vehicles,
+  loaders,
+  visibleVehicleIds,
+  visibleLoaderIds,
+  onToggleVehicle,
+  onToggleLoader,
+}: {
+  vehicles: VehicleRoute[];
+  loaders: LoaderRoute[];
+  visibleVehicleIds: Set<number>;
+  visibleLoaderIds: Set<number>;
+  onToggleVehicle: (id: number | "all", checked: boolean) => void;
+  onToggleLoader: (id: number | "all", checked: boolean) => void;
+}) {
+  const vehicleAll = vehicles.length > 0 && vehicles.every((v) => visibleVehicleIds.has(v.id));
+  const vehicleSome = vehicles.some((v) => visibleVehicleIds.has(v.id)) && !vehicleAll;
+  const loaderAll = loaders.length > 0 && loaders.every((l) => visibleLoaderIds.has(l.id));
+  const loaderSome = loaders.some((l) => visibleLoaderIds.has(l.id)) && !loaderAll;
+
+  const groupTitleStyle = { fontSize: 11, fontWeight: 600, color: "#111827", margin: "0 0 4px 0" };
+  const labelStyle = { display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: "#374151", cursor: "pointer", marginBottom: 2 };
+
+  return (
+    <div
+      data-route-filter
+      onWheel={(e) => e.stopPropagation()}
+      style={{
+        background: "rgba(255,255,255,0.95)",
+        border: "1px solid #E5E7EB",
+        borderRadius: 6,
+        padding: "8px 10px",
+        fontSize: 11,
+        maxHeight: 180,
+        overflow: "auto",
+        maxWidth: 170,
+      }}
+    >
+      <p style={{ fontWeight: 600, margin: "0 0 6px 0", color: "#111827" }}>Routes</p>
+
+      {vehicles.length > 0 && (
+        <div style={{ marginBottom: 8 }}>
+          <p style={groupTitleStyle}>Vehicles</p>
+          <label style={labelStyle}>
+            <input
+              type="checkbox"
+              checked={vehicleAll}
+              ref={(el) => {
+                if (el) el.indeterminate = vehicleSome;
+              }}
+              onChange={(e) => onToggleVehicle("all", e.target.checked)}
+            />
+            All vehicles
+          </label>
+          {vehicles.map((v, i) => (
+            <label key={v.id} style={{ ...labelStyle, paddingLeft: 12 }}>
+              <input
+                type="checkbox"
+                checked={visibleVehicleIds.has(v.id)}
+                onChange={(e) => onToggleVehicle(v.id, e.target.checked)}
+              />
+              <span
+                style={{
+                  width: 10,
+                  height: 10,
+                  borderRadius: "50%",
+                  background: VEHICLE_COLORS[i % VEHICLE_COLORS.length],
+                  flexShrink: 0,
+                }}
+              />
+              V-{v.id}
+            </label>
+          ))}
+        </div>
+      )}
+
+      {loaders.length > 0 && (
+        <div>
+          <p style={groupTitleStyle}>Loaders</p>
+          <label style={labelStyle}>
+            <input
+              type="checkbox"
+              checked={loaderAll}
+              ref={(el) => {
+                if (el) el.indeterminate = loaderSome;
+              }}
+              onChange={(e) => onToggleLoader("all", e.target.checked)}
+            />
+            All loaders
+          </label>
+          {loaders.map((l, i) => (
+            <label key={l.id} style={{ ...labelStyle, paddingLeft: 12 }}>
+              <input
+                type="checkbox"
+                checked={visibleLoaderIds.has(l.id)}
+                onChange={(e) => onToggleLoader(l.id, e.target.checked)}
+              />
+              <span
+                style={{
+                  width: 10,
+                  height: 10,
+                  borderRadius: "50%",
+                  background: LOADER_COLORS[i % LOADER_COLORS.length],
+                  flexShrink: 0,
+                }}
+              />
+              L-{l.id}
+            </label>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function MapRouteList({
+  vehicles,
+  loaders,
+  visibleVehicleIds,
+  visibleLoaderIds,
+}: {
+  vehicles: VehicleRoute[];
+  loaders: LoaderRoute[];
+  visibleVehicleIds: Set<number>;
+  visibleLoaderIds: Set<number>;
+}) {
+  const visibleVehicles = vehicles.filter((v) => visibleVehicleIds.has(v.id));
+  const visibleLoaders = loaders.filter((l) => visibleLoaderIds.has(l.id));
+  return (
+    <div
+      style={{
+        background: "rgba(255,255,255,0.95)",
+        border: "1px solid #E5E7EB",
+        borderRadius: 6,
+        padding: "8px 10px",
+        maxHeight: 120,
+        overflow: "auto",
+        maxWidth: 180,
+      }}
+    >
+      <p style={{ fontSize: 11, fontWeight: 600, color: "#111827", margin: "0 0 6px 0" }}>Routes</p>
+      {visibleVehicles.map((v, i) => (
+        <div key={`rlv-${v.id}`} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: "#374151", marginBottom: 3 }}>
+          <div style={{ width: 10, height: 10, borderRadius: "50%", background: VEHICLE_COLORS[i % VEHICLE_COLORS.length] }} />
+          <span>V-{v.id}: {v.route.filter((id) => id !== 0).length} orders</span>
+        </div>
+      ))}
+      {visibleLoaders.map((l, i) => (
+        <div key={`rll-${l.id}`} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: "#374151", marginBottom: 3 }}>
+          <div style={{ width: 10, height: 10, borderRadius: "50%", background: LOADER_COLORS[i % LOADER_COLORS.length] }} />
+          <span>L-{l.id}: {l.route.filter((id) => id !== 0).length} orders</span>
+        </div>
+      ))}
+    </div>
   );
 }
 
@@ -156,7 +505,8 @@ export function JobDetail({ id, navigate }: Props) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<Tab>("Routes");
-  const [mapMode, setMapMode] = useState<MapMode>("vehicles");
+  const [visibleVehicleIds, setVisibleVehicleIds] = useState<Set<number>>(new Set());
+  const [visibleLoaderIds, setVisibleLoaderIds] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     let cancelled = false;
@@ -187,6 +537,44 @@ export function JobDetail({ id, navigate }: Props) {
       clearInterval(interval);
     };
   }, [id, job?.status]);
+
+  // Initialise route filters when a job is loaded.
+  useEffect(() => {
+    if (job) {
+      const vehicles = (job.result?.vehicles as VehicleRoute[] | undefined) ?? [];
+      const loaders = (job.result?.loaders as LoaderRoute[] | undefined) ?? [];
+      setVisibleVehicleIds(new Set(vehicles.map((v) => v.id)));
+      setVisibleLoaderIds(new Set(loaders.map((l) => l.id)));
+    }
+  }, [job?.job_id]);
+
+  const handleToggleVehicle = useCallback((id: number | "all", checked: boolean) => {
+    if (id === "all") {
+      const vehicles = (job?.result?.vehicles as VehicleRoute[] | undefined) ?? [];
+      setVisibleVehicleIds(checked ? new Set(vehicles.map((v) => v.id)) : new Set());
+    } else {
+      setVisibleVehicleIds((prev) => {
+        const next = new Set(prev);
+        if (checked) next.add(id);
+        else next.delete(id);
+        return next;
+      });
+    }
+  }, [job]);
+
+  const handleToggleLoader = useCallback((id: number | "all", checked: boolean) => {
+    if (id === "all") {
+      const loaders = (job?.result?.loaders as LoaderRoute[] | undefined) ?? [];
+      setVisibleLoaderIds(checked ? new Set(loaders.map((l) => l.id)) : new Set());
+    } else {
+      setVisibleLoaderIds((prev) => {
+        const next = new Set(prev);
+        if (checked) next.add(id);
+        else next.delete(id);
+        return next;
+      });
+    }
+  }, [job]);
 
   if (isLoading) return <p className="p-6 text-gray-600">Loading job…</p>;
   if (error || !job) return <p className="p-6 text-red-600">{error || "Job not found"}</p>;
@@ -319,45 +707,43 @@ export function JobDetail({ id, navigate }: Props) {
 
         {/* Route map */}
         <div
-          className="rounded-xl mb-5 relative overflow-hidden flex items-center justify-center"
-          style={{ background: "#F0F4FF", border: "1px solid #DBEAFE", height: 280, boxShadow: "0 1px 4px rgba(0,0,0,0.05)" }}
+          className="rounded-xl mb-5 relative overflow-hidden"
+          style={{ background: "#F0F4FF", border: "1px solid #DBEAFE", height: 420, boxShadow: "0 1px 4px rgba(0,0,0,0.05)" }}
         >
-          <svg className="absolute inset-0 w-full h-full" style={{ opacity: 0.15 }} xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#2563EB" strokeWidth="0.5" />
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#grid)" />
-          </svg>
-          <RouteMap inputData={job.input_data} vehicles={vehicles} loaders={loaders} mode={mapMode} />
-          <div
-            className="absolute top-3 left-3 flex items-center gap-1"
-            style={{ background: "#fff", border: "1px solid #E5E7EB", borderRadius: 6, padding: 2, fontSize: 12 }}
-          >
-            {(["vehicles", "loaders", "both"] as MapMode[]).map((m) => (
-              <button
-                key={m}
-                onClick={() => setMapMode(m)}
-                className="px-2 py-1 rounded capitalize"
-                style={{
-                  background: mapMode === m ? "#2563EB" : "transparent",
-                  color: mapMode === m ? "#fff" : "#374151",
-                  border: "none",
-                  cursor: "pointer",
-                  fontWeight: mapMode === m ? 600 : 400,
-                }}
-              >
-                {m}
-              </button>
-            ))}
+          <RouteMap
+            inputData={job.input_data}
+            vehicles={vehicles}
+            loaders={loaders}
+            visibleVehicleIds={visibleVehicleIds}
+            visibleLoaderIds={visibleLoaderIds}
+          />
+
+          <div className="absolute top-3 left-3">
+            <RouteFilter
+              vehicles={vehicles}
+              loaders={loaders}
+              visibleVehicleIds={visibleVehicleIds}
+              visibleLoaderIds={visibleLoaderIds}
+              onToggleVehicle={handleToggleVehicle}
+              onToggleLoader={handleToggleLoader}
+            />
           </div>
+
           <div
-            className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1 rounded-md"
+            className="absolute top-3 right-3 flex items-center gap-2 px-2.5 py-1 rounded-md"
             style={{ background: "#fff", border: "1px solid #E5E7EB", fontSize: 12, color: "#6B7280" }}
           >
             <MapPin size={12} style={{ color: "#2563EB" }} />
             Route Map
+          </div>
+
+          <div className="absolute bottom-3 right-3">
+            <MapRouteList
+              vehicles={vehicles}
+              loaders={loaders}
+              visibleVehicleIds={visibleVehicleIds}
+              visibleLoaderIds={visibleLoaderIds}
+            />
           </div>
         </div>
 
