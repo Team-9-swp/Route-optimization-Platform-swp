@@ -123,6 +123,7 @@ All MVP v1 PBIs have been implemented, reviewed and merged into the `validator-m
   - #60 — release v1.0.0 / Docker Compose and docs (#44)
   - #63 — Docker frontend build fix (#43)
   - #65 — frontend build context ignores host node_modules (#43)
+  - #67 — switch frontend builder to node:20-slim (#43)
   - #61 — route map zoom/pan/scroll-lock polish (#44)
 
 ## Delivered MVP v1
