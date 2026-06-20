@@ -226,3 +226,7 @@ __marimo__/
 # Local agent/tool state
 .superpowers/
 frontend/.vite/
+
+# Local assignment instructions / generated readmes
+docs/assignment-materials/
+frontend/README.md

@@ -54,7 +54,7 @@ async def run_solver(
                 _solve_sync,
                 record.input_data,
                 record.seed,
-                record.time_limit if record.time_limit is not None else 30.0,
+                record.time_limit if record.time_limit is not None else 120.0,
                 record.max_restarts,
             )
 

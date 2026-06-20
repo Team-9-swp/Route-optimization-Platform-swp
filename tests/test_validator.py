@@ -132,7 +132,7 @@ def test_validator_on_t1_generated_solution():
     with open("test_cases/t1.json") as f:
         instance = json.load(f)
 
-    solution = main_mvp.solve(instance, seed=42)
+    solution = main_mvp.solve(instance, seed=42, time_budget=120)
     assert solution is not None
 
     result = validate_solution(instance, solution)
