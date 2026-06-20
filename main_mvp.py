@@ -633,19 +633,22 @@ def assign_loaders_greedy(problem, evaluator, vehicle_arrival_times):
     return loader_routes
 
 
-def solve(problem_data, seed):
+def solve(problem_data, seed, time_budget=30.0, max_restarts=None):
     """Run the full greedy + local search pipeline and return the solution JSON."""
     random.seed(seed)
 
     problem = ProblemData(problem_data)
     evaluator = Evaluator(problem)
 
-    if problem.number_of_orders <= 200:
-        number_of_restarts = 50
-    elif problem.number_of_orders <= 500:
-        number_of_restarts = 20
+    if max_restarts is None:
+        if problem.number_of_orders <= 200:
+            number_of_restarts = 50
+        elif problem.number_of_orders <= 500:
+            number_of_restarts = 20
+        else:
+            number_of_restarts = 8
     else:
-        number_of_restarts = 8
+        number_of_restarts = max_restarts
 
     print(f"Greedy construction ({number_of_restarts} restarts)")
 
@@ -690,7 +693,7 @@ def solve(problem_data, seed):
 
     print("  Loader SA improvement...")
     loader_sa = LoaderSA(problem, evaluator, temp0=100, alpha=0.998,
-                         max_iters=50000, time_budget=30.0)
+                         max_iters=50000, time_budget=time_budget)
     best_solution = loader_sa.improve(best_solution, vehicle_times)
 
     best_cost, feasible, details = evaluator.evaluate(best_solution)
