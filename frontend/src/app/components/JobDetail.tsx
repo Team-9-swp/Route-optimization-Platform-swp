@@ -27,11 +27,136 @@ function formatRoute(route: number[]): string {
   return ["Depot", ...route.filter((n) => n !== 0).map(String), "Depot"].join(" → ");
 }
 
+interface InputOrder {
+  id: number;
+  x: number;
+  y: number;
+}
+
+interface InputData {
+  depot?: { x: number; y: number };
+  orders?: InputOrder[];
+}
+
+const VEHICLE_COLORS = ["#2563EB", "#16A34A", "#CA8A04", "#9333EA", "#DC2626", "#0891B2"];
+const LOADER_COLORS = ["#DB2777", "#7C3AED", "#EA580C", "#0D9488", "#65A30D", "#4F46E5"];
+
+type MapMode = "vehicles" | "loaders" | "both";
+
+function RouteMap({
+  inputData,
+  vehicles,
+  loaders,
+  mode,
+}: {
+  inputData?: Record<string, unknown>;
+  vehicles: VehicleRoute[];
+  loaders: LoaderRoute[];
+  mode: MapMode;
+}) {
+  const data = inputData as InputData | undefined;
+  const depot = data?.depot;
+  const orders = data?.orders ?? [];
+
+  const hasVehicles = mode !== "loaders" && vehicles.length > 0;
+  const hasLoaders = mode !== "vehicles" && loaders.length > 0;
+
+  if (!depot || (!hasVehicles && !hasLoaders)) {
+    return (
+      <div className="flex items-center justify-center h-full text-gray-500 text-sm">
+        No route data available for the selected layer.
+      </div>
+    );
+  }
+
+  const orderById = new Map(orders.map((o) => [o.id, o]));
+  const points: { x: number; y: number }[] = [depot, ...orders];
+  const xs = points.map((p) => p.x);
+  const ys = points.map((p) => p.y);
+  const minX = Math.min(...xs);
+  const maxX = Math.max(...xs);
+  const minY = Math.min(...ys);
+  const maxY = Math.max(...ys);
+  const padX = Math.max((maxX - minX) * 0.1, 5);
+  const padY = Math.max((maxY - minY) * 0.1, 5);
+  const vbMinX = minX - padX;
+  const vbMaxX = maxX + padX;
+  const vbMinY = minY - padY;
+  const vbMaxY = maxY + padY;
+  const width = vbMaxX - vbMinX;
+  const height = vbMaxY - vbMinY;
+
+  function toSvg(point: { x: number; y: number }) {
+    return {
+      cx: point.x - vbMinX,
+      cy: vbMaxY - point.y,
+    };
+  }
+
+  const depotPt = toSvg(depot);
+  const strokeWidth = Math.max(width / 120, 1.5);
+  const pointRadius = Math.max(width / 80, 3);
+  const fontSize = Math.max(width / 40, 10);
+
+  return (
+    <svg className="absolute inset-0 w-full h-full" viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="xMidYMid meet">
+      {hasVehicles &&
+        vehicles.map((vehicle, vi) => {
+          const coords = [depot, ...vehicle.route.filter((id) => id !== 0).map((id) => orderById.get(id)).filter(Boolean) as InputOrder[], depot];
+          const pts = coords.map(toSvg);
+          const pointsAttr = pts.map((p) => `${p.cx},${p.cy}`).join(" ");
+          const color = VEHICLE_COLORS[vi % VEHICLE_COLORS.length];
+          return (
+            <g key={`v-${vehicle.id}`}>
+              <polyline points={pointsAttr} fill="none" stroke={color} strokeWidth={strokeWidth} opacity={0.8} strokeDasharray="6,3" />
+            </g>
+          );
+        })}
+      {hasLoaders &&
+        loaders.map((loader, li) => {
+          const loaderOrders = loader.route
+            .filter((id) => id !== 0)
+            .map((id) => orderById.get(id))
+            .filter(Boolean) as InputOrder[];
+          if (loaderOrders.length === 0) return null;
+          const coords = [...loaderOrders, loaderOrders[0]];
+          const pts = coords.map(toSvg);
+          const pointsAttr = pts.map((p) => `${p.cx},${p.cy}`).join(" ");
+          const color = LOADER_COLORS[li % LOADER_COLORS.length];
+          return (
+            <g key={`l-${loader.id}`}>
+              <polyline points={pointsAttr} fill="none" stroke={color} strokeWidth={strokeWidth} opacity={0.8} />
+            </g>
+          );
+        })}
+      {orders.map((order) => {
+        const pt = toSvg(order);
+        return (
+          <g key={`o-${order.id}`}>
+            <circle cx={pt.cx} cy={pt.cy} r={pointRadius} fill="#CA8A04" />
+            <text x={pt.cx} y={pt.cy - pointRadius - 1} fontSize={fontSize} fill="#374151" textAnchor="middle">
+              {order.id}
+            </text>
+          </g>
+        );
+      })}
+      <g>
+        <circle cx={depotPt.cx} cy={depotPt.cy} r={Math.max(width / 60, 5)} fill="#2563EB" />
+        <circle cx={depotPt.cx} cy={depotPt.cy} r={Math.max(width / 35, 8)} fill="#2563EB" fillOpacity={0.15} />
+        <text x={depotPt.cx} y={depotPt.cy - Math.max(width / 35, 9)} fontSize={fontSize} fill="#2563EB" textAnchor="middle" fontWeight={600}>
+          Depot
+        </text>
+      </g>
+    </svg>
+  );
+}
+
 export function JobDetail({ id, navigate }: Props) {
   const [job, setJob] = useState<Job | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<Tab>("Routes");
+  const [mapMode, setMapMode] = useState<MapMode>("vehicles");
 
   useEffect(() => {
     let cancelled = false;
@@ -192,7 +317,7 @@ export function JobDetail({ id, navigate }: Props) {
           </div>
         </div>
 
-        {/* Map placeholder */}
+        {/* Route map */}
         <div
           className="rounded-xl mb-5 relative overflow-hidden flex items-center justify-center"
           style={{ background: "#F0F4FF", border: "1px solid #DBEAFE", height: 280, boxShadow: "0 1px 4px rgba(0,0,0,0.05)" }}
@@ -205,6 +330,28 @@ export function JobDetail({ id, navigate }: Props) {
             </defs>
             <rect width="100%" height="100%" fill="url(#grid)" />
           </svg>
+          <RouteMap inputData={job.input_data} vehicles={vehicles} loaders={loaders} mode={mapMode} />
+          <div
+            className="absolute top-3 left-3 flex items-center gap-1"
+            style={{ background: "#fff", border: "1px solid #E5E7EB", borderRadius: 6, padding: 2, fontSize: 12 }}
+          >
+            {(["vehicles", "loaders", "both"] as MapMode[]).map((m) => (
+              <button
+                key={m}
+                onClick={() => setMapMode(m)}
+                className="px-2 py-1 rounded capitalize"
+                style={{
+                  background: mapMode === m ? "#2563EB" : "transparent",
+                  color: mapMode === m ? "#fff" : "#374151",
+                  border: "none",
+                  cursor: "pointer",
+                  fontWeight: mapMode === m ? 600 : 400,
+                }}
+              >
+                {m}
+              </button>
+            ))}
+          </div>
           <div
             className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1 rounded-md"
             style={{ background: "#fff", border: "1px solid #E5E7EB", fontSize: 12, color: "#6B7280" }}

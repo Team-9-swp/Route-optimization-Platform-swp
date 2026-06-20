@@ -1,18 +1,19 @@
 # Route Optimization Platform
 
-A logistics optimization system that generates vehicle and loader routes for the BIA CVRPTW problem variant. The project provides an asynchronous REST solver service and a planned React web interface.
+A logistics optimization system that generates vehicle and loader routes for the BIA CVRPTW problem variant. The project provides an asynchronous REST solver service and a React web interface.
 
 ## Quick start
 
-A hosted instance is available at `http://10.93.26.188:8000` from the university network (Swagger UI at `/docs`).
-
-To run locally, use Docker Compose:
+Run the whole stack with Docker Compose:
 
 ```bash
 docker compose up --build
 ```
 
-Then open Swagger UI at `http://localhost:8000/docs`.
+Then open:
+
+- Swagger UI: `http://localhost:8000/docs`
+- Web interface: `http://localhost:3000`
 
 ## Local development
 
@@ -34,21 +35,26 @@ Then open Swagger UI at `http://localhost:8000/docs`.
 4. Submit a test instance:
 
    ```bash
-   curl -X POST "http://localhost:8000/solve?seed=42" \
+   curl -X POST "http://localhost:8000/solve?seed=42&time_limit=2&max_restarts=3" \
         -H "Content-Type: application/json" \
         -d @test_cases/t1.json
    ```
 
-### Frontend (planned)
+### Frontend
 
-A React + TypeScript SPA is planned for MVP v1. The interactive prototype is available on Figma:
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
-**[Figma prototype — Route Optimizer](https://carry-race-78764713.figma.site/)**
+Vite dev server proxies `/api` to `http://localhost:8000`.
 
 ## Assignment reports
 
 - [Week 2 report index](./reports/week2/README.md)
 - [MVP v0 report](./reports/week2/mvp-v0-report.md)
+- [MVP v1 report](./reports/week3/README.md)
 - [User-stories](docs/user-stories.md)
 
 ## License
