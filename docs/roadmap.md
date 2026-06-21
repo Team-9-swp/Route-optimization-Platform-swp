@@ -4,7 +4,7 @@
 
 **Goal:** Deliver a working end-to-end route-optimization platform that can be started with `docker compose up --build` and provides a web UI for submitting jobs, viewing results and validating solutions.
 
-**Status:** In review (all PBIs implemented, stacked PRs open).
+**Status:** Completed. All selected MVP v1 work was implemented, reviewed, merged into main, and included in the v1.0.0 release.
 
 ### Delivered in MVP v1
 - Full REST API: `POST /solve`, `GET /jobs`, `GET /jobs/{id}`, `POST /validate`, `GET /health`
