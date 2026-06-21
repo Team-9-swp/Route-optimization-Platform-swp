@@ -15,15 +15,20 @@ def _solve_sync(
     time_budget: float = 30.0,
     max_restarts: int | None = None,
 ) -> dict | None:
-    import main_mvp
+    from beta_code.pipeline.orchestrate import solve as _solve
 
-    return main_mvp.solve(instance, seed, time_budget=time_budget, max_restarts=max_restarts)
+    return _solve(instance, time_limit=time_budget, seed=seed)
 
 
 def _extract_objective_value(result: dict | None) -> float | None:
     if result is None:
         return None
-    return result.get("objective_value")
+    if "objective_value" in result:
+        return result["objective_value"]
+    if "_cost" in result:
+        result["objective_value"] = result["_cost"]
+        return result["objective_value"]
+    return None
 
 
 async def run_solver(
@@ -49,7 +54,7 @@ async def run_solver(
                 _solve_sync,
                 record.input_data,
                 record.seed,
-                record.time_limit if record.time_limit is not None else 30.0,
+                record.time_limit if record.time_limit is not None else 120.0,
                 record.max_restarts,
             )
 
