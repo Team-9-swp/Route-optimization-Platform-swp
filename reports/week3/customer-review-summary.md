@@ -4,8 +4,8 @@
 
 - **Date**: 2026-06-19
 - **Participants**:
-  - Customer / product owner
-  - Development team
+  - Customer / product owner (Aleksejs Lozkins)
+  - Development team (Team 9 swp)
 - **Format**: online demo and discussion
 
 ## Artifacts demonstrated
