@@ -89,7 +89,7 @@ All MVP v1 PBIs have been implemented, reviewed and merged into `main`. The back
 | Verenikina Adeliia | Adelevere | Product Owner | #19 | — | #46, #50, #54, #58, #61, #71 |
 | Matvei Trifonov | FuFill | Developer | #18 | — | #47, #51, #55, #59 |
 | Belorusova Elvina | belelvser | Scrum Master | #5 | — | #48, #52, #56, #60 |
-| Gaifullin Aydar | Aydar-art | Tech Lead | #6 | — | #45, #49, #53, #57 |
+| Gaifullin Aydar | Aydar-art | Developer | #6 | — | #45, #49, #53, #57 |
 
 ## Release and changelog
 
