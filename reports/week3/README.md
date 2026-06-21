@@ -30,17 +30,19 @@ The main feedback from Assignment 2 was that the solver needed to be accessible 
 
 ## Estimates
 
-- **Total Product Backlog size**: 34 Story Points
-- **Total Sprint 1 size**: 34 Story Points
+- **Total Product Backlog size**: 106 Story Points
+- **Total Sprint 1 size**: 91 Story Points
+- **Total MVP v1 size**: 91 Story Points
 
 ## Selected MVP v1 scope
 
-MVP v1 contains the following PBIs, all linked to Sprint 1 and labeled `mvp-v1`:
+MVP v1 contains all PBIs linked to Sprint 1 and labeled `mvp-v1`:
 
-- Backend: CORS, expanded schemas, extended store, validation wrapper, runner improvements, service extensions, new API endpoints, e2e stabilization.
-- Frontend: API client/types, Dashboard, New Job, Job Detail, Validate pages.
-- DevOps: frontend Dockerfile/nginx config, root Dockerfile update, Docker Compose update.
-- Docs: README, CHANGELOG, user-stories, roadmap, Week 3 reports.
+- Core Must Have user stories: vehicle route output, vehicle arrival schedule, loader route, hard-constraint validation, Docker execution, API health check/input validation.
+- Supporting technical PBIs: CORS, expanded schemas, extended store, validation wrapper, runner improvements, service extensions, new API endpoints, e2e stabilization.
+- Frontend PBIs: API client/types, Dashboard, New Job, Job Detail, Validate pages.
+- DevOps/docs PBIs: frontend Dockerfile/nginx config, root Dockerfile update, Docker Compose update, SemVer release, README, CHANGELOG, user-stories, roadmap, Week 3 reports.
+- Additional user stories completed in Sprint 1 and included in the delivered increment: algorithm time limit, reproducible seed, objective function value, planned routes overview, REST API for solver submission, React web frontend.
 
 ## PBI tracking approach
 
@@ -96,7 +98,7 @@ All MVP v1 PBIs have been implemented, reviewed and merged into `main`. The back
 
 ## Process and templates
 
-- [Process Requirements](../../Process_Requirements.md)
+- Process Requirements — course document used for backlog workflow semantics (not committed to the public repo per team policy)
 - [Definition of Done](../../docs/definition-of-done.md)
 - [Roadmap](../../docs/roadmap.md)
 - [Issue templates](../../.github/ISSUE_TEMPLATE)
@@ -129,6 +131,7 @@ All MVP v1 PBIs have been implemented, reviewed and merged into `main`. The back
   - #69 — add missing frontend App shell files (#44)
   - #61 — route map zoom/pan/scroll-lock polish (#44)
   - #71 — integrate beta_code OR-Tools solver and reorganize repo (#44)
+- #72 — update Week 3 report and CHANGELOG after main merge
 
 ## Delivered MVP v1
 

@@ -21,6 +21,12 @@ Historical stories from Assignment 2: [`reports/week2/user-stories.md`](../repor
 | US-12 | React web frontend | Could Have | [#21](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/21) | Active | Done | [Sprint 1](https://github.com/Team-9-swp/Route-optimization-Platform-swp/milestone/2) |
 | US-01 | Vehicle route and schedule | — | [#5](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/5) | Removed | — | — |
 
+## Totals
+
+- Active Product Backlog: 106 Story Points
+- Sprint 1: 91 Story Points
+- MVP v1: 91 Story Points
+
 ## Supporting PBIs (MVP v1)
 
 - PBI-01: Add CORS middleware to FastAPI app — [#30](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/30)
