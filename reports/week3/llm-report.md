@@ -4,6 +4,7 @@
 
 - Kimi Code CLI (Large Language Model coding assistant)
 - GitHub Copilot / inline suggestions were not used.
+- Speech-to-text transcription software
 
 ## How they were used
 
@@ -11,6 +12,7 @@
 - Helped write test cases and verify test failures before implementing fixes.
 - Generated project documentation, report templates and the CHANGELOG entry.
 - Suggested the stacked-PR branching strategy and issue numbering conventions.
+- Speech-to-text software was used to create the initial transcript of the customer meeting. The resulting text was manually reviewed, corrected, translated into English, sanitized, and formatted before being included in the report.
 
 ## Human oversight
 
