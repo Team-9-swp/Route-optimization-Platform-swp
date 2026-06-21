@@ -84,12 +84,12 @@ All MVP v1 PBIs have been implemented, reviewed and merged into `main`. The back
 
 | Name | GitHub username | Role | Issues / PBIs | PRs | Reviews |
 |---|---|---|---|---|---|
-| Name (TBD) | whateverwillbewillbe | Role (TBD) | #7, #8, #26, #30–#44 | #45–#71 | #34, #39, #44 |
-| Name (TBD) | quaaow | Role (TBD) | commit author for #45–#71 | — | — |
-| Name (TBD) | Adelevere | Role (TBD) | #19 | — | #46, #50, #54, #58, #61, #71 |
-| Name (TBD) | FuFill | Role (TBD) | #18 | — | #47, #51, #55, #59 |
-| Name (TBD) | belelvser | Role (TBD) | #5 | — | #48, #52, #56, #60 |
-| Name (TBD) | Aydar-art | Role (TBD) | #6 | — | #45, #49, #53, #57 |
+| Valerii Verbovetc | whateverwillbewillbe | Developer | #7, #8, #26, #30–#44 | #45–#71 | #34, #39, #44 |
+| Valerii Verbovetc | quaaow | Developer | commit author for #45–#71 | — | — |
+| Verenikina Adeliia | Adelevere | Product Owner | #19 | — | #46, #50, #54, #58, #61, #71 |
+| Matvei Trifonov | FuFill | Developer | #18 | — | #47, #51, #55, #59 |
+| Belorusova Elvina | belelvser | Scrum Master | #5 | — | #48, #52, #56, #60 |
+| Gaifullin Aydar | Aydar-art | Tech Lead | #6 | — | #45, #49, #53, #57 |
 
 ## Release and changelog
 
