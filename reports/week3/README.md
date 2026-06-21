@@ -141,7 +141,7 @@ All MVP v1 PBIs have been implemented, reviewed and merged into `main`. The back
 
 ## Video demonstration
 
-- *(link to be added after recording — record a <2 minute public demo and paste the URL here)*
+- Link to video: https://drive.google.com/file/d/1bbFjtIx1f06RvszFD5y2ouTFjYIBYfpO/view?usp=drive_link
 
 ## Screenshots
 
