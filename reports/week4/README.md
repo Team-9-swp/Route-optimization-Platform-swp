@@ -87,3 +87,18 @@ All Assignment 4 quality gates remain active for later project work:
 - Critical modules must maintain >=30% line coverage
 - Bandit security scan runs as the additional QA check
 - Later PBIs must maintain or extend these gates; any replacement must be documented as equivalent or stronger
+
+## Sprint Review status
+
+A customer meeting was conducted on 26 June 2026. The recording was not saved because of a technical recording failure.
+
+The customer could not access the hosted application because the current university VM deployment is limited to the Innopolis University network. As a result, customer-executed UAT and final acceptance were not completed.
+
+Final automated QRT and protected-main CI evidence were not demonstrated during this meeting.
+
+- [Customer review notes](customer-review-notes.md)
+- [Customer review summary](customer-review-summary.md)
+
+A follow-up recorded Sprint Review and customer-executed UAT session is required after customer access is available.
+
+[#92](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/92) remains open until the follow-up Sprint Review and all required review evidence are complete.
