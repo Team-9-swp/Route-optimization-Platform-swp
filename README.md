@@ -15,6 +15,32 @@ Then open:
 - Swagger UI: `http://localhost:8000/docs`
 - Web interface: `http://localhost:3000`
 
+## Deployment
+
+### Production (Docker Compose)
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.prod.yml up --build -d
+```
+
+The `docker-compose.prod.yml` override adds `restart: unless-stopped` policies and production environment settings.
+
+### Remote access via ngrok
+
+Share the running stack with the customer or TA over the internet:
+
+```bash
+ngrok http 3000
+```
+
+Then share the generated `https://*.ngrok-free.app` URL. The nginx proxy forwards `/api/` requests to the backend automatically.
+
+### Stopping
+
+```bash
+docker compose down
+```
+
 ## Local development
 
 ### Backend

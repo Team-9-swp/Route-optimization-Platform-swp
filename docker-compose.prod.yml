@@ -1,0 +1,9 @@
+services:
+  api:
+    restart: unless-stopped
+    environment:
+      - CORS_ORIGINS=http://localhost:3000,https://your-domain.com
+      - LOG_LEVEL=warning
+
+  frontend:
+    restart: unless-stopped
