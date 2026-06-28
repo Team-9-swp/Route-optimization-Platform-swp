@@ -25,7 +25,7 @@ def instance():
 @pytest.fixture(scope="module")
 def solution(instance):
     """Solve once and reuse the result for all correctness checks."""
-    sol = solve(instance, time_limit=30, seed=42, skip_loader_refinement=True)
+    sol = solve(instance, time_limit=30, seed=42)
     assert sol is not None, "Solver returned no solution"
     return sol
 

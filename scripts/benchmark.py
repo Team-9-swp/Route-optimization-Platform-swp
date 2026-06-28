@@ -9,7 +9,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from beta_code.pipeline.orchestrate import solve
 
 
-def run_benchmark(instances_dir, report_path, time_limit, seed, skip_loader_refinement=False):
+def run_benchmark(instances_dir, report_path, time_limit, seed):
     instance_files = sorted(Path(instances_dir).glob("i*.json"))
     results = []
     for path in instance_files:
@@ -22,7 +22,6 @@ def run_benchmark(instances_dir, report_path, time_limit, seed, skip_loader_refi
                 instance,
                 time_limit=time_limit,
                 seed=seed,
-                skip_loader_refinement=skip_loader_refinement,
             )
         except Exception as exc:
             elapsed = time.time() - start
@@ -56,17 +55,16 @@ def run_benchmark(instances_dir, report_path, time_limit, seed, skip_loader_refi
                 "runtime_s": round(elapsed, 2),
                 "unserved_optional": len(solution.get("unserved_optional", [])),
             })
-    write_report(results, report_path, time_limit, seed, skip_loader_refinement)
+    write_report(results, report_path, time_limit, seed)
     return results
 
 
-def write_report(results, report_path, time_limit, seed, skip_loader_refinement):
+def write_report(results, report_path, time_limit, seed):
     Path(report_path).parent.mkdir(parents=True, exist_ok=True)
-    mode = "greedy only" if skip_loader_refinement else "full pipeline"
     lines = [
         "# Solver Benchmark Report",
         "",
-        f"- Mode: {mode}",
+        "- Solver: PyVRP + Nevergrad",
         f"- Time limit per instance: {time_limit}s",
         f"- Seed: {seed}",
         f"- Instances: {len(results)}",
@@ -88,10 +86,9 @@ def main():
     parser.add_argument("--report-path", default="reports/week4/solver-benchmark.md", help="Output markdown report path")
     parser.add_argument("--time-limit", type=float, default=420, help="Solver time limit per instance in seconds")
     parser.add_argument("--seed", type=int, default=42, help="Random seed")
-    parser.add_argument("--skip-loader-refinement", action="store_true", help="Skip loader SA refinement phase")
     args = parser.parse_args()
 
-    run_benchmark(args.instances_dir, args.report_path, args.time_limit, args.seed, args.skip_loader_refinement)
+    run_benchmark(args.instances_dir, args.report_path, args.time_limit, args.seed)
 
 
 if __name__ == "__main__":

@@ -8,15 +8,12 @@ Usage:
 
 import argparse
 import json
-import os as _os
 import sys
 
-from beta_code.pipeline.orchestrate import solve
+from solver import solve
 
 
 def main():
-    _os.environ["GLOG_minloglevel"] = "3"
-
     parser = argparse.ArgumentParser(
         description="CVRPTW+Loader solver — adaptive pipeline"
     )

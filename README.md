@@ -15,6 +15,32 @@ Then open:
 - Swagger UI: `http://localhost:8000/docs`
 - Web interface: `http://localhost:3000`
 
+## Deployment
+
+### Production (Docker Compose)
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.prod.yml up --build -d
+```
+
+The `docker-compose.prod.yml` override adds `restart: unless-stopped` policies and production environment settings.
+
+### Remote access via ngrok
+
+Share the running stack with the customer or TA over the internet:
+
+```bash
+ngrok http 3000
+```
+
+Then share the generated `https://*.ngrok-free.app` URL. The nginx proxy forwards `/api/` requests to the backend automatically.
+
+### Stopping
+
+```bash
+docker compose down
+```
+
 ## Local development
 
 ### Backend
@@ -85,17 +111,10 @@ pytest -m quality
 
 ## Solver benchmarking
 
-Benchmark the full pipeline on all `instances/i*.json` fixtures:
+Benchmark the solver on all `instances/i*.json` fixtures:
 
 ```bash
 python scripts/benchmark.py --time-limit 60
-```
-
-Compare the greedy loader stage against the full pipeline:
-
-```bash
-python scripts/benchmark.py --time-limit 60 --skip-loader-refinement \
-       --report-path reports/week4/solver-benchmark-greedy.md
 ```
 
 ## Assignment reports
@@ -104,7 +123,6 @@ python scripts/benchmark.py --time-limit 60 --skip-loader-refinement \
 - [MVP v0 report](./reports/week2/mvp-v0-report.md)
 - [MVP v1 report](./reports/week3/README.md)
 - [Solver benchmark report](./reports/week4/solver-benchmark.md)
-- [Greedy-stage analysis](./reports/week4/greedy-stage-analysis.md)
 - [User-stories](docs/user-stories.md)
 
 ## License

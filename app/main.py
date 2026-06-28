@@ -10,7 +10,7 @@ from app.db import close_db, init_db
 def create_app(*, init_db_on_startup: bool = True) -> FastAPI:
     app = FastAPI(
         title="Route Optimization Solver",
-        description="Async wrapper around OR-Tools CVRPTW solver",
+        description="Async wrapper around CVRPTW solver",
         version="1.1.0",
     )
 

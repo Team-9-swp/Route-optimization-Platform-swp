@@ -17,7 +17,7 @@ def _solve_sync(
     seed: int,
     time_budget: float = 30.0,
 ) -> dict | None:
-    from beta_code.pipeline.orchestrate import solve as _solve
+    from solver import solve as _solve
 
     return _solve(instance, time_limit=time_budget, seed=seed)
 
