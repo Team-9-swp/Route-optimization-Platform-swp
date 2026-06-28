@@ -23,8 +23,7 @@ async def test_solver_zero_hard_constraint_violations():
         transport=httpx.ASGITransport(app=app), base_url="http://test"
     ) as client:
         response = await client.post(
-            "/solve?seed=42&time_limit=120&max_restarts=1&auto_validate=true",
-            json=instance
+            "/solve?seed=42&time_limit=60&auto_validate=true", json=instance
         )
         assert response.status_code == 202
         job_id = response.json()["job_id"]
@@ -40,5 +39,7 @@ async def test_solver_zero_hard_constraint_violations():
                 break
             await asyncio.sleep(2)
 
-    assert job_data["status"] == "completed", f"Job failed or timed out. Status: {job_data.get('status')}, Error: {job_data.get('error')}"
+    assert (
+        job_data["status"] == "completed"
+    ), f"Job failed or timed out. Status: {job_data.get('status')}, Error: {job_data.get('error')}"
     assert job_data["validation_status"] == "passed", "Solution did not pass validation"

@@ -15,6 +15,7 @@ export interface Job {
   objective_value?: number;
   validation_status?: ValidationStatus;
   validation_report?: Record<string, unknown>;
+  unserved_optional?: number[];
 }
 
 export interface JobListResponse {

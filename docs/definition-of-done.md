@@ -39,6 +39,15 @@ A Product Backlog Item may be marked as `Done` only when all applicable conditio
 * `CHANGELOG.md` is updated for every user-visible change.
 * Documentation does not contain secrets, private credentials, or prohibited customer information.
 
+## Assignment 4 Specific Checks
+
+For PBI's delivered under Assignment 4 the following evidence must also exist before marking the item as `Done`:
+
+- Persistent job storage is covered by an automated integration test that recreates the application/store.
+- Quality Requirement Tests (QRTs) in `tests/quality/` pass for the affected product area.
+- Solver changes are accompanied by a benchmark report in `reports/week4/` when the change may affect objective value, runtime, or feasibility.
+- API contract changes are reflected in `README.md`, `CHANGELOG.md`, and the OpenAPI/Postman artifacts where applicable.
+
 ## Completion Rule
 
 A Product Backlog Item must not be marked as `Done` while any required condition above remains incomplete.

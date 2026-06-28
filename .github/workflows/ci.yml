@@ -9,42 +9,65 @@ on:
 jobs:
   backend:
     runs-on: ubuntu-latest
-    
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: optimizer
+          POSTGRES_PASSWORD: optimizer
+          POSTGRES_DB: optimizer
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgresql+asyncpg://optimizer:optimizer@localhost:5432/optimizer
+
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
         python-version: '3.11'
-        
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install ruff black pytest-cov bandit httpx
-        
+
+    - name: Run database migrations
+      run: alembic upgrade head
+      env:
+        DATABASE_URL: postgresql+asyncpg://optimizer:optimizer@localhost:5432/optimizer
+
     - name: Lint with Ruff
       run: ruff check . --output-format=github
       continue-on-error: true
-        
+
     - name: Format check with Black
       run: black --check .
       continue-on-error: true
-        
+
     - name: Run Unit & Integration Tests with Coverage
       run: |
         pytest tests/ --ignore=tests/quality --ignore=tests/test_e2e.py --ignore=tests/test_validator.py --cov=app --cov-report=xml --cov-report=term-missing
-        
+
     - name: Run Automated Quality Requirement Tests (QRTs)
       run: |
         pytest tests/quality/ -m "qrt"
-        
+
     - name: Additional QA Check (Security Static Analysis)
       run: |
         # -ll ensures only Medium and High severity issues fail the build
-        bandit -r app/ -ll 
-        
+        bandit -r app/ -ll
+
     - name: Upload Coverage Report
       uses: actions/upload-artifact@v4
       with:
