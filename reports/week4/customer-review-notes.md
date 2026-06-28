@@ -81,17 +81,16 @@ The Assignment 4 quality model covers:
 - recoverability of stored jobs;
 - confidentiality of public error responses.
 
-Local evidence before PR CI:
+Verified protected-main evidence after merged [PR #106](https://github.com/Team-9-swp/Route-optimization-Platform-swp/pull/106):
 
-- Ruff: passing;
-- Black: passing;
-- compileall: passing;
-- fast backend tests: 14 passed;
-- direct solver QRT support tests: 5 passed in 147.18 seconds;
-- QRT marker discovery: 15 tests under both `qrt` and `quality`;
-- Bandit: no medium/high severity findings.
-
-Final PostgreSQL-backed QRT execution, full integration coverage, frontend type checking, frontend build, and protected-main evidence still require the PR or main GitHub Actions run.
+- CI Pipeline [run 28335038211](https://github.com/Team-9-swp/Route-optimization-Platform-swp/actions/runs/28335038211) passed on `main` commit `95cc4804922d8ce053afea607f172817747f742a`;
+- Link Check [run 28335038205](https://github.com/Team-9-swp/Route-optimization-Platform-swp/actions/runs/28335038205) passed;
+- backend unit/integration tests: `39 passed`, `1 deselected`;
+- QRTs: `15 passed`;
+- coverage: `app/service.py` 100%, `app/repository.py` 97%, `app/api.py` 100%, total `app/` 94%;
+- Ruff and Black passed as blocking backend checks;
+- Bandit passed with no medium/high severity findings across 539 lines;
+- frontend `npm run typecheck` and `npm run build` passed.
 
 ## Customer Feedback
 
@@ -114,9 +113,8 @@ The customer requested or recommended:
 ## Remaining Gaps and Risks
 
 - The university VM deployment is not publicly verified as accessible outside the Innopolis University network.
-- Final GitHub release `v1.2.0` must be created after merge to `main`.
+- Final GitHub release `v1.2.0` must be created from the final protected-`main` commit after this documentation evidence PR is merged.
 - Branch protection / required-check evidence requires organization admin verification.
-- Full PR CI evidence is pending because the branch could not yet be pushed from this environment.
 - Solver quality relative to a baseline remains a broader product risk unless benchmark comparison evidence is reviewed.
 
 ## Required Follow-up Sprint Review Evidence

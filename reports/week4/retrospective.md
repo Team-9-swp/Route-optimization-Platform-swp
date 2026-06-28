@@ -1,6 +1,6 @@
 # Sprint Retrospective - Week 4
 
-**Status:** Interim retrospective. The product increment and public documents have been updated, but final PR CI, branch-protection evidence, deployment/access verification, post-merge release creation, and final Sprint Review verification remain open.
+**Status:** Interim retrospective. The product increment and public CI evidence have been updated, but branch-protection evidence, deployment/access verification, private evidence, screenshots, post-merge release creation, and final Sprint Review verification remain open.
 
 ## What went well
 
@@ -10,6 +10,7 @@
 - The current solver is benchmarked in a reproducible report.
 - Quality requirements use stable IDs, ISO/IEC 25010 sub-characteristics, measurable thresholds, and automated QRT links.
 - Ruff and Black are now configured as blocking CI checks instead of optional checks.
+- PR #106 merged, and protected-main CI verified backend tests, QRTs, Bandit, frontend typecheck, frontend build, coverage upload, and Link Check.
 - UAT and Sprint Review evidence are documented with a clear separation between public sanitized summaries and private recording evidence.
 
 ## What did not go well
@@ -18,9 +19,8 @@
 - The 26 June meeting recording was not saved because of a technical failure.
 - UAT had to be moved to a separate recorded session on 27 June.
 - Public notes do not verify that the 27 June recording covers every required Sprint Review topic.
-- Final CI evidence could not be produced locally because isolated PostgreSQL and Node/npm were unavailable in this environment.
 - GitHub branch protection evidence depends on organization-admin access.
-- Commit, push, and PR creation were blocked in this Codex session by the temporary elevated-action usage limit.
+- The final release still cannot be published until the documentation evidence PR is merged and the final protected-main commit SHA is known.
 
 ## Changes compared with the previous Sprint
 
@@ -48,8 +48,8 @@
 
 This retrospective can be marked final only after:
 
-- PR CI passes with backend integration tests, QRTs, frontend typecheck, and frontend build;
 - branch-protection evidence is verified by an organization admin or explicitly documented as unavailable;
 - deployment/access and release evidence are complete;
 - private UAT recording evidence is verified;
+- required screenshots are added;
 - final Sprint Review evidence is verified or a follow-up Sprint Review is conducted.

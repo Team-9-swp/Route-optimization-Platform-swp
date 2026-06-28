@@ -9,9 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Post-merge GitHub release creation for the Assignment 4 increment is pending after this PR is merged to `main`.
+- GitHub Release `v1.2.0` is prepared but not published. Create it from the final protected-`main` commit after this documentation evidence PR is merged.
 
-## [1.2.0] - 2026-06-28
+## [1.2.0] - Prepared, not published
 
 ### Added
 
