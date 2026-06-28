@@ -13,7 +13,7 @@ The 27 June recording must not be treated as the final Sprint Review unless priv
 
 The Sprint Goal was to deliver a more reliable and verifiable Route Optimization Platform by addressing selected customer feedback, preserving submitted jobs across restarts, improving solver robustness, and enforcing automated quality gates through tests and CI.
 
-The product work is prepared in the repository, but final evidence still depends on PR CI, branch-protection verification, deployment/access verification, and post-merge release creation.
+The product code increment is present on `main`, and PR #106 plus protected-main GitHub Actions provide public CI evidence. Final Assignment 4 evidence still depends on branch-protection verification, deployment/access verification, private evidence, screenshots, and post-merge release creation.
 
 ## Increment and Product Access
 
@@ -40,24 +40,23 @@ Implemented quality areas:
 - `QR-RE-01`: PostgreSQL recoverability;
 - `QR-SE-01`: safe error confidentiality.
 
-Local evidence before PR CI:
+Verified protected-main CI evidence after merged [PR #106](https://github.com/Team-9-swp/Route-optimization-Platform-swp/pull/106):
 
-- Ruff: passing;
-- Black: passing;
-- compileall: passing;
-- fast backend tests: 14 passed;
-- direct solver QRT support tests: 5 passed in 147.18 seconds;
-- QRT marker discovery: 15 tests under both `qrt` and `quality`;
-- Bandit: no medium/high severity findings.
+- CI Pipeline [run 28335038211](https://github.com/Team-9-swp/Route-optimization-Platform-swp/actions/runs/28335038211) passed on `main` commit `95cc4804922d8ce053afea607f172817747f742a`.
+- Link Check [run 28335038205](https://github.com/Team-9-swp/Route-optimization-Platform-swp/actions/runs/28335038205) passed.
+- Backend unit/integration tests passed: `39 passed`, `1 deselected`.
+- QRTs passed: `15 passed`.
+- Coverage: `app/service.py` 100%, `app/repository.py` 97%, `app/api.py` 100%, total `app/` 94%.
+- Ruff, Black, Bandit, frontend typecheck, and frontend production build passed.
 
 Final evidence still needed:
 
-- PR CI run with PostgreSQL service;
-- full integration coverage values;
-- full QRT execution;
-- frontend `npm run typecheck`;
-- frontend `npm run build`;
-- branch-protection / required-check verification.
+- branch-protection / required-check verification by a repository or organization admin;
+- deployment/customer access verification;
+- private UAT recording URL, exact timecodes, and recording permission evidence through Moodle or another approved private channel;
+- final Sprint Review evidence;
+- screenshots under `reports/week4/images/`;
+- final `v1.2.0` release after this documentation evidence PR is merged.
 
 ## Main Customer Feedback
 
@@ -77,11 +76,11 @@ Final evidence still needed:
 | Verify private UAT recording URL, exact timecodes, and permission evidence. | [#91](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/91) | Open |
 | Verify or conduct final Sprint Review recording covering all required topics. | [#92](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/92) | Open |
 | Verify branch protection / required checks. | [#89](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/89) | Open |
-| Create post-merge `v1.2.0` release from `main`. | [#90](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/90) | Pending post-merge |
+| Create post-merge `v1.2.0` release from the final protected-`main` commit. | [#90](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/90) | Pending post-merge |
 
 ## Remaining Risks
 
 - The public repository does not verify customer access to the hosted deployment.
 - The public repository does not include private recording links or timecodes.
 - The final Sprint Review is not verified as complete by public notes.
-- The final release cannot be created until this PR is merged into `main`.
+- The final release cannot be created until this documentation evidence PR is merged into `main`.

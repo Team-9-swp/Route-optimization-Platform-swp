@@ -14,7 +14,7 @@ The assumption that PostgreSQL persistence was needed for calculation history wa
 
 The assumption that skipped optional orders should be visible to users was validated by [#13](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/13), which is now represented in solver output and public job responses.
 
-The assumption that the current solver can be tested through the project validator was validated by the direct solver QRT support tests: `5 passed` locally in `147.18s`.
+The assumption that the current solver can be tested through the project validator was validated by the PR #106 QRT run: `15 passed` in protected-main CI.
 
 The assumption that Docker can serve as a fallback run method remains valid, but the university-network-only deployment is not sufficient customer access evidence.
 
@@ -22,21 +22,21 @@ The assumption that the 27 June recording proves UAT is reasonable for the UAT s
 
 ## Friction and gaps
 
-PR [#105](https://github.com/Team-9-swp/Route-optimization-Platform-swp/pull/105) is merged, and the final Assignment 4 code increment is present on `main`. The existing `v1.1.0` release predates that merge and therefore does not represent the final Assignment 4 increment.
+PR [#106](https://github.com/Team-9-swp/Route-optimization-Platform-swp/pull/106) is merged, and the final Assignment 4 code increment is present on `main`. The existing `v1.1.0` release predates that increment and therefore does not represent the final Assignment 4 release.
 
-Current CI defects addressed in this branch:
+Current CI defects addressed and verified through PR #106:
 
 - Ruff and Black were previously not reliable blocking gates; the workflow now makes them blocking.
 - The backend coverage command previously excluded integration tests through pytest defaults; the workflow now overrides the marker expression with `-m "not slow"`.
 - Frontend type checking was missing from CI; the workflow now runs `npm run typecheck`.
+- Protected-main CI passed with `39` backend tests, `15` QRTs, 94% total `app/` coverage, Bandit, frontend typecheck, and frontend build.
 
 Current evidence gaps:
 
-- full PR CI has not run for this branch because commit/push/PR creation was blocked by the temporary elevated-action usage limit;
-- local PostgreSQL integration/QRT execution could not use an isolated database;
-- local frontend typecheck/build could not run because Node/npm are not in PATH;
 - branch protection requires organization-admin verification;
 - deployment/customer access evidence remains incomplete;
+- screenshot files still need to be added under `reports/week4/images/`;
+- the final `v1.2.0` GitHub release does not exist yet and must be created from the final protected-main commit after this documentation evidence PR is merged;
 - private UAT recording URL, exact timecodes, and recording permission evidence must stay outside the public repository;
 - final Sprint Review status depends on whether private evidence verifies all required review topics.
 
@@ -44,9 +44,9 @@ Solver quality relative to a baseline still needs careful interpretation. The be
 
 ## Planned response
 
-After this branch is committed and pushed, open a PR to `main` and use the PR CI run to collect final backend coverage, full QRT results, frontend typecheck, frontend build, and Bandit evidence.
+Use PR #106 and the protected-main CI run as the public automated evidence for Assignment 4: CI Pipeline run 28335038211 and Link Check run 28335038205.
 
-Keep [#89](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/89) open until CI and branch-protection evidence are verified.
+Keep [#89](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/89) open until branch-protection evidence is verified.
 
 Keep [#90](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/90) open until deployment/access and the post-merge `v1.2.0` release are complete.
 
@@ -54,4 +54,4 @@ Keep [#91](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/
 
 Keep [#92](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/92) open unless the 27 June recording is verified to include the full Sprint Review agenda; otherwise conduct a follow-up recorded Sprint Review.
 
-Create the final `v1.2.0` GitHub release only after the PR is merged into protected `main`, using `reports/week4/release-notes-v1.2.0.md`.
+Create the final `v1.2.0` GitHub release only after this documentation evidence PR is merged into protected `main`, using `reports/week4/release-notes-v1.2.0.md`.

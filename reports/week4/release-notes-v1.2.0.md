@@ -1,6 +1,6 @@
 # Draft Release Notes - v1.2.0
 
-These notes are prepared for the post-merge GitHub release. The final release must be created from the merge commit on `main`, not from this PR branch.
+These notes are prepared for the future `v1.2.0` GitHub release. The release does not currently exist and must be created from the final protected-`main` commit after the documentation evidence PR is merged, not from a documentation branch.
 
 ## Assignment 4 Sprint Mapping
 
@@ -69,15 +69,19 @@ npm run build
 
 ## Known Evidence Limitations
 
-- The GitHub release must be created only after this PR is merged to `main`.
+- The GitHub release must be created only after the documentation evidence PR is merged to `main`.
 - Branch protection / required-check settings require organization admin verification.
 - Customer recording URL, exact UAT timecodes, and recording permission evidence must stay private and be supplied through Moodle or another approved private channel.
+- Final Sprint Review evidence is not publicly verified by the current sanitized notes.
 - The university VM deployment is publicly documented as network-limited until customer access is verified or another access method is explicitly agreed.
 
 ## Post-Merge Command
 
-After the PR is merged and `main` is up to date:
+After the documentation evidence PR is merged and `main` is up to date:
 
 ```bash
-gh release create v1.2.0 --target main --title "v1.2.0 - Assignment 4 Quality Gates and Persistent Jobs" --notes-file reports/week4/release-notes-v1.2.0.md
+gh release create v1.2.0 \
+  --target <FINAL_MAIN_COMMIT_SHA> \
+  --title "v1.2.0 - Assignment 4 Quality Gates and Persistent Jobs" \
+  --notes-file reports/week4/release-notes-v1.2.0.md
 ```
