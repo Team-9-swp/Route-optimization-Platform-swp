@@ -18,3 +18,72 @@ Detailed response notes are available in [customer-feedback-response.md](custome
 | The customer can run the application using Docker. | [#90 — Update VM deployment and create the Sprint release](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/90) | Selected for Assignment 4 | Docker remains the fallback access path. The Sprint release work must keep the Docker run instructions verified and usable if network access is still limited. |
 | The customer suggested reproducibility comparison between repeated runs. | [#97 — Compare solver with baseline and analyze greedy-stage impact](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/97) | Not planned for this Sprint | The selected follow-up focuses first on same-scenario baseline comparison and greedy-stage impact. Dedicated repeated-run tooling is postponed until the baseline comparison clarifies whether it is needed. |
 | The customer suggested Gantt-style schedules and workload-balancing visibility. | No current Sprint issue | Not planned for this Sprint | This was treated as lower priority than solver quality, deployment access, and the main visualization/reporting workflow. It may be reconsidered in a later Sprint. |
+
+## Quality Requirements
+
+The quality model follows ISO/IEC 25010. The following sub-characteristics were selected for Assignment 4:
+
+| ID | Sub-characteristic | Requirement |
+|---|---|---|
+| QR-FC-01 | Functional correctness | Solver output must satisfy all hard constraints for valid supported input instances. |
+| QR-PE-01 | Time behaviour | Fixed CI benchmark must complete within 30 seconds. |
+| QR-RE-01 | Recoverability | Submitted jobs and completed results must remain available after application restart. |
+| QR-SE-01 | Confidentiality | API responses must not expose stack traces, internal file paths, or implementation details. |
+
+See [docs/quality-requirements.md](../../docs/quality-requirements.md) for full definitions.
+
+## Testing Status
+
+### Critical Modules and Coverage
+
+| Critical module | Why critical | Required coverage | Current coverage |
+|---|---|---|---|
+| `app/service.py` | Core orchestration of solver jobs and validation | 30% | 100% |
+| `app/store.py` | Persistent job storage and thread safety | 30% | 98% |
+| `app/api.py` | Public-facing REST endpoints and request validation | 30% | 96% |
+
+All three critical modules exceed the 30% threshold. Total project coverage: 95%.
+
+### Test Suites
+
+| Test type | Scope | Location | Status |
+|---|---|---|---|
+| Unit tests | Schemas, Store CRUD, Validation, Service layer, Runner | [tests/](../../tests/) | 34 passing |
+| Integration tests | API + Service + Store, Solver validation | [tests/test_api.py](../../tests/test_api.py), [tests/test_validator.py](../../tests/test_validator.py) | Passing |
+| Automated QRTs | QR-FC-01, QR-PE-01, QR-SE-01 | [tests/quality/](../../tests/quality/) | 3 passing |
+
+See [docs/testing.md](../../docs/testing.md) for full details.
+
+## CI Pipeline
+
+The CI pipeline runs on every PR and push to `main` via GitHub Actions:
+
+- **Backend job:** Python 3.11 setup, Ruff linting, Black format check, pytest with coverage, QRTs, Bandit security scan
+- **Frontend job:** Node.js 20 setup, dependency install, Vite production build
+
+**Pipeline:** [ci.yml](../../.github/workflows/ci.yml)
+
+### Additional QA Check
+
+**Selected check:** Bandit (Security Static Analysis)
+
+**Options considered:**
+- `pip-audit` / `safety`: dependency vulnerability scanning — useful but overlaps with Dependabot
+- `mypy`: type checking — not yet adopted across the codebase; deferred to align with team convention
+- `bandit`: static application security testing — selected because it detects hardcoded secrets, unsafe deserialization, and injection patterns in the existing Python codebase without requiring type annotations
+
+**QA objective addressed:** Python code may contain hardcoded secrets, insecure deserialization, or unsafe error handling that could compromise API confidentiality or data integrity.
+
+**Scope:** `app/` directory (all production code)
+
+**Result:** 0 issues identified across 393 lines of code (Medium+ severity).
+
+### Continued Governance
+
+All Assignment 4 quality gates remain active for later project work:
+
+- Ruff linting and Black formatting are required checks before merge
+- Unit, integration, and QRTs run automatically on every PR and push to `main`
+- Critical modules must maintain >=30% line coverage
+- Bandit security scan runs as the additional QA check
+- Later PBIs must maintain or extend these gates; any replacement must be documented as equivalent or stronger

@@ -1,8 +1,13 @@
 from datetime import datetime, timezone
 
-import pytest
 
-from app.schemas import JobRecord, JobResponse, JobStatus, SolveResponse, ValidationStatus
+from app.schemas import (
+    JobRecord,
+    JobResponse,
+    JobStatus,
+    SolveResponse,
+    ValidationStatus,
+)
 
 
 def test_job_status_values():
