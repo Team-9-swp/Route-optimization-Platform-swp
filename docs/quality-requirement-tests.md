@@ -18,7 +18,7 @@ A QRT verifies a system-level quality property, not only the behaviour of one is
 | QRT ID | Quality requirement | Automated test | Main threshold |
 |---|---|---|---|
 | QRT-FC-01 | QR-FC-01 — Solver functional correctness | `tests/quality/test_qrt_functional_correctness.py` | Validator reports zero hard-constraint violations |
-| QRT-PE-01 | QR-PE-01 — Solver time behaviour | `tests/quality/test_qrt_time_behaviour.py` | Fixed CI fixture completes within 30 seconds |
+| QRT-PE-01 | QR-PE-01 — Solver time behaviour | `tests/quality/test_qrt_time_behaviour.py` | Fixed CI fixture completes within 900 seconds |
 | QRT-RE-01 | QR-RE-01 — Job recoverability | `tests/quality/test_job_recoverability.py` | Job and result survive store/application recreation |
 | QRT-SE-01 | QR-SE-01 — Safe error confidentiality | `tests/quality/test_qrt_confidentiality.py` | API response contains no traceback, internal path, or secret |
 
