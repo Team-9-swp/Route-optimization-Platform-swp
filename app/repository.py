@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime, timezone
 from typing import Any
 
-from sqlalchemy import delete, select, update
+from sqlalchemy import delete, func, select, update
 
 from app.db import JobModel, async_session_maker
 from app.schemas import JobRecord, JobStatus, ValidationStatus
@@ -11,7 +11,7 @@ from app.schemas import JobRecord, JobStatus, ValidationStatus
 class JobRepository:
     async def create_job(
         self,
-        instance: dict,
+        instance: dict[str, Any],
         seed: int,
         name: str | None = None,
         time_limit: float | None = None,
@@ -47,8 +47,7 @@ class JobRepository:
         sort_desc: bool = True,
     ) -> tuple[list[JobRecord], int]:
         async with async_session_maker() as session:
-            total_result = await session.execute(select(JobModel.job_id))
-            total = len(total_result.scalars().all())
+            total = (await session.execute(select(func.count(JobModel.job_id)))).scalar_one()
 
             order = JobModel.created_at.desc() if sort_desc else JobModel.created_at.asc()
             offset = (page - 1) * page_size
