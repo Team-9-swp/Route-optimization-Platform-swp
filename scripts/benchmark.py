@@ -25,36 +25,42 @@ def run_benchmark(instances_dir, report_path, time_limit, seed):
             )
         except Exception as exc:
             elapsed = time.time() - start
-            results.append({
-                "instance": path.name,
-                "status": "ERROR",
-                "objective_value": None,
-                "runtime_s": round(elapsed, 2),
-                "unserved_optional": None,
-                "error": f"{type(exc).__name__}: {exc}",
-            })
+            results.append(
+                {
+                    "instance": path.name,
+                    "status": "ERROR",
+                    "objective_value": None,
+                    "runtime_s": round(elapsed, 2),
+                    "unserved_optional": None,
+                    "error": f"{type(exc).__name__}: {exc}",
+                }
+            )
             continue
 
         elapsed = time.time() - start
         if solution is None:
-            results.append({
-                "instance": path.name,
-                "status": "FAILED",
-                "objective_value": None,
-                "runtime_s": round(elapsed, 2),
-                "unserved_optional": None,
-            })
+            results.append(
+                {
+                    "instance": path.name,
+                    "status": "FAILED",
+                    "objective_value": None,
+                    "runtime_s": round(elapsed, 2),
+                    "unserved_optional": None,
+                }
+            )
         else:
             objective_value = solution.get("objective_value")
             if objective_value is None:
                 objective_value = solution.get("_cost")
-            results.append({
-                "instance": path.name,
-                "status": "OK",
-                "objective_value": round(objective_value, 2),
-                "runtime_s": round(elapsed, 2),
-                "unserved_optional": len(solution.get("unserved_optional", [])),
-            })
+            results.append(
+                {
+                    "instance": path.name,
+                    "status": "OK",
+                    "objective_value": round(objective_value, 2),
+                    "runtime_s": round(elapsed, 2),
+                    "unserved_optional": len(solution.get("unserved_optional", [])),
+                }
+            )
     write_report(results, report_path, time_limit, seed)
     return results
 
@@ -81,10 +87,25 @@ def write_report(results, report_path, time_limit, seed):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Run solver benchmark on competition instances.")
-    parser.add_argument("--instances-dir", default="instances", help="Directory containing i*.json instances")
-    parser.add_argument("--report-path", default="reports/week4/solver-benchmark.md", help="Output markdown report path")
-    parser.add_argument("--time-limit", type=float, default=420, help="Solver time limit per instance in seconds")
+    parser = argparse.ArgumentParser(
+        description="Run solver benchmark on competition instances."
+    )
+    parser.add_argument(
+        "--instances-dir",
+        default="instances",
+        help="Directory containing i*.json instances",
+    )
+    parser.add_argument(
+        "--report-path",
+        default="reports/week4/solver-benchmark.md",
+        help="Output markdown report path",
+    )
+    parser.add_argument(
+        "--time-limit",
+        type=float,
+        default=420,
+        help="Solver time limit per instance in seconds",
+    )
     parser.add_argument("--seed", type=int, default=42, help="Random seed")
     args = parser.parse_args()
 

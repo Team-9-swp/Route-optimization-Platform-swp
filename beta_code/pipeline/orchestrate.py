@@ -5,7 +5,7 @@ _project_root = str(Path(__file__).resolve().parent.parent.parent)
 if _project_root not in sys.path:
     sys.path.insert(0, _project_root)
 
-from solver import solve as _solve
+from solver import solve as _solve  # noqa: E402
 
 
 def solve(problem_data, time_limit, seed):

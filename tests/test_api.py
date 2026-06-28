@@ -85,7 +85,9 @@ def test_post_validate(integration_client):
     root = Path(__file__).resolve().parent.parent
     instance = json.loads((root / "test_cases" / "t1.json").read_text())
     solution = json.loads((root / "test_cases" / "sol_t1.json").read_text())
-    response = integration_client.post("/validate", json={"instance": instance, "solution": solution})
+    response = integration_client.post(
+        "/validate", json={"instance": instance, "solution": solution}
+    )
     assert response.status_code == 200
     data = response.json()
     assert isinstance(data["passed"], bool)

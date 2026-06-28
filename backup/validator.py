@@ -595,9 +595,9 @@ class Validator:
         df_vehicles = self.vehicle_routes.assign(
             is_correct=lambda df: df[NAMES.ROUTE].apply(lambda x: x[0] == x[-1] == 0)
         )
-        
+
         depot_start_and_finish = df_vehicles[~df_vehicles["is_correct"]]
-        
+
         if not depot_start_and_finish.empty:
             self._logger.warning(
                 f"\nVehicle routes have to start and finish in depot. \n"
@@ -609,7 +609,7 @@ class Validator:
             is_correct=lambda df: df[NAMES.ROUTE].apply(lambda x: x[0] == x[-1])
         )
         loader_start_and_finish = df_loaders[~df_loaders["is_correct"]]
-        
+
         if not loader_start_and_finish.empty:
             self._logger.warning(
                 f"\nLoader routes have to start and finish in same point. \n"

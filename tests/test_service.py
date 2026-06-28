@@ -6,7 +6,7 @@ import pytest
 import pytest_asyncio
 
 from app.repository import JobRepository
-from app.schemas import JobStatus, ValidationStatus
+from app.schemas import JobStatus
 from app.service import SolverService
 
 
@@ -23,7 +23,9 @@ def service(repository):
     return SolverService(repository=repository)
 
 
-async def noop_runner(job_id: str, repository: JobRepository, *, auto_validate: bool = False) -> None:
+async def noop_runner(
+    job_id: str, repository: JobRepository, *, auto_validate: bool = False
+) -> None:
     record = await repository.get_job(job_id)
     if record is not None:
         await repository.update_job(job_id, status=JobStatus.RUNNING)
@@ -68,7 +70,9 @@ async def test_service_submits_job_with_name_and_auto_validate(repository, monke
         )
 
     service = SolverService(repository=repository, runner=fake_runner)
-    response = await service.submit_job({"orders": []}, seed=1, name="my-job", auto_validate=True)
+    response = await service.submit_job(
+        {"orders": []}, seed=1, name="my-job", auto_validate=True
+    )
     await asyncio.sleep(0)
     assert response.name == "my-job"
     assert calls["auto_validate"] is True

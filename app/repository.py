@@ -33,7 +33,9 @@ class JobRepository:
 
     async def get_job(self, job_id: str) -> JobRecord | None:
         async with get_session_maker()() as session:
-            result = await session.execute(select(JobModel).where(JobModel.job_id == job_id))
+            result = await session.execute(
+                select(JobModel).where(JobModel.job_id == job_id)
+            )
             row = result.scalar_one_or_none()
             if row is None:
                 return None
@@ -47,15 +49,16 @@ class JobRepository:
         sort_desc: bool = True,
     ) -> tuple[list[JobRecord], int]:
         async with get_session_maker()() as session:
-            total = (await session.execute(select(func.count(JobModel.job_id)))).scalar_one()
+            total = (
+                await session.execute(select(func.count(JobModel.job_id)))
+            ).scalar_one()
 
-            order = JobModel.created_at.desc() if sort_desc else JobModel.created_at.asc()
+            order = (
+                JobModel.created_at.desc() if sort_desc else JobModel.created_at.asc()
+            )
             offset = (page - 1) * page_size
             result = await session.execute(
-                select(JobModel)
-                .order_by(order)
-                .offset(offset)
-                .limit(page_size)
+                select(JobModel).order_by(order).offset(offset).limit(page_size)
             )
             rows = result.scalars().all()
             return [JobRepository._from_model(row) for row in rows], total
@@ -118,7 +121,9 @@ class JobRepository:
             result=record.result,
             error=record.error,
             objective_value=record.objective_value,
-            validation_status=record.validation_status.value if record.validation_status else None,
+            validation_status=(
+                record.validation_status.value if record.validation_status else None
+            ),
             validation_report=record.validation_report,
         )
 
@@ -137,7 +142,11 @@ class JobRepository:
             result=row.result,
             error=row.error,
             objective_value=row.objective_value,
-            validation_status=ValidationStatus(row.validation_status) if row.validation_status else None,
+            validation_status=(
+                ValidationStatus(row.validation_status)
+                if row.validation_status
+                else None
+            ),
             validation_report=row.validation_report,
         )
 

@@ -1,53 +1,53 @@
 # Definition of Done
 
-A Product Backlog Item may be marked as `Done` only when all applicable conditions below are satisfied.
+A Product Backlog Item may be marked as `Done` only when all applicable conditions below are satisfied and the evidence is linked from the issue, pull request, or Week 4 report.
 
 ## Implementation
 
-* The implementation is complete and meets all acceptance criteria.
-* The change is integrated with the existing product without breaking previously working functionality.
-* No unfinished placeholders, temporary code, or known blocking defects remain.
+* The implementation meets the linked issue acceptance criteria.
+* The change is integrated with the current product stack: FastAPI, PostgreSQL-backed `app/repository.py`, the PyVRP/Nevergrad solver, and the React frontend where applicable.
+* Existing public API contracts remain compatible, or the contract change is documented in `README.md`, frontend API code, and `CHANGELOG.md`.
+* No unfinished placeholders, temporary code, known blocking defects, private credentials, or private customer access details remain in tracked files.
 
 ## Testing and Verification
 
-* Required automated tests have been added or updated.
-* All relevant tests, linters, and CI checks pass.
-* The implemented behaviour has been manually verified when automated verification is insufficient.
-* Verification evidence is included in the related Issue, Pull Request, or Week 3 report.
-* Relevant Automated QRTs pass in CI.
-* Coverage for critical modules meets the >= 30% threshold.
-* Additional QA checks (Bandit security scan), Linting (Ruff), and Formatting (Black) pass in CI.
+* Relevant unit tests and integration tests are added or updated.
+* Important cross-component flows are covered where applicable, including API -> service -> PostgreSQL repository, solver -> validator, persistence/recovery, and skipped optional orders.
+* Applicable automated QRTs in `tests/quality/` pass.
+* Critical modules maintain at least 30% line coverage, including `app/service.py`, `app/repository.py`, and `app/api.py`.
+* Manual verification is recorded when automated verification is insufficient.
+* Evidence links are present for tests, coverage, QRTs, customer evidence, release evidence, or deployment evidence as applicable.
+
+## CI and Quality Gates
+
+* The backend CI job passes with blocking Ruff linting and Black formatting checks.
+* The backend CI job runs unit tests, meaningful integration tests, coverage, required QRTs, and Bandit security scanning.
+* The frontend CI job runs TypeScript type checking and the production build.
+* Required CI artifacts, such as coverage XML and test result XML, are preserved where the workflow produces them.
+* The pull request must not be merged while a required CI check is failing.
 
 ## Code Review
 
-* The change is submitted through an Issue-linked Pull Request.
-* The Pull Request is reviewed by a team member other than the implementer.
-* At least one meaningful review comment is provided where applicable.
-* All blocking review comments are resolved.
-* The Pull Request is approved before merging.
+* The change is submitted through an issue-linked pull request.
+* The pull request is reviewed and approved by a team member other than the implementer.
+* Blocking review comments are resolved before merge.
+* The merge uses the repository's required merge workflow into the protected default branch.
 
-## Integration
+## Documentation and Release Evidence
 
-* The Pull Request is merged into the protected default branch using the required merge-commit workflow.
-* The related Issue and Pull Request contain correct traceability links.
-* The Work Status and other relevant Project fields are updated.
-
-## Documentation
-
-* Technical and user documentation is updated when affected by the change.
-* Run, deployment, API, or access instructions are updated when applicable.
-* `CHANGELOG.md` is updated for every user-visible change.
-* Documentation does not contain secrets, private credentials, or prohibited customer information.
+* Technical, run, deployment, API, and user-facing documentation are updated when affected.
+* `CHANGELOG.md` is updated for user-visible changes.
+* Issue and Project Work Status are updated to match the real state.
+* Release and deployment evidence is linked when the PBI includes release or deployment work.
+* Public documentation is sanitized and contains no private recording links, credentials, customer identity, or private exact access details.
 
 ## Assignment 4 Specific Checks
 
-For PBI's delivered under Assignment 4 the following evidence must also exist before marking the item as `Done`:
-
-- Persistent job storage is covered by an automated integration test that recreates the application/store.
-- Quality Requirement Tests (QRTs) in `tests/quality/` pass for the affected product area.
-- Solver changes are accompanied by a benchmark report in `reports/week4/` when the change may affect objective value, runtime, or feasibility.
-- API contract changes are reflected in `README.md`, `CHANGELOG.md`, and the OpenAPI/Postman artifacts where applicable.
+* PostgreSQL job persistence is covered by an automated recoverability QRT or integration test that recreates the repository/application with the same database.
+* Solver changes include validation evidence and, when objective value or runtime may change, benchmark evidence in `reports/week4/`.
+* Quality requirements and QRT specifications remain synchronized with the implemented tests and CI commands.
+* UAT, Sprint Review, release, deployment, and branch-protection PBIs are not marked `Done` until their private or admin-only evidence is actually verified.
 
 ## Completion Rule
 
-A Product Backlog Item must not be marked as `Done` while any required condition above remains incomplete.
+A PBI must remain open or non-`Done` while any required evidence, review, CI, deployment, release, customer, or admin-only condition remains incomplete.

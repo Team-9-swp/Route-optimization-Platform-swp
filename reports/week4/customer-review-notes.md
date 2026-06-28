@@ -1,84 +1,99 @@
 # Customer Review Notes
 
-**Meeting date:** 26 June 2026
+## 26 June 2026 Partial Sprint Review
 
 **Participants:** Customer representative and project team members
 
-**Recording status:** The meeting took place, but the recording was not saved because of a technical recording failure. These sanitized notes were reconstructed immediately after the meeting from team notes.
+**Recording status:** The meeting took place, but the recording was not saved because of a technical recording failure. These sanitized notes were reconstructed from team notes.
 
-**Publication status:** These notes contain no personal names, credentials, private links, or confidential business information.
+**Publication status:** These notes contain no personal names, credentials, private links, exact private access details, or confidential business information.
 
-## Sprint Goal reviewed
+### Sprint Goal Reviewed
 
-The planned Sprint Goal was to improve the reliability and verifiability of the Route Optimization Platform by addressing selected customer feedback, improving persistence and solver robustness, defining measurable quality requirements, and adding automated quality gates.
+The planned Sprint Goal was to improve reliability and verifiability of the Route Optimization Platform by addressing selected customer feedback, preserving submitted jobs across restarts, improving solver robustness, defining measurable quality requirements, and adding automated quality gates.
 
-The complete Sprint increment was not presented as finished during this meeting.
+The complete Sprint increment was not accepted as finished during this meeting.
 
-## Delivered increment discussed
+### Delivered Increment Discussed
 
 The discussion covered:
 
 - the current route optimization platform;
-- the existing Docker-based run method;
-- the university VM deployment;
+- Docker-based run method;
+- university VM deployment;
 - current solver behaviour;
-- planned quality requirements and automated quality verification.
+- planned quality requirements and automated verification.
 
 Unfinished Assignment 4 features were not recorded as completed demonstrations.
 
-## Deployment and customer access
+### Deployment and Customer Access
 
-The customer could not open the hosted website because the university VM deployment was reachable only from the Innopolis University network, while the customer was outside Innopolis.
+The customer could not open the hosted website because the university VM deployment was reachable only from the Innopolis University network while the customer was outside Innopolis.
 
-The project can be run locally using Docker. Docker was discussed as a temporary fallback.
+Docker was discussed as a temporary fallback. The team agreed to investigate either external access to the hosted application or another explicitly agreed remote access method.
 
-The team agreed to investigate:
+### UAT Result for 26 June
 
-- external access to the hosted application; or
-- another explicitly agreed remote access method.
-
-Customer access must be verified before the follow-up UAT session.
-
-## UAT results
-
-Customer-executed UAT was not completed during this meeting because the customer could not access the hosted product.
+Customer-executed UAT was not completed during this meeting.
 
 Therefore:
 
-- no UAT scenario should be marked Passed based on this meeting;
-- the current increment was not accepted by the customer through UAT;
-- a follow-up recorded session is required after customer access is available.
+- no UAT scenario should be marked passed based on the 26 June meeting;
+- the increment was not accepted by the customer through UAT on 26 June;
+- a separate recorded UAT session was required.
 
-## Addressed customer feedback
+## 27 June 2026 Customer UAT
 
-The team discussed previous customer requests related to:
+A separate recorded customer UAT session exists from 27 June 2026. Public repository files include only sanitized results and do not include the recording URL, exact timecodes, recording permission evidence, customer identity, credentials, or private access details.
 
-- route-result visibility;
-- calculation history and persistence;
-- solver execution time;
-- solution quality relative to the baseline;
-- customer access to the deployed application.
+Sanitized UAT result:
 
-The corresponding backlog work is tracked through [#13](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/13), [#23](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/23), [#85](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/85), [#87](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/87), [#88](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/88), [#90](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/90), and [#97](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/97).
+- UAT-01: submit a delivery instance and receive an optimized solution - passed according to sanitized UAT notes.
+- UAT-02: validate a custom solution through the validator - passed according to sanitized UAT notes.
+- UAT-03: retrieve previously submitted solutions from history - passed according to sanitized UAT notes.
 
-## Quality requirements and automated quality evidence
+Private evidence still required for Moodle or another approved private channel:
 
-The team has prepared or is preparing quality requirements covering:
+- recording URL;
+- exact UAT timecodes;
+- recording permission evidence.
+
+The available public notes do not verify that the 27 June recording also covered all required Sprint Review topics. It must not be used as final Sprint Review evidence unless private notes or timecodes confirm the complete Sprint Review agenda.
+
+## Addressed Customer Feedback
+
+The team tracked customer feedback through:
+
+- [#13 - Skipped optional orders report](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/13)
+- [#23 - Solver refactoring and performance](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/23)
+- [#85 - Persist jobs and results across restarts](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/85)
+- [#87 - Define quality requirements and QRT specifications](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/87)
+- [#88 - Add automated tests, coverage, and QA checks](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/88)
+- [#90 - Update VM deployment and create the Sprint release](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/90)
+- [#97 - Compare solver with baseline and analyze greedy-stage impact](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/97)
+
+## Quality Requirements and Automated Evidence
+
+The Assignment 4 quality model covers:
 
 - solver functional correctness;
-- solver time behaviour;
+- solver time behaviour with a 900 second fixed benchmark threshold;
 - recoverability of stored jobs;
-- safe API error handling.
+- confidentiality of public error responses.
 
-At the time of this meeting:
+Local evidence before PR CI:
 
-- final automated QRT implementations were not demonstrated;
-- final protected-default-branch CI evidence was not demonstrated;
-- no claim should be made that all quality gates passed.
+- Ruff: passing;
+- Black: passing;
+- compileall: passing;
+- fast backend tests: 14 passed;
+- direct solver QRT support tests: 5 passed in 147.18 seconds;
+- QRT marker discovery: 15 tests under both `qrt` and `quality`;
+- Bandit: no medium/high severity findings.
 
-The final quality evidence must be shown during the follow-up Sprint Review or linked from the completed Week 4 report.
+Final PostgreSQL-backed QRT execution, full integration coverage, frontend type checking, frontend build, and protected-main evidence still require the PR or main GitHub Actions run.
 
-## Customer feedback
+## Customer Feedback
 
 The customer requested or recommended:
 
@@ -89,47 +104,34 @@ The customer requested or recommended:
 
 ## Decisions
 
-- Deployment accessibility is an immediate blocker for customer UAT.
-- Docker remains a temporary fallback access method.
-- Baseline comparison and greedy-stage analysis are tracked in [#97](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/97).
-- Broader joint optimization remains part of solver investigation under [#23](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/23).
-- UAT and final Sprint Review evidence must be completed in a follow-up recorded session.
-- [#87](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/87) records quality requirement and QRT specifications; [#88](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/88) remains open until QRT implementation and CI evidence are complete.
+- Deployment accessibility remains an important blocker for customer access and final release evidence.
+- Docker remains the documented fallback run method.
+- Baseline comparison and greedy-stage analysis are tracked in [#97](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/97) and the public benchmark report.
+- Broader joint optimization remains Product Backlog work under [#23](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/23).
+- [#91](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/91) should remain open until private UAT recording evidence is verified.
+- [#92](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/92) should remain open until a final Sprint Review recording or verified timecodes cover all required topics.
 
-## Remaining gaps and risks
+## Remaining Gaps and Risks
 
-- The customer cannot currently access the hosted product outside the university network.
-- Customer-executed UAT is incomplete.
-- Final Assignment 4 increment evidence is incomplete.
-- Automated QRT and protected-branch CI evidence is incomplete.
-- The current solver architecture may lose solution quality by optimizing major components mainly in sequence.
-- [#97](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/97) still requires actual baseline measurements.
+- The university VM deployment is not publicly verified as accessible outside the Innopolis University network.
+- Final GitHub release `v1.2.0` must be created after merge to `main`.
+- Branch protection / required-check evidence requires organization admin verification.
+- Full PR CI evidence is pending because the branch could not yet be pushed from this environment.
+- Solver quality relative to a baseline remains a broader product risk unless benchmark comparison evidence is reviewed.
 
-## Resulting Product Backlog updates
+## Required Follow-up Sprint Review Evidence
 
-- [#90](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/90) was updated with external or agreed remote access, Docker fallback, and pre-UAT access verification criteria.
-- [#23](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/23) contains the new joint-optimization and solver-quality feedback.
-- [#97](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/97) tracks baseline comparison and greedy-stage analysis.
-- [#91](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/91) remains open until customer-executed UAT is completed.
-- [#92](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/92) remains open until the follow-up Sprint Review and all required review evidence are complete.
-
-## Required follow-up Sprint Review
-
-Conduct a short recorded follow-up session after the customer can access the product.
-
-The follow-up must cover:
+If the 27 June recording is used for final Sprint Review evidence, private notes or timecodes must verify all of the following:
 
 1. recording permission before recording starts;
 2. planned Sprint Goal;
 3. delivered Sprint increment;
 4. addressed customer feedback;
-5. customer execution of at least three UAT scenarios;
+5. customer execution of UAT scenarios;
 6. UAT results;
 7. quality requirements;
 8. automated QRT results;
 9. latest protected-main CI evidence;
-10. quality gates that must continue into later work;
+10. quality gates that continue into later work;
 11. remaining gaps and risks;
 12. resulting Product Backlog changes.
-
-Record exact Moodle-only timestamps for the UAT and Sprint Review sections.

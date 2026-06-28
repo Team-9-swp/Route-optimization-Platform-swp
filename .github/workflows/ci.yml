@@ -49,19 +49,17 @@ jobs:
 
     - name: Lint with Ruff
       run: ruff check . --output-format=github
-      continue-on-error: true
 
     - name: Format check with Black
       run: black --check .
-      continue-on-error: true
 
     - name: Run Unit & Integration Tests with Coverage
       run: |
-        pytest tests/ --ignore=tests/quality --ignore=tests/test_e2e.py --ignore=tests/test_validator.py --cov=app --cov-report=xml --cov-report=term-missing
+        pytest tests/ --ignore=tests/quality --ignore=tests/test_e2e.py -m "not slow" --cov=app --cov-report=xml --cov-report=term-missing --junitxml=backend-test-results.xml
 
     - name: Run Automated Quality Requirement Tests (QRTs)
       run: |
-        pytest tests/quality/ -m "qrt"
+        pytest tests/quality/ -m "qrt" -q --junitxml=qrt-test-results.xml
 
     - name: Additional QA Check (Security Static Analysis)
       run: |
@@ -70,9 +68,13 @@ jobs:
 
     - name: Upload Coverage Report
       uses: actions/upload-artifact@v4
+      if: always()
       with:
         name: coverage-report
-        path: coverage.xml
+        path: |
+          coverage.xml
+          backend-test-results.xml
+          qrt-test-results.xml
 
   frontend:
     runs-on: ubuntu-latest
@@ -89,6 +91,10 @@ jobs:
         
     - name: Install dependencies
       run: npm ci
+      working-directory: frontend
+
+    - name: Type check frontend
+      run: npm run typecheck
       working-directory: frontend
         
     - name: Build frontend
