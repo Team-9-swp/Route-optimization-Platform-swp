@@ -126,7 +126,7 @@ An externally reachable tunnel such as ngrok may be used only as an agreed acces
 ngrok http 3000
 ```
 
-Issue [#90](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/90) remains the tracking item for deployment access and the final post-merge release.
+Issue [#90](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/90) remains the tracking item for deployment/customer access. GitHub Release [`v1.2.0`](https://github.com/Team-9-swp/Route-optimization-Platform-swp/releases/tag/v1.2.0) is published from protected `main`.
 
 ## Assignment Reports
 

@@ -7,11 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-
-- GitHub Release `v1.2.0` is prepared but not published. Create it from the final protected-`main` commit after this documentation evidence PR is merged.
-
-## [1.2.0] - Prepared, not published
+## [1.2.0] - 2026-06-29
 
 ### Added
 
@@ -87,7 +83,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - JobDetail route map: custom SVG zoom/pan, per-route visibility filter, color legend and body-scroll lock on hover.
 
-[Unreleased]: https://github.com/Team-9-swp/Route-optimization-Platform-swp/compare/main...HEAD
-[1.2.0]: https://github.com/Team-9-swp/Route-optimization-Platform-swp/compare/v1.1.0...main
+[Unreleased]: https://github.com/Team-9-swp/Route-optimization-Platform-swp/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/Team-9-swp/Route-optimization-Platform-swp/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/Team-9-swp/Route-optimization-Platform-swp/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/Team-9-swp/Route-optimization-Platform-swp/releases/tag/v1.0.0

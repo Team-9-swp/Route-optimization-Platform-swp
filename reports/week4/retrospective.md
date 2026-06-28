@@ -1,6 +1,6 @@
 # Sprint Retrospective - Week 4
 
-**Status:** Interim retrospective. The product increment and public CI evidence have been updated, but branch-protection evidence, deployment/access verification, private evidence, screenshots, post-merge release creation, and final Sprint Review verification remain open.
+**Status:** Interim retrospective. The product increment, public CI evidence, screenshots, GitHub Release `v1.2.0`, and combined Sprint Review/UAT documentation have been updated. Branch-protection evidence, deployment/access verification, and private Moodle-only recording evidence remain open.
 
 ## What went well
 
@@ -11,16 +11,14 @@
 - Quality requirements use stable IDs, ISO/IEC 25010 sub-characteristics, measurable thresholds, and automated QRT links.
 - Ruff and Black are now configured as blocking CI checks instead of optional checks.
 - PR #106 merged, and protected-main CI verified backend tests, QRTs, Bandit, frontend typecheck, frontend build, coverage upload, and Link Check.
-- UAT and Sprint Review evidence are documented with a clear separation between public sanitized summaries and private recording evidence.
+- The combined Sprint Review and customer UAT session was completed on 27 June 2026, with public sanitized summaries separated from private Moodle-only recording evidence.
+- GitHub Release `v1.2.0` is published from protected `main`.
 
 ## What did not go well
 
 - The customer could not access the hosted product from outside the Innopolis University network during the 26 June meeting.
-- The 26 June meeting recording was not saved because of a technical failure.
-- UAT had to be moved to a separate recorded session on 27 June.
-- Public notes do not verify that the 27 June recording covers every required Sprint Review topic.
 - GitHub branch protection evidence depends on organization-admin access.
-- The final release still cannot be published until the documentation evidence PR is merged and the final protected-main commit SHA is known.
+- Private recording URL, exact timecodes, and permission evidence cannot be published in the repository and must remain in Moodle.
 
 ## Changes compared with the previous Sprint
 
@@ -28,7 +26,7 @@
 - Quality gates are treated as continuing project assets, not one-time report material.
 - QRTs now exercise solver correctness, performance, recoverability, and safe error handling.
 - Documentation distinguishes Done, deferred, blocked, private-evidence, and post-merge states.
-- Release preparation now separates draft release notes from actual release creation on protected `main`.
+- Release documentation now points to the published `v1.2.0` release on protected `main`.
 
 ## Process improvements
 
@@ -49,7 +47,5 @@
 This retrospective can be marked final only after:
 
 - branch-protection evidence is verified by an organization admin or explicitly documented as unavailable;
-- deployment/access and release evidence are complete;
-- private UAT recording evidence is verified;
-- required screenshots are added;
-- final Sprint Review evidence is verified or a follow-up Sprint Review is conducted.
+- deployment/access evidence is complete;
+- private combined Sprint Review/UAT recording evidence remains available through Moodle.

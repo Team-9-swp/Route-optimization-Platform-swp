@@ -2,18 +2,19 @@
 
 ## Summary
 
-Assignment 4 has two separate customer-evidence events:
+A recorded customer session took place on 27 June 2026 and included both the Sprint Review and customer UAT.
 
-- **26 June 2026:** partial Sprint Review / customer meeting. The recording was not saved because of a technical failure, and UAT was not completed because the customer could not access the hosted product outside the Innopolis University network.
-- **27 June 2026:** separate recorded customer UAT session. Sanitized notes record UAT-01, UAT-02, and UAT-03 as passed. The public repository does not contain the recording link, exact timecodes, customer identity, credentials, or private access details.
+The team reviewed the Sprint Goal and delivered increment, demonstrated the product, discussed customer feedback and remaining risks, and executed UAT-01, UAT-02, and UAT-03.
 
-The 27 June recording must not be treated as the final Sprint Review unless private notes or timecodes verify that it also covered every required Sprint Review topic.
+The three active UAT scenarios are recorded as passed in the maintained UAT documentation.
+
+The private recording URL, customer identity, and private access information are intentionally excluded from the public repository and are supplied only through Moodle.
 
 ## Sprint Goal
 
 The Sprint Goal was to deliver a more reliable and verifiable Route Optimization Platform by addressing selected customer feedback, preserving submitted jobs across restarts, improving solver robustness, and enforcing automated quality gates through tests and CI.
 
-The product code increment is present on `main`, and PR #106 plus protected-main GitHub Actions provide public CI evidence. Final Assignment 4 evidence still depends on branch-protection verification, deployment/access verification, private evidence, screenshots, and post-merge release creation.
+The product code increment is present on `main`, PR #106 plus protected-main GitHub Actions provide public CI evidence, and GitHub Release `v1.2.0` is published. Remaining public evidence work is limited to branch-protection verification and deployment/access verification; private recording evidence stays outside the repository.
 
 ## Increment and Product Access
 
@@ -25,11 +26,11 @@ The university VM deployment is documented as limited to the Innopolis Universit
 
 | Scenario | Public sanitized result | Evidence limitation |
 |---|---|---|
-| UAT-01 - Submit a delivery instance and receive an optimized solution | Passed according to 27 June UAT notes | Private recording URL, timecodes, and permission evidence required |
-| UAT-02 - Validate a custom solution through the validator | Passed according to 27 June UAT notes | Private recording URL, timecodes, and permission evidence required |
-| UAT-03 - Retrieve previously submitted solutions from history | Passed according to 27 June UAT notes | Private recording URL, timecodes, and permission evidence required |
+| UAT-01 - Submit a delivery instance and receive an optimized solution | Passed according to 27 June combined Sprint Review/UAT notes | Private recording URL, timecodes, and permission evidence are Moodle-only |
+| UAT-02 - Validate a custom solution through the validator | Passed according to 27 June combined Sprint Review/UAT notes | Private recording URL, timecodes, and permission evidence are Moodle-only |
+| UAT-03 - Retrieve previously submitted solutions from history | Passed according to 27 June combined Sprint Review/UAT notes | Private recording URL, timecodes, and permission evidence are Moodle-only |
 
-Issue [#91](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/91) should remain open until the private UAT evidence is verified.
+Issue [#91](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/91) tracks Moodle-only UAT recording evidence that is intentionally not committed publicly.
 
 ## Quality Evidence Status
 
@@ -53,10 +54,7 @@ Final evidence still needed:
 
 - branch-protection / required-check verification by a repository or organization admin;
 - deployment/customer access verification;
-- private UAT recording URL, exact timecodes, and recording permission evidence through Moodle or another approved private channel;
-- final Sprint Review evidence;
-- screenshots under `reports/week4/images/`;
-- final `v1.2.0` release after this documentation evidence PR is merged.
+- private recording URL, exact timecodes, and recording permission evidence through Moodle or another approved private channel.
 
 ## Main Customer Feedback
 
@@ -72,15 +70,11 @@ Final evidence still needed:
 
 | Action | Issue | Current status |
 |---|---|---|
-| Verify external or explicitly agreed customer access and create the final release after merge. | [#90](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/90) | Open |
-| Verify private UAT recording URL, exact timecodes, and permission evidence. | [#91](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/91) | Open |
-| Verify or conduct final Sprint Review recording covering all required topics. | [#92](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/92) | Open |
+| Verify external or explicitly agreed customer access. | [#90](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/90) | Open |
+| Keep private combined Sprint Review/UAT recording URL, exact timecodes, and permission evidence in Moodle only. | [#91](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/91), [#92](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/92) | Private evidence |
 | Verify branch protection / required checks. | [#89](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/89) | Open |
-| Create post-merge `v1.2.0` release from the final protected-`main` commit. | [#90](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/90) | Pending post-merge |
 
 ## Remaining Risks
 
 - The public repository does not verify customer access to the hosted deployment.
 - The public repository does not include private recording links or timecodes.
-- The final Sprint Review is not verified as complete by public notes.
-- The final release cannot be created until this documentation evidence PR is merged into `main`.
