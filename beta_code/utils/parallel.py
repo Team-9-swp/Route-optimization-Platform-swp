@@ -43,8 +43,15 @@ def ortools_worker(problem_data_dict, time_limit, seed, strategy_name):
     return strategy_name, vehicle_routes, unserved_optional, cost
 
 
-def loader_sa_worker(problem_data_dict, vehicle_routes, loader_routes,
-                     unserved_optional, vehicle_times, time_budget, seed):
+def loader_sa_worker(
+    problem_data_dict,
+    vehicle_routes,
+    loader_routes,
+    unserved_optional,
+    vehicle_times,
+    time_budget,
+    seed,
+):
     """Standalone Loader SA chain run in a subprocess."""
     _suppress_stderr()
     random.seed(seed)
@@ -56,9 +63,12 @@ def loader_sa_worker(problem_data_dict, vehicle_routes, loader_routes,
     solution.unserved_optional = set(unserved_optional)
 
     loader_sa = LoaderSA(
-        problem, evaluator,
-        temp0=100, alpha=0.998,
-        max_iters=100000, time_budget=time_budget,
+        problem,
+        evaluator,
+        temp0=100,
+        alpha=0.998,
+        max_iters=100000,
+        time_budget=time_budget,
     )
     improved = loader_sa.improve(solution, vehicle_times)
 

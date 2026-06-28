@@ -3,7 +3,9 @@ from typing import Any
 from backup.validator import validate_solution as _validate_solution
 
 
-def validate_solution(instance: dict[str, Any], solution: dict[str, Any]) -> dict[str, Any]:
+def validate_solution(
+    instance: dict[str, Any], solution: dict[str, Any]
+) -> dict[str, Any]:
     """Validate a solution against an instance using the project's Validator.
 
     Returns a normalized dict that matches the ValidationResponse schema.

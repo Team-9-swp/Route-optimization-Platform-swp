@@ -29,7 +29,9 @@ class SolverService:
         record = self._store.create_job(
             instance, seed, name=name, time_limit=time_limit, max_restarts=max_restarts
         )
-        asyncio.create_task(self._runner(record.job_id, self._store, auto_validate=auto_validate))
+        asyncio.create_task(
+            self._runner(record.job_id, self._store, auto_validate=auto_validate)
+        )
         return SolveResponse(
             job_id=record.job_id,
             status=record.status,
@@ -64,7 +66,9 @@ class SolverService:
         page_size: int = 25,
         sort_desc: bool = True,
     ) -> JobListResponse:
-        records, total = self._store.list_jobs(page=page, page_size=page_size, sort_desc=sort_desc)
+        records, total = self._store.list_jobs(
+            page=page, page_size=page_size, sort_desc=sort_desc
+        )
         return JobListResponse(
             items=[self.get_job(record.job_id) for record in records],
             total=total,

@@ -9,7 +9,9 @@ from app.service import SolverService
 from app.store import JobStore
 
 
-async def noop_runner(job_id: str, store: JobStore, *, auto_validate: bool = False) -> None:
+async def noop_runner(
+    job_id: str, store: JobStore, *, auto_validate: bool = False
+) -> None:
     record = store.get_job(job_id)
     if record is not None:
         record.status = JobStatus.RUNNING
@@ -45,11 +47,17 @@ async def test_service_submits_job_with_name_and_auto_validate(monkeypatch):
 
     async def fake_runner(job_id, store, *, auto_validate=False):
         calls["auto_validate"] = auto_validate
-        store.update_job(job_id, status=JobStatus.COMPLETED, result={"objective_value": 1.0, "vehicles": [], "loaders": []})
+        store.update_job(
+            job_id,
+            status=JobStatus.COMPLETED,
+            result={"objective_value": 1.0, "vehicles": [], "loaders": []},
+        )
 
     store = JobStore()
     service = SolverService(store=store, runner=fake_runner)
-    response = await service.submit_job({"orders": []}, seed=1, name="my-job", auto_validate=True)
+    response = await service.submit_job(
+        {"orders": []}, seed=1, name="my-job", auto_validate=True
+    )
     await asyncio.sleep(0)
     assert response.name == "my-job"
     assert calls["auto_validate"] is True

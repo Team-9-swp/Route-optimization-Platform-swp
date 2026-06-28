@@ -80,7 +80,11 @@ async def run_solver(
             validation = validate_solution(record.input_data, result)
             store.update_job(
                 job_id,
-                validation_status=ValidationStatus.PASSED if validation["passed"] else ValidationStatus.FAILED,
+                validation_status=(
+                    ValidationStatus.PASSED
+                    if validation["passed"]
+                    else ValidationStatus.FAILED
+                ),
                 validation_report=validation,
             )
     except Exception as exc:
