@@ -22,7 +22,7 @@ async def test_api_async_responsiveness():
     ) as client:
         start = time.time()
         response = await client.post(
-            "/solve?seed=42&time_limit=30&max_restarts=5",
+            "/solve?seed=42&time_limit=30",
             json=instance
         )
         elapsed = time.time() - start

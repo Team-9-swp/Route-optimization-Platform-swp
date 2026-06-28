@@ -23,7 +23,7 @@ async def test_solver_zero_hard_constraint_violations():
         transport=httpx.ASGITransport(app=app), base_url="http://test"
     ) as client:
         response = await client.post(
-            "/solve?seed=42&time_limit=120&max_restarts=1&auto_validate=true",
+            "/solve?seed=42&time_limit=60&auto_validate=true",
             json=instance
         )
         assert response.status_code == 202
