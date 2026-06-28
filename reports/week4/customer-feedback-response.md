@@ -3,8 +3,7 @@
 ## Sources
 
 - Customer Sprint Review - 19 June 2026.
-- Partial customer meeting - 26 June 2026. The recording was not saved because of a technical failure.
-- Separate recorded customer UAT - 27 June 2026. Public files contain only sanitized summaries.
+- Combined recorded Sprint Review and customer UAT - 27 June 2026. Public files contain only sanitized summaries; private recording details are supplied through Moodle only.
 
 ## Feedback Response Table
 
@@ -29,7 +28,8 @@
 - [#85](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/85) is represented by PostgreSQL persistence and recoverability tests.
 - [#87](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/87) is represented by quality requirements and QRT specifications.
 - [#88](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/88) is represented by QRT implementation, CI workflow updates, and protected-main CI evidence from PR #106.
-- [#90](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/90), [#91](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/91), and [#92](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/92) should remain open until their deployment, private UAT, and Sprint Review evidence is actually verified.
+- [#90](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/90) remains open until deployment/customer access is actually verified.
+- [#91](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/91) and [#92](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/92) track private Moodle-only recording evidence and public reporting consistency for the combined Sprint Review/UAT session.
 
 ## Deferred Feedback
 

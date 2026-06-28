@@ -101,8 +101,7 @@ PR #106 and the subsequent protected-main CI run verify that these configured ga
 
 | Evidence | Scope | Public status | Limitation |
 |---|---|---|---|
-| 27 June 2026 customer UAT recording | UAT-01, UAT-02, UAT-03 | Public repository contains only sanitized scenario results and no private recording link. | Recording URL, exact timecodes, and permission evidence must stay private and be supplied through Moodle or another approved private channel. |
-| 26 June 2026 customer meeting notes | Partial Sprint Review and access blocker | Public sanitized notes are available in `reports/week4/`. | The recording was not saved and UAT was not completed in that meeting. |
+| 27 June 2026 combined Sprint Review and customer UAT recording | Sprint Review discussion, UAT-01, UAT-02, UAT-03 | Public repository contains only sanitized session and scenario results with no private recording link. | Recording URL, exact timecodes, and permission evidence must stay private and be supplied through Moodle or another approved private channel. |
 
 ## Assignment 4 Quality Gate Status
 
@@ -122,6 +121,4 @@ Remaining non-CI evidence requirements:
 
 - branch-protection/rules verification by someone with repository admin access;
 - deployment/customer access verification;
-- private UAT recording URL, exact timecodes, and permission evidence;
-- final Sprint Review evidence;
-- post-merge `v1.2.0` GitHub release if not yet published.
+- private combined Sprint Review/UAT recording URL, exact timecodes, and permission evidence.

@@ -8,16 +8,15 @@ This document defines end-user-facing acceptance test scenarios for the Route Op
 
 | Date | Event | Public status |
 |---|---|---|
-| 26 June 2026 | Customer meeting / partial Sprint Review | UAT was not completed because the customer could not access the hosted product outside the Innopolis University network. |
-| 27 June 2026 | Separate recorded customer UAT session | UAT scenarios below are recorded as passed in sanitized team notes. Private recording URL, exact timecodes, and recording permission evidence must be supplied through Moodle or another approved private channel. |
+| 27 June 2026 | Combined recorded Sprint Review and customer UAT session | The session included Sprint Review discussion and execution of UAT-01, UAT-02, and UAT-03. Private recording URL, exact timecodes, and recording permission evidence are supplied through Moodle only. |
 
 ## Active Scenarios
 
 | ID | Title | Public result | Priority | Traceability |
 |---|---|---|---|---|
-| UAT-01 | Submit a delivery instance and receive an optimized solution | Passed in 27 June UAT notes; private evidence required | High | US-01a, US-01b, US-02, US-07, US-08; QR-FC-01 |
-| UAT-02 | Validate a custom solution through the validator | Passed in 27 June UAT notes; private evidence required | High | US-03; QR-FC-01; QR-SE-01 |
-| UAT-03 | Retrieve previously submitted solutions from history | Passed in 27 June UAT notes; private evidence required | High | US-08; QR-RE-01 |
+| UAT-01 | Submit a delivery instance and receive an optimized solution | Passed in the 27 June combined Sprint Review/UAT session | High | US-01a, US-01b, US-02, US-07, US-08; QR-FC-01 |
+| UAT-02 | Validate a custom solution through the validator | Passed in the 27 June combined Sprint Review/UAT session | High | US-03; QR-FC-01; QR-SE-01 |
+| UAT-03 | Retrieve previously submitted solutions from history | Passed in the 27 June combined Sprint Review/UAT session | High | US-08; QR-RE-01 |
 
 ## UAT-01: Submit a Delivery Instance and Receive an Optimized Solution
 
@@ -62,9 +61,9 @@ This document defines end-user-facing acceptance test scenarios for the Route Op
 |---|---|
 | Execution date | 27 June 2026 |
 | Customer role | Customer representative |
-| Public result | Passed according to sanitized UAT notes |
-| Sanitized public evidence | A separate recorded customer UAT session exists; repository contains only this sanitized summary. |
-| Private evidence required | Recording URL, exact UAT timecodes, and recording permission evidence for Moodle/private submission. |
+| Public result | Passed according to sanitized combined Sprint Review/UAT notes |
+| Sanitized public evidence | A recorded 27 June customer session included Sprint Review discussion and UAT execution; repository contains only this sanitized summary. |
+| Private evidence required | Recording URL, exact UAT/Sprint Review timecodes, and recording permission evidence for Moodle/private submission. |
 
 ## UAT-02: Validate a Custom Solution Through the Validator
 
@@ -104,9 +103,9 @@ This document defines end-user-facing acceptance test scenarios for the Route Op
 |---|---|
 | Execution date | 27 June 2026 |
 | Customer role | Customer representative |
-| Public result | Passed according to sanitized UAT notes |
-| Sanitized public evidence | A separate recorded customer UAT session exists; repository contains only this sanitized summary. |
-| Private evidence required | Recording URL, exact UAT timecodes, and recording permission evidence for Moodle/private submission. |
+| Public result | Passed according to sanitized combined Sprint Review/UAT notes |
+| Sanitized public evidence | A recorded 27 June customer session included Sprint Review discussion and UAT execution; repository contains only this sanitized summary. |
+| Private evidence required | Recording URL, exact UAT/Sprint Review timecodes, and recording permission evidence for Moodle/private submission. |
 
 ## UAT-03: Retrieve Previously Submitted Solutions from History
 
@@ -146,17 +145,16 @@ This document defines end-user-facing acceptance test scenarios for the Route Op
 |---|---|
 | Execution date | 27 June 2026 |
 | Customer role | Customer representative |
-| Public result | Passed according to sanitized UAT notes |
-| Sanitized public evidence | A separate recorded customer UAT session exists; repository contains only this sanitized summary. |
-| Private evidence required | Recording URL, exact UAT timecodes, and recording permission evidence for Moodle/private submission. |
+| Public result | Passed according to sanitized combined Sprint Review/UAT notes |
+| Sanitized public evidence | A recorded 27 June customer session included Sprint Review discussion and UAT execution; repository contains only this sanitized summary. |
+| Private evidence required | Recording URL, exact UAT/Sprint Review timecodes, and recording permission evidence for Moodle/private submission. |
 
 ## Resulting Backlog Items
 
 | Feedback or observation | Resulting issue | Public status |
 |---|---|---|
-| Customer access must be reliable outside the university network or explicitly agreed through another method. | [#90](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/90) | Still open until deployment/access and release criteria are verified. |
-| UAT evidence must remain available privately without exposing customer identity or links publicly. | [#91](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/91) | Should remain open until private recording URL, timecodes, and permission evidence are confirmed. |
-| Sprint Review evidence must cover more than UAT if the same recording is used for Part 11. | [#92](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/92) | Still open unless the 27 June recording is verified to include all Sprint Review topics. |
+| Customer access must be reliable outside the university network or explicitly agreed through another method. | [#90](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/90) | Still open until deployment/access criteria are verified. |
+| Combined Sprint Review/UAT evidence must remain available privately without exposing customer identity or links publicly. | [#91](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/91), [#92](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/92) | Private recording details are supplied through Moodle only and are intentionally excluded from the repository. |
 
 ## Private Moodle Checklist
 

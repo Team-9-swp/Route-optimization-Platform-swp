@@ -1,6 +1,6 @@
-# Draft Release Notes - v1.2.0
+# Release Notes - v1.2.0
 
-These notes are prepared for the future `v1.2.0` GitHub release. The release does not currently exist and must be created from the final protected-`main` commit after the documentation evidence PR is merged, not from a documentation branch.
+GitHub Release [`v1.2.0`](https://github.com/Team-9-swp/Route-optimization-Platform-swp/releases/tag/v1.2.0) was published from protected `main` commit `1fb36d1d17c7a85b548ce3fa180b4f3d460a4d64`.
 
 ## Assignment 4 Sprint Mapping
 
@@ -66,22 +66,10 @@ npm run build
 - Presentation: `reports/week4/presentation.pdf`
 - Solver benchmark: `reports/week4/solver-benchmark.md`
 - Changelog: `CHANGELOG.md`
+- Customer evidence: one recorded 27 June 2026 customer session contained both Sprint Review discussion and customer UAT execution. Private recording details are supplied only through Moodle.
 
 ## Known Evidence Limitations
 
-- The GitHub release must be created only after the documentation evidence PR is merged to `main`.
 - Branch protection / required-check settings require organization admin verification.
-- Customer recording URL, exact UAT timecodes, and recording permission evidence must stay private and be supplied through Moodle or another approved private channel.
-- Final Sprint Review evidence is not publicly verified by the current sanitized notes.
+- Customer recording URL, exact UAT/Sprint Review timecodes, and recording permission evidence must stay private and be supplied through Moodle or another approved private channel.
 - The university VM deployment is publicly documented as network-limited until customer access is verified or another access method is explicitly agreed.
-
-## Post-Merge Command
-
-After the documentation evidence PR is merged and `main` is up to date:
-
-```bash
-gh release create v1.2.0 \
-  --target <FINAL_MAIN_COMMIT_SHA> \
-  --title "v1.2.0 - Assignment 4 Quality Gates and Persistent Jobs" \
-  --notes-file reports/week4/release-notes-v1.2.0.md
-```

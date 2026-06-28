@@ -53,7 +53,7 @@ License: [MIT](../../LICENSE)
 | Safe solver failure handling. | [#86](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/86), `tests/quality/test_qrt_confidentiality.py` |
 | Assignment 4 quality requirements and QRT specifications. | [quality requirements](../../docs/quality-requirements.md), [QRT specification](../../docs/quality-requirement-tests.md) |
 | Blocking CI lint/format gates and frontend type checking. | [PR #106](https://github.com/Team-9-swp/Route-optimization-Platform-swp/pull/106), [CI workflow](../../.github/workflows/ci.yml), [main CI run 28335038211](https://github.com/Team-9-swp/Route-optimization-Platform-swp/actions/runs/28335038211) |
-| Draft `v1.2.0` release notes. | [release-notes-v1.2.0.md](./release-notes-v1.2.0.md), [CHANGELOG.md](../../CHANGELOG.md) |
+| Published `v1.2.0` Assignment 4 release. | [GitHub Release v1.2.0](https://github.com/Team-9-swp/Route-optimization-Platform-swp/releases/tag/v1.2.0), [release notes](./release-notes-v1.2.0.md), [CHANGELOG.md](../../CHANGELOG.md) |
 
 ## Deployment and Runnable Product Status
 
@@ -82,7 +82,7 @@ Current access status:
 - The university VM deployment is documented as limited to the Innopolis University network.
 - Customer access from outside that network is not publicly verified.
 - An ngrok or similar tunnel is only evidence if it is explicitly agreed and verified during a customer session.
-- [#90](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/90) remains open until deployment/access and the final release criteria are verified.
+- [#90](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/90) remains open until deployment/access criteria are verified.
 
 ## Customer Feedback Response
 
@@ -189,24 +189,14 @@ Continued governance:
 
 ## Release Status
 
-The existing `v1.1.0` release predates PR #105 and does not contain the final Assignment 4 increment.
+GitHub Release [`v1.2.0`](https://github.com/Team-9-swp/Route-optimization-Platform-swp/releases/tag/v1.2.0) is published from protected `main` commit `1fb36d1d17c7a85b548ce3fa180b4f3d460a4d64`.
 
-GitHub Release `v1.2.0` does not currently exist. The release is prepared but must be created from the final protected-`main` commit after this documentation evidence PR is merged.
+Release artifacts:
 
-Prepared release materials:
-
-- planned version: `v1.2.0`;
-- draft notes: [release-notes-v1.2.0.md](./release-notes-v1.2.0.md);
-- changelog: [CHANGELOG.md](../../CHANGELOG.md).
-
-Post-merge command:
-
-```bash
-gh release create v1.2.0 \
-  --target <FINAL_MAIN_COMMIT_SHA> \
-  --title "v1.2.0 - Assignment 4 Quality Gates and Persistent Jobs" \
-  --notes-file reports/week4/release-notes-v1.2.0.md
-```
+- release notes: [release-notes-v1.2.0.md](./release-notes-v1.2.0.md);
+- changelog: [CHANGELOG.md](../../CHANGELOG.md);
+- public demo video: https://drive.google.com/file/d/15Dh_azNvTxptEjW1XX4S__jnOmg84rHg/view?usp=sharing;
+- presentation: [presentation.pdf](./presentation.pdf).
 
 ## Demo, Presentation, and Reports
 
@@ -225,31 +215,25 @@ No public customer-review transcript is included because publication permission 
 
 ## UAT and Sprint Review Status
 
-UAT timeline:
+A recorded customer session took place on 27 June 2026 and included both the Sprint Review and customer UAT.
 
-- 26 June 2026: UAT was not completed because customer access to the hosted product was blocked.
-- 27 June 2026: a separate recorded customer UAT session exists.
+The session covered:
 
-Sanitized UAT summary:
+- the Sprint Goal;
+- the delivered product increment;
+- product demonstration;
+- customer feedback;
+- remaining risks and next Product Backlog Items;
+- execution of UAT-01, UAT-02, and UAT-03.
 
-| Scenario | Result | Public evidence | Private evidence required |
-|---|---|---|---|
-| UAT-01 - Submit a delivery instance and receive an optimized solution | Passed according to sanitized UAT notes | [docs/user-acceptance-tests.md](../../docs/user-acceptance-tests.md) | Recording URL, exact timecodes, permission evidence |
-| UAT-02 - Validate a custom solution through the validator | Passed according to sanitized UAT notes | [docs/user-acceptance-tests.md](../../docs/user-acceptance-tests.md) | Recording URL, exact timecodes, permission evidence |
-| UAT-03 - Retrieve previously submitted solutions from history | Passed according to sanitized UAT notes | [docs/user-acceptance-tests.md](../../docs/user-acceptance-tests.md) | Recording URL, exact timecodes, permission evidence |
+All three active UAT scenarios were recorded as passed in the maintained UAT documentation.
 
-Sprint Review status:
-
-- 26 June notes are partial Sprint Review evidence only.
-- The 26 June recording was not saved.
-- The public notes do not verify that the 27 June recording covers all required Sprint Review topics.
-- [#92](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/92) should remain open unless private evidence verifies the full Sprint Review agenda or a follow-up review is recorded.
+The private recording URL, customer identity, and any private access information are supplied only through Moodle and are intentionally excluded from the public repository.
 
 Resulting PBIs:
 
-- deployment/access and release: [#90](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/90);
-- UAT private evidence: [#91](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/91);
-- Sprint Review evidence: [#92](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/92);
+- deployment/access: [#90](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/90);
+- private Moodle-only recording evidence: [#91](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/91), [#92](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/92);
 - solver-quality follow-up: [#23](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/23), [#97](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/97).
 
 ## Current Product Status
@@ -266,16 +250,13 @@ Implemented and verified through merged PR #106:
 - Bandit additional QA check;
 - frontend typecheck and production build;
 - protected-main CI and Link Check success;
-- draft `v1.2.0` release documentation.
+- published GitHub Release `v1.2.0` from protected `main`.
 
 Pending public or private evidence:
 
 - branch-protection / required-check verification by an organization admin;
-- screenshot files under `reports/week4/images/`;
-- private UAT recording URL, exact timecodes, and recording permission evidence;
-- final Sprint Review verification;
-- deployment/customer-access verification;
-- post-merge `v1.2.0` GitHub release.
+- private Moodle-only recording URL, exact timecodes, and recording permission evidence;
+- deployment/customer-access verification.
 
 ## Contribution Traceability
 
@@ -292,9 +273,6 @@ This table maps repository accounts to public evidence visible in git history, i
 
 ## Next Steps
 
-1. Add real screenshot files under `reports/week4/images/` and embed them only after the files exist.
-2. Ask a repository or organization admin to verify branch protection/rules and required checks.
-3. Provide private Moodle evidence: recording URL, exact UAT timecodes, and recording permission evidence.
-4. Verify whether the 27 June recording covers all Sprint Review topics; otherwise conduct a follow-up recorded Sprint Review.
-5. Verify deployment/customer access or document the explicitly agreed remote access method.
-6. After this documentation evidence PR is merged, create GitHub release `v1.2.0` from the final protected-main commit.
+1. Ask a repository or organization admin to verify branch protection/rules and required checks.
+2. Keep private Moodle evidence available outside the repository: recording URL, exact timecodes, and recording permission evidence.
+3. Verify deployment/customer access or document the explicitly agreed remote access method.

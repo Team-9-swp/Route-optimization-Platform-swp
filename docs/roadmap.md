@@ -14,13 +14,13 @@
 | Persist jobs and results so they survive application restarts. | Implemented with PostgreSQL-backed `app/repository.py` and linked to [#85](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/85). |
 | Fix solver parameter handling and prevent internal tracebacks from being exposed through the API. | Implemented; `max_restarts` is removed and safe error QRTs inject internal failures. |
 | Define measurable quality requirements using distinct ISO/IEC 25010 sub-characteristics. | Implemented in `docs/quality-requirements.md`. |
-| Automate at least one quality requirement test for each quality requirement. | Implemented under `tests/quality/`; final PR CI execution evidence is pending. |
-| Add unit tests, integration tests, critical-module coverage reporting, and an additional automated QA check. | Implemented in workflow and tests; final PostgreSQL integration coverage must be verified in PR CI. |
+| Automate at least one quality requirement test for each quality requirement. | Implemented under `tests/quality/`; protected-main CI passed all required QRTs. |
+| Add unit tests, integration tests, critical-module coverage reporting, and an additional automated QA check. | Implemented in workflow and tests; protected-main CI reports 94% total `app/` coverage and Bandit passed. |
 | Configure CI quality gates and protected-default-branch rules. | CI workflow updated; branch-protection evidence still requires organization-admin verification. |
-| Update deployment access and create a SemVer release for the Sprint increment. | Docker run instructions and draft `v1.2.0` release notes are prepared; final release must be created from `main` after merge. |
-| Conduct customer UAT and preserve sanitized evidence. | 27 June UAT is recorded in sanitized public notes; private recording URL, timecodes, and permission evidence are required. |
-| Conduct Sprint Review and preserve evidence. | 26 June meeting was partial and unrecorded; 27 June recording must be verified for full Sprint Review topics or a follow-up review is required. |
-| Prepare the Week 4 report, public demo video, and project presentation. | Public report index, demo video link, and `presentation.pdf` are included; final screenshots are expected to be added manually. |
+| Update deployment access and create a SemVer release for the Sprint increment. | GitHub Release `v1.2.0` is published from protected `main`; deployment/customer access verification remains open. |
+| Conduct customer UAT and preserve sanitized evidence. | The 27 June recorded customer session included UAT-01, UAT-02, and UAT-03; private recording URL, timecodes, and permission evidence are Moodle-only. |
+| Conduct Sprint Review and preserve evidence. | The 27 June recorded customer session included Sprint Review discussion and customer UAT execution; public notes are sanitized. |
+| Prepare the Week 4 report, public demo video, and project presentation. | Public report index, screenshots, demo video link, and `presentation.pdf` are included. |
 
 ### Scope Rationale
 
@@ -38,7 +38,7 @@ The Sprint prioritizes customer value, product reliability, and risk reduction. 
 
 MVP v1 was released as `v1.0.0`. It delivered the REST API, React SPA, route visualization, solution validation, configurable solver controls, and Docker Compose packaging for the API and frontend.
 
-The `v1.1.0` release contains Assignment 4 planning and quality-documentation work but predates the final PR #105 increment. The prepared `v1.2.0` release must be created after this final evidence PR is merged into `main`.
+The `v1.1.0` release contains Assignment 4 planning and quality-documentation work. GitHub Release `v1.2.0` contains the final Assignment 4 increment and was published from protected `main`.
 
 ## Next Sprint: Product Hardening and Scalability
 
@@ -47,7 +47,6 @@ The `v1.1.0` release contains Assignment 4 planning and quality-documentation wo
 ### Expected Work
 
 - Complete any remaining deployment/customer-access actions from [#90](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/90).
-- Complete or verify final Sprint Review evidence from [#92](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/92).
 - Refine solver performance targets using reproducible benchmark datasets.
 - Improve solution quality and execution time without bypassing Assignment 4 quality gates.
 - Add job retention and cleanup policies for persistent storage.
