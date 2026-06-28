@@ -23,18 +23,25 @@ License: [MIT](../../LICENSE)
 
 **Total selected Story Points:** 46, derived from the Assignment 4 milestone scope inspected during PR #95 planning.
 
-<!--
-Screenshots to be added manually before submission:
-reports/week4/images/sprint-milestone.png
-reports/week4/images/protected-main-ci.png
-reports/week4/images/branch-protection.png
-reports/week4/images/coverage-tests.png
-reports/week4/images/additional-qa-bandit.png
-reports/week4/images/semver-release.png
-reports/week4/images/reviewed-pr.png
-reports/week4/images/product-backlog.png
-reports/week4/images/sprint-backlog.png
--->
+## Screenshot Evidence
+
+![Sprint milestone](./images/sprint-milestone.png)
+
+![Product Backlog](./images/product-backlog.png)
+
+![Sprint Backlog](./images/sprint-backlog.png)
+
+![Latest protected default branch CI run](./images/protected-main-ci.png)
+
+![Branch protection or rules evidence](./images/branch-protection.png)
+
+![Coverage and test report](./images/coverage-tests.png)
+
+![Additional QA Bandit result](./images/additional-qa-bandit.png)
+
+![SemVer release](./images/semver-release.png)
+
+![Reviewed issue-linked PR](./images/reviewed-pr.png)
 
 ## Delivered Product Changes
 
