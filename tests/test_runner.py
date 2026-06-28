@@ -127,4 +127,5 @@ async def test_runner_does_not_leak_traceback(repository, monkeypatch):
     updated = await repository.get_job(record.job_id)
     assert updated.status == JobStatus.FAILED
     assert "Traceback" not in (updated.error or "")
-    assert "RuntimeError: boom" in (updated.error or "")
+    assert "RuntimeError" in (updated.error or "")
+    assert "boom" not in (updated.error or "")

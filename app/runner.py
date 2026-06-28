@@ -86,9 +86,11 @@ async def run_solver(
             )
     except Exception as exc:
         logger.exception("Solver failed for job %s", job_id)
+        # Store a user-safe error message. Detailed diagnostics are written to
+        # the server-side log above via logger.exception().
         await repository.update_job(
             job_id,
             status=JobStatus.FAILED,
             finished_at=datetime.now(timezone.utc),
-            error=f"{type(exc).__name__}: {exc}",
+            error=f"{type(exc).__name__}: solver execution failed",
         )

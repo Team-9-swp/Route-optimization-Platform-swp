@@ -20,8 +20,8 @@ from beta_code.utils.parallel import (
 SMALL_INSTANCE_LIMIT = 500
 
 
-def solve(problem_data, time_limit, seed):
-    """Full pipeline: vehicle routing → greedy loaders → Loader SA."""
+def solve(problem_data, time_limit, seed, skip_loader_refinement=False):
+    """Full pipeline: vehicle routing → greedy loaders → optional Loader SA."""
     random.seed(seed)
     solve_start = time.time()
 
@@ -72,44 +72,48 @@ def solve(problem_data, time_limit, seed):
     # ------------------------------------------------------------------
     # Phase 3: Loader SA refinement (parallel chains)
     # ------------------------------------------------------------------
-    remaining = time_limit - (time.time() - start_time)
-    ls_budget = max(remaining * 0.8, 10)
-    n_chains = max(mp.cpu_count() // 2, 1)
-    print(f"\nPhase 3: Loader SA ({n_chains} chains × {ls_budget:.0f}s budget)")
+    if skip_loader_refinement:
+        print("\nPhase 3: Loader SA skipped (--skip-loader-refinement)")
+    else:
+        remaining = time_limit - (time.time() - start_time)
+        ls_budget = max(remaining * 0.8, 10)
+        n_chains = max(mp.cpu_count() // 2, 1)
+        print(f"\nPhase 3: Loader SA ({n_chains} chains × {ls_budget:.0f}s budget)")
 
-    base_solution = solution
-    vehicle_times = evaluator.extract_vehicle_times(base_solution)
-    loader_routes = [list(r) for r in base_solution.loader_routes]
-    unserved_opt = list(base_solution.unserved_optional)
-    veh_routes = [list(r) for r in base_solution.vehicle_routes]
+        base_solution = solution
+        vehicle_times = evaluator.extract_vehicle_times(base_solution)
+        loader_routes = [list(r) for r in base_solution.loader_routes]
+        unserved_opt = list(base_solution.unserved_optional)
+        veh_routes = [list(r) for r in base_solution.vehicle_routes]
 
-    chain_results = []
-    with ProcessPoolExecutor(max_workers=n_chains) as pool:
-        futures = {
-            pool.submit(
-                loader_sa_worker, problem_data, veh_routes, loader_routes,
-                unserved_opt, vehicle_times, ls_budget, seed + i,
-            ): i
-            for i in range(n_chains)
-        }
-        for fut in as_completed(futures):
-            c, lr, uo = fut.result()
-            chain_results.append((c, lr, uo))
-            print(f"  Chain {futures[fut]}: cost={c:.2f}")
+        chain_results = []
+        with ProcessPoolExecutor(max_workers=n_chains) as pool:
+            futures = {
+                pool.submit(
+                    loader_sa_worker, problem_data, veh_routes, loader_routes,
+                    unserved_opt, vehicle_times, ls_budget, seed + i,
+                ): i
+                for i in range(n_chains)
+            }
+            for fut in as_completed(futures):
+                c, lr, uo = fut.result()
+                chain_results.append((c, lr, uo))
+                print(f"  Chain {futures[fut]}: cost={c:.2f}")
 
-    chain_results.sort(key=lambda x: x[0])
-    best_cost_loader, best_lr, best_uo = chain_results[0]
-    solution = base_solution.copy()
-    solution.loader_routes = [list(r) for r in best_lr]
-    solution.unserved_optional = set(best_uo)
+        chain_results.sort(key=lambda x: x[0])
+        best_cost_loader, best_lr, best_uo = chain_results[0]
+        solution = base_solution.copy()
+        solution.loader_routes = [list(r) for r in best_lr]
+        solution.unserved_optional = set(best_uo)
 
     cost, ok, details = evaluator.evaluate(solution)
     if not ok:
-        print(f"  After Loader SA: INFEASIBLE")
-        cost = best_cost_loader
+        print(f"  After loader stage: INFEASIBLE")
+        cost = best_cost_loader if not skip_loader_refinement else cost
         print(f"\n  Final cost: {cost:.2f} (using best chain cost)")
     else:
-        print(f"  After Loader SA: cost={cost:.2f}, "
+        stage = "greedy loaders" if skip_loader_refinement else "Loader SA"
+        print(f"  After {stage}: cost={cost:.2f}, "
               f"v={details['used_vehicles']}, l={details['used_loaders']}")
         print(f"\n  Final cost: {cost:.2f}")
 

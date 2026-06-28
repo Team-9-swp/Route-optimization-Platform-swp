@@ -8,16 +8,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Persistent PostgreSQL storage for jobs and results via SQLAlchemy 2.0 async models and Alembic migrations
+- Async `JobRepository` replacing the previous in-memory store
+- Integration tests covering job persistence across application restarts
+- Skipped optional orders report returned in solver output and exposed in the frontend
+- `skip_loader_refinement` solver option and `scripts/benchmark.py` for comparing the greedy loader stage against the full pipeline
+- Assignment 4 Quality Requirement Tests under `tests/quality/`
+- Week 4 benchmark and analysis reports under `reports/week4/`
 
 ### Changed
-
-### Deprecated
+- `POST /solve` no longer accepts `max_restarts`
+- `README.md` updated with database setup, test commands, and benchmarking instructions
 
 ### Removed
+- In-memory `app/store.py` and the `max_restarts` API parameter
 
 ### Fixed
+- Solver runner now stores a user-safe error message instead of the raw exception details
 
 ### Security
+- Failed solver jobs no longer leak stack traces, file paths, or injected secrets through the API
+
+### Deprecated
 
 ## [1.0.0] - 2026-06-19
 
