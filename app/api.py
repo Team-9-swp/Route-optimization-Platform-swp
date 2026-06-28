@@ -1,29 +1,35 @@
-from fastapi import APIRouter, Body, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query
 
-from app.schemas import JobListResponse, JobResponse, SolveResponse, ValidationRequest, ValidationResponse
+from app.schemas import (
+    JobListResponse,
+    JobResponse,
+    ValidationRequest,
+    ValidationResponse,
+)
 from app.service import SolverService
 
 router = APIRouter()
 service = SolverService()
 
 
-@router.post("/solve", response_model=SolveResponse, status_code=202)
-async def solve(
-    instance: dict = Body(...),
-    seed: int = Query(default=42, ge=0),
-    name: str | None = Query(default=None),
-    auto_validate: bool = Query(default=False),
-    time_limit: float | None = Query(default=None, gt=0),
-    max_restarts: int | None = Query(default=None, ge=1),
-) -> SolveResponse:
-    return await service.submit_job(
-        instance,
-        seed,
+@router.post("/solve", status_code=202)
+async def solve_endpoint(
+    instance: dict,
+    seed: int = Query(42),
+    time_limit: int = Query(60),
+    max_restarts: int = Query(3),
+    auto_validate: bool = Query(False),
+    name: str | None = Query(None),
+):
+    response = await service.submit_job(
+        instance=instance,
+        seed=seed,
         name=name,
         auto_validate=auto_validate,
         time_limit=time_limit,
         max_restarts=max_restarts,
     )
+    return response.model_dump()
 
 
 @router.get("/jobs/{job_id}", response_model=JobResponse)

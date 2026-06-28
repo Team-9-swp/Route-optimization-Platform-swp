@@ -39,7 +39,9 @@ class ORToolsVehicleSolver(VehicleSolver):
         def cost_callback(from_index, to_index):
             from_node = manager.IndexToNode(from_index)
             to_node = manager.IndexToNode(to_index)
-            return int(self.problem.distance(from_node, to_node) * fuel_cost_scaled / SC)
+            return int(
+                self.problem.distance(from_node, to_node) * fuel_cost_scaled / SC
+            )
 
         routing.SetArcCostEvaluatorOfAllVehicles(
             routing.RegisterTransitCallback(cost_callback)
@@ -49,7 +51,9 @@ class ORToolsVehicleSolver(VehicleSolver):
         def time_callback(from_index, to_index):
             from_node = manager.IndexToNode(from_index)
             to_node = manager.IndexToNode(to_index)
-            travel = self.problem.travel_time(from_node, to_node, self.problem.vehicle_speed)
+            travel = self.problem.travel_time(
+                from_node, to_node, self.problem.vehicle_speed
+            )
             service = 0.0
             if from_node != 0:
                 service = self.problem.order_by_id[from_node]["vehicle_service_time"]

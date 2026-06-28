@@ -14,6 +14,9 @@ A Product Backlog Item may be marked as `Done` only when all applicable conditio
 * All relevant tests, linters, and CI checks pass.
 * The implemented behaviour has been manually verified when automated verification is insufficient.
 * Verification evidence is included in the related Issue, Pull Request, or Week 3 report.
+* Relevant Automated QRTs pass in CI.
+* Coverage for critical modules meets the >= 30% threshold.
+* Additional QA checks (Bandit security scan), Linting (Ruff), and Formatting (Black) pass in CI.
 
 ## Code Review
 

@@ -49,9 +49,7 @@ class Evaluator:
         if t - E > self.problem.vehicle_shift_length + 1e-6:
             return False, [], 0.0
 
-        total_volume = sum(
-            self.problem.order_by_id[node]["volume"] for node in orders
-        )
+        total_volume = sum(self.problem.order_by_id[node]["volume"] for node in orders)
         if total_volume > self.problem.vehicle_capacity + 1e-6:
             return False, [], 0.0
 
@@ -63,7 +61,10 @@ class Evaluator:
         first = route[0]
         if first not in vehicle_times:
             return False
-        t = vehicle_times[first] + self.problem.order_by_id[first]["loader_service_time"]
+        t = (
+            vehicle_times[first]
+            + self.problem.order_by_id[first]["loader_service_time"]
+        )
         for i in range(1, len(route)):
             prev, node = route[i - 1], route[i]
             t += self.problem.travel_time(prev, node, self.problem.loader_speed)
@@ -71,7 +72,10 @@ class Evaluator:
                 return False
             if t > vehicle_times[node] + 1e-6:
                 return False
-            t = vehicle_times[node] + self.problem.order_by_id[node]["loader_service_time"]
+            t = (
+                vehicle_times[node]
+                + self.problem.order_by_id[node]["loader_service_time"]
+            )
         t += self.problem.travel_time(route[-1], first, self.problem.loader_speed)
         return t - vehicle_times[first] <= self.problem.loader_shift_length + 1e-6
 
@@ -129,16 +133,21 @@ class Evaluator:
             + total_v_dist * self.problem.weights["fuel_cost"]
             + used_l * self.problem.weights["loader_salary"]
             + total_l_work * self.problem.weights["loader_work"]
-            + len(solution.unserved_optional) * self.problem.weights["optional_order_penalty"]
+            + len(solution.unserved_optional)
+            * self.problem.weights["optional_order_penalty"]
         )
-        return cost, True, {
-            "used_vehicles": used_v,
-            "vehicle_distance": total_v_dist,
-            "used_loaders": used_l,
-            "loader_work": total_l_work,
-            "unserved_optional": len(solution.unserved_optional),
-            "vehicle_times": vehicle_times,
-        }
+        return (
+            cost,
+            True,
+            {
+                "used_vehicles": used_v,
+                "vehicle_distance": total_v_dist,
+                "used_loaders": used_l,
+                "loader_work": total_l_work,
+                "unserved_optional": len(solution.unserved_optional),
+                "vehicle_times": vehicle_times,
+            },
+        )
 
     def extract_vehicle_times(self, solution):
         times = {}

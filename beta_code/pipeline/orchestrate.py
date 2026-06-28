@@ -36,23 +36,28 @@ def solve(problem_data, time_limit, seed):
     start_time = time.time()
 
     if problem.number_of_orders > SMALL_INSTANCE_LIMIT:
-        solution = _run_large_instance(problem, evaluator, problem_data,
-                                       or_tools_budget, seed, start_time)
+        solution = _run_large_instance(
+            problem, evaluator, problem_data, or_tools_budget, seed, start_time
+        )
     else:
-        solution = _run_small_instance(problem, evaluator, problem_data,
-                                       or_tools_budget, seed, start_time)
+        solution = _run_small_instance(
+            problem, evaluator, problem_data, or_tools_budget, seed, start_time
+        )
 
     if solution is None:
         return None
 
     # Phase 1b: GLS refinement
-    solution = _refine_gls(problem, evaluator, solution,
-                           or_tools_budget, start_time, seed)
+    solution = _refine_gls(
+        problem, evaluator, solution, or_tools_budget, start_time, seed
+    )
 
     cost, _, details = evaluator.evaluate(solution)
-    print(f"  Result: cost={cost:.2f}, v={details.get('used_vehicles', '?')}, "
-          f"dist={details.get('vehicle_distance', 0):.1f}, "
-          f"unserved_opt={details.get('unserved_optional', 0)}")
+    print(
+        f"  Result: cost={cost:.2f}, v={details.get('used_vehicles', '?')}, "
+        f"dist={details.get('vehicle_distance', 0):.1f}, "
+        f"unserved_opt={details.get('unserved_optional', 0)}"
+    )
 
     # ------------------------------------------------------------------
     # Phase 2: Greedy loader assignment
@@ -66,8 +71,10 @@ def solve(problem_data, time_limit, seed):
         print(f"  After loaders: INFEASIBLE (cost={cost:.2f})")
         print("  ERROR: greedy loader assignment produced infeasible solution.")
         return None
-    print(f"  After loaders: cost={cost:.2f}, "
-          f"v={details['used_vehicles']}, l={details['used_loaders']}")
+    print(
+        f"  After loaders: cost={cost:.2f}, "
+        f"v={details['used_vehicles']}, l={details['used_loaders']}"
+    )
 
     # ------------------------------------------------------------------
     # Phase 3: Loader SA refinement (parallel chains)
@@ -87,8 +94,14 @@ def solve(problem_data, time_limit, seed):
     with ProcessPoolExecutor(max_workers=n_chains) as pool:
         futures = {
             pool.submit(
-                loader_sa_worker, problem_data, veh_routes, loader_routes,
-                unserved_opt, vehicle_times, ls_budget, seed + i,
+                loader_sa_worker,
+                problem_data,
+                veh_routes,
+                loader_routes,
+                unserved_opt,
+                vehicle_times,
+                ls_budget,
+                seed + i,
             ): i
             for i in range(n_chains)
         }
@@ -105,12 +118,14 @@ def solve(problem_data, time_limit, seed):
 
     cost, ok, details = evaluator.evaluate(solution)
     if not ok:
-        print(f"  After Loader SA: INFEASIBLE")
+        print("  After Loader SA: INFEASIBLE")
         cost = best_cost_loader
         print(f"\n  Final cost: {cost:.2f} (using best chain cost)")
     else:
-        print(f"  After Loader SA: cost={cost:.2f}, "
-              f"v={details['used_vehicles']}, l={details['used_loaders']}")
+        print(
+            f"  After Loader SA: cost={cost:.2f}, "
+            f"v={details['used_vehicles']}, l={details['used_loaders']}"
+        )
         print(f"\n  Final cost: {cost:.2f}")
 
     # ------------------------------------------------------------------
@@ -124,8 +139,9 @@ def solve(problem_data, time_limit, seed):
     return output
 
 
-def _run_large_instance(problem, evaluator, problem_data,
-                        or_tools_budget, seed, start_time):
+def _run_large_instance(
+    problem, evaluator, problem_data, or_tools_budget, seed, start_time
+):
     print(f"\nPhase 1: OR-Tools PCI + GLS ({or_tools_budget:.0f}s)")
     solver = ORToolsVehicleSolver(problem, evaluator)
     solution = solver.solve(
@@ -139,13 +155,16 @@ def _run_large_instance(problem, evaluator, problem_data,
     return solution
 
 
-def _run_small_instance(problem, evaluator, problem_data,
-                        or_tools_budget, seed, start_time):
+def _run_small_instance(
+    problem, evaluator, problem_data, or_tools_budget, seed, start_time
+):
     n_strategies = min(mp.cpu_count(), len(_STRATEGIES))
     init_budget = max(
         min(int(or_tools_budget * 0.20), max(60, problem.number_of_orders // 10)), 10
     )
-    print(f"\nPhase 1a: Quick initial solutions ({n_strategies} strategies x {init_budget}s)")
+    print(
+        f"\nPhase 1a: Quick initial solutions ({n_strategies} strategies x {init_budget}s)"
+    )
 
     results = []
     with ProcessPoolExecutor(max_workers=n_strategies) as pool:
