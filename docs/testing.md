@@ -4,9 +4,9 @@
 
 | Critical module | Why critical | Required line coverage | Current line coverage | Evidence |
 |---|---:|---:|---:|
-| `app/service.py` | Core orchestration of solver jobs and validation. | 30% | 100% | [Coverage run](ci.md) |
-| `app/store.py` | Persistent job storage and thread safety. | 30% | 98% | [Coverage run](ci.md) |
-| `app/api.py` | Public-facing REST endpoints and request validation. | 30% | 96% | [Coverage run](ci.md) |
+| `app/service.py` | Core orchestration of solver jobs and validation. | 30% | 100% | [Coverage run](../.github/workflows/ci.yml) |
+| `app/store.py` | Persistent job storage and thread safety. | 30% | 98% | [Coverage run](../.github/workflows/ci.yml) |
+| `app/api.py` | Public-facing REST endpoints and request validation. | 30% | 96% | [Coverage run](../.github/workflows/ci.yml) |
 
 All three critical modules exceed the 30% threshold. The single missed line in `store.py` (line 75: early return in `update_job` when record is missing) and the single missed line in `api.py` (line 41: `list_jobs` fallback) are low-risk defensive paths.
 
@@ -14,23 +14,23 @@ All three critical modules exceed the 30% threshold. The single missed line in `
 
 | Test type | Scope | Command or CI check | Latest result | Evidence |
 |---|---|---|---|---|
-| Unit tests | Schemas, Store CRUD, Validation logic, Service layer, Runner | `pytest tests/ --ignore=tests/quality --ignore=tests/test_e2e.py --ignore=tests/test_validator.py` | 34 passed | [CI run](ci.md) |
-| Integration tests | API + Service + Store interaction, Solver validation | `pytest tests/test_api.py tests/test_validator.py` | Passing | [CI run](ci.md) |
-| Automated QRTs | QR-FC-01, QR-PE-01, QR-SE-01 | `pytest tests/quality/ -m "qrt"` | Passing | [QRT report](ci.md) |
+| Unit tests | Schemas, Store CRUD, Validation logic, Service layer, Runner | `pytest tests/ --ignore=tests/quality --ignore=tests/test_e2e.py --ignore=tests/test_validator.py` | 34 passed | [CI run](../.github/workflows/ci.yml) |
+| Integration tests | API + Service + Store interaction, Solver validation | `pytest tests/test_api.py tests/test_validator.py` | Passing | [CI run](../.github/workflows/ci.yml) |
+| Automated QRTs | QR-FC-01, QR-PE-01, QR-SE-01 | `pytest tests/quality/ -m "qrt"` | Passing | [QRT report](../.github/workflows/ci.yml) |
 
 ## CI and QA Check Status
 
 | Gate or check | Required for Done? | Latest protected-branch status | Evidence |
 |---|---|---|---|
-| Linting (Ruff) | Yes | Passing | [CI run](ci.md) |
-| Formatting (Black) | Yes | Passing | [CI run](ci.md) |
-| Additional QA check (Bandit) | Yes | Passing | [Check report](ci.md) |
+| Linting (Ruff) | Yes | Passing | [CI run](../.github/workflows/ci.yml) |
+| Formatting (Black) | Yes | Passing | [CI run](../.github/workflows/ci.yml) |
+| Additional QA check (Bandit) | Yes | Passing | [Check report](../.github/workflows/ci.yml) |
 
 ## Additional QA Check Rationale
 
 | QA objective or risk | Additional QA check | Scope | Latest result | Evidence | Limitations or follow-up |
 |---|---|---|---|---|---|
-| Python code may contain hardcoded secrets, insecure deserialization, or unsafe error handling that compromises API confidentiality. | **Bandit** (Security Static Analysis) | `app/` directory | Passing: 0 issues identified across 393 lines | [CI run](ci.md) | Static analysis may produce false positives; cannot catch runtime logic flaws. Bandit is configured with `-ll` to flag only Medium and High severity issues. |
+| Python code may contain hardcoded secrets, insecure deserialization, or unsafe error handling that compromises API confidentiality. | **Bandit** (Security Static Analysis) | `app/` directory | Passing: 0 issues identified across 393 lines | [CI run](../.github/workflows/ci.yml) | Static analysis may produce false positives; cannot catch runtime logic flaws. Bandit is configured with `-ll` to flag only Medium and High severity issues. |
 
 ## Manual Evidence That Does Not Count as QRT
 
