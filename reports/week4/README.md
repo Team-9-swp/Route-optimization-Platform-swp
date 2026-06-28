@@ -5,104 +5,87 @@
 **Route Optimization Platform** — a logistics optimisation system that generates vehicle and loader routes for the BIA CVRPTW problem variant.
 License: [MIT](../../LICENSE)
 
-## Summary of scope since Assignment 3
+## Solver benchmark
 
-The Assignment 4 Sprint (22 June – 3 July 2026) shifts focus from feature delivery to quality, reliability, and customer validation. Key outcomes:
+- [`solver-benchmark.md`](./solver-benchmark.md) — reproducible objective/runtime comparison across all `instances/i*.json` fixtures using the new PyVRP + Nevergrad solver.
 
-- Defined 4 measurable quality requirements with distinct ISO/IEC 25010 sub-characteristics in [`docs/quality-requirements.md`](../../docs/quality-requirements.md)
-- Automated quality requirement test specifications in [`docs/quality-requirement-tests.md`](../../docs/quality-requirement-tests.md)
-- Created and executed 3 end-user-facing UAT scenarios in [`docs/user-acceptance-tests.md`](../../docs/user-acceptance-tests.md)
-- Assignment 4 sprint plan and roadmap in [`docs/roadmap.md`](../../docs/roadmap.md)
-- Released [`v1.1.0`](https://github.com/Team-9-swp/Route-optimization-Platform-swp/releases/tag/v1.1.0) for the Assignment 4 Sprint increment
+| Feedback point | Resulting PBI or issue | Status | Response |
+|---|---|---|---|
+| The customer requested a clear two-dimensional route visualization instead of a real geographic map. | [#14 — Route visualization](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/14) | Done | The coordinate-plane route visualization was implemented, verified against the acceptance criteria, and closed as work from the previous increment. |
+| The customer requested visibility into optional orders that were not served. | [#13 — Skipped optional orders report](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/13) | Selected for Assignment 4 | The team selected a skipped optional orders report for the current Sprint. The completed result identifies optional orders that were not assigned to any route. |
+| The customer requested calculation history and confirmed that persistent storage is appropriate for a dynamic interface. | [#85 — Persist jobs and results across restarts](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/85) | Selected for Assignment 4 | The team selected persistent storage so submitted jobs and completed results remain available after application or container restarts. Retention and automatic cleanup are deferred. |
+| The customer requested measurement of solver execution time. | [#87 — Define quality requirements and QRT specifications](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/87), [#88 — Add automated tests, coverage, and QA checks](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/88) | Selected for Assignment 4 | The measurable quality requirement and QRT specification were completed in #87. Automated QRTs are implemented in `tests/quality/`. |
+| The customer requested improving solver quality, especially for scenarios where the current result is weaker than the baseline. | [#23 — Solver refactoring and performance](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/23), [#97 — Compare solver with baseline and analyze greedy-stage impact](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/97) | Follow-up required | The broad solver refactor remains in the Product Backlog as #23. A reproducible benchmark is now in `reports/week4/solver-benchmark.md`. |
+| The customer recommended comparing the current solver with the baseline on the same scenarios and metrics. | [#97 — Compare solver with baseline and analyze greedy-stage impact](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/97) | Follow-up required | The team runs the current solver on the official `instances/i*.json` fixtures with a fixed seed and time limit, recording objective values and execution times. |
+| The customer suggested considering vehicle routing, loader assignment, and optional-order selection more jointly instead of solving the major parts mainly in sequence. | [#23 — Solver refactoring and performance](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/23) | Deferred | A more joint optimization approach may improve solution quality but requires algorithm redesign and benchmarking. It is kept as broader Product Backlog work and is not planned as completed Assignment 4 work. |
+| The customer could not access the deployed website because it is available only inside the Innopolis University network. | [#90 — Update VM deployment and create the Sprint release](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/90) | Selected for Assignment 4 | The deployment issue now requires either external customer access or another explicitly agreed remote access method, verified Docker run instructions as a fallback, and customer access testing before UAT. |
+| The customer can run the application using Docker. | [#90 — Update VM deployment and create the Sprint release](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/90) | Selected for Assignment 4 | Docker remains the fallback access path. The Sprint release work must keep the Docker run instructions verified and usable if network access is still limited. |
+| The customer suggested reproducibility comparison between repeated runs. | [#97 — Compare solver with baseline and analyze greedy-stage impact](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/97) | Not planned for this Sprint | The selected follow-up focuses first on same-scenario baseline comparison. Dedicated repeated-run tooling is postponed until the baseline comparison clarifies whether it is needed. |
+| The customer suggested Gantt-style schedules and workload-balancing visibility. | No current Sprint issue | Not planned for this Sprint | This was treated as lower priority than solver quality, deployment access, and the main visualization/reporting workflow. It may be reconsidered in a later Sprint. |
 
-## Solver benchmark and greedy-stage analysis
+## Demo Video
 
-- [`solver-benchmark.md`](./solver-benchmark.md) — reproducible objective/runtime comparison across all `instances/i*.json` fixtures.
-- [`solver-benchmark-greedy.md`](./solver-benchmark-greedy.md) — same benchmark with the Loader SA refinement skipped.
-- [`greedy-stage-analysis.md`](./greedy-stage-analysis.md) — comparison of the full pipeline versus the greedy-only pipeline.
+[Public sanitized demo video](https://drive.google.com/file/d/15Dh_azNvTxptEjW1XX4S__jnOmg84rHg/view?usp=sharing)
 
-## UAT results summary
+## Quality Requirements
 
-All 3 active UAT scenarios were executed by the customer during a recorded session and accepted. No scenarios failed or require product changes at this stage.
+The quality model follows ISO/IEC 25010. The following sub-characteristics were selected for Assignment 4:
 
-### Passed scenarios
-
-| ID | Title | Result |
+| ID | Sub-characteristic | Requirement |
 |---|---|---|
-| UAT-01 | Submit a delivery instance and receive an optimised solution | Passed |
-| UAT-02 | Validate a custom solution through the validator | Passed |
-| UAT-03 | Retrieve previously submitted solutions from history | Passed |
+| QR-FC-01 | Functional correctness | Solver output must satisfy all hard constraints for valid supported input instances. |
+| QR-PE-01 | Time behaviour | Fixed CI benchmark must complete within the configured time limit plus tolerance. |
+| QR-RE-01 | Recoverability | Submitted jobs and completed results must remain available after application restart. |
+| QR-SE-01 | Confidentiality | API responses must not expose stack traces, internal file paths, or implementation details. |
 
-### Failed or blocked scenarios
+See [docs/quality-requirements.md](../../docs/quality-requirements.md) for full definitions.
 
-None.
+## Testing Status
 
-### Most important customer feedback
+### Critical Modules and Coverage
 
-- The customer confirmed that the core workflow (submit → solve → view results) works as expected.
-- The route map and route tables were found clear and useful for understanding vehicle and loader assignments.
-- The validation page was appreciated for testing custom solutions before deployment.
-- No blocking issues or usability problems were identified during the session.
+| Critical module | Why critical | Required coverage | Current coverage |
+|---|---|---|---|
+| `app/service.py` | Core orchestration of solver jobs and validation | 30% | TBD |
+| `app/repository.py` | Persistent job storage | 30% | TBD |
+| `app/api.py` | Public-facing REST endpoints and request validation | 30% | TBD |
 
-### Resulting PBIs or issues
+### Test Suites
 
-No new PBIs or issues were created as a direct result of UAT. The customer accepted the current increment as-is. Any follow-up items will be triaged into the Product Backlog for the next sprint.
+| Test type | Scope | Location | Status |
+|---|---|---|---|
+| Unit/integration tests | Schemas, Repository, Validation, Service, Runner, API | [tests/](../../tests/) | Passing |
+| Automated QRTs | QR-FC-01, QR-PE-01, QR-RE-01, QR-SE-01 | [tests/quality/](../../tests/quality/) | 9 passing |
 
-## Backlog and Sprint views
+See [docs/testing.md](../../docs/testing.md) for full details.
 
-- **GitHub Project (board)**: https://github.com/orgs/Team-9-swp/projects/1
-- **Sprint Backlog view**: https://github.com/orgs/Team-9-swp/projects/1/views/2
-- **Sprint milestone**: https://github.com/Team-9-swp/Route-optimization-Platform-swp/milestone/5
+## CI Pipeline
 
-## Release and changelog
+The CI pipeline runs on every PR and push to `main` via GitHub Actions:
 
-- **SemVer release**: https://github.com/Team-9-swp/Route-optimization-Platform-swp/releases/tag/v1.1.0
-- **CHANGELOG**: [CHANGELOG.md](../../CHANGELOG.md)
+- **Backend job:** Python setup, Ruff linting, Black format check, pytest with coverage, QRTs, Bandit security scan
+- **Frontend job:** Node.js setup, dependency install, Vite production build
 
-## Deployment
+**Pipeline:** [ci.yml](../../.github/workflows/ci.yml)
 
-- **Docker Compose:** `docker compose -f docker-compose.yml -f docker-compose.prod.yml up --build -d`
-- **Run instructions:** [README.md → Quick start](../../README.md#quick-start)
-- **Remote access:** via ngrok (see [README.md → Deployment](../../README.md#deployment))
+### Continued Governance
 
-## Maintained quality assets
+All Assignment 4 quality gates remain active for later project work:
 
-- [`docs/quality-requirements.md`](../../docs/quality-requirements.md)
-- [`docs/quality-requirement-tests.md`](../../docs/quality-requirement-tests.md)
-- [`docs/user-acceptance-tests.md`](../../docs/user-acceptance-tests.md)
+- Ruff linting and Black formatting are required checks before merge
+- Unit, integration, and QRTs run automatically on every PR and push to `main`
+- Critical modules must maintain >=30% line coverage
+- Bandit security scan runs as the additional QA check
 
-## Process and templates
+## Sprint Review status
 
-- [Definition of Done](../../docs/definition-of-done.md)
-- [Roadmap](../../docs/roadmap.md)
-- [Issue templates](../../.github/ISSUE_TEMPLATE)
-- [Pull Request template](../../.github/pull_request_template.md)
+A customer meeting was conducted on 26 June 2026. The recording was not saved because of a technical recording failure.
 
-## Reviewed PRs (Assignment 4)
+The customer could not access the hosted application because the current university VM deployment is limited to the Innopolis University network. As a result, customer-executed UAT and final acceptance were not completed.
 
-- #95 — Assignment 4 sprint planning and roadmap update
-- #96 — Quality requirements and quality requirement tests
-- #97 — (placeholder for additional sprint PRs)
+- [Customer review notes](customer-review-notes.md)
+- [Customer review summary](customer-review-summary.md)
 
-## Video demonstration
+A follow-up recorded Sprint Review and customer-executed UAT session is required after customer access is available.
 
-- **Public demo video:** *Coming soon — will be linked once recorded*
-
-## Screenshots
-
-See [`reports/week4/images/`](./images/). The following screenshots should be added before final submission:
-
-- Sprint Backlog view (Assignment 4)
-- SemVer release v1.1.0
-- Quality requirements document
-- UAT document with execution history
-
-## Private UAT recording
-
-The private customer UAT recording has been submitted via Moodle. The recording link is **not** committed to the public repository per team policy.
-
-## Contribution traceability
-
-| Name | GitHub username | Role | PRs | Reviews |
-|---|---|---|---|---|
-| TBD | TBD | TBD | TBD | TBD |
+[#92](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/92) remains open until the follow-up Sprint Review and all required review evidence are complete.

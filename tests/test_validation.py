@@ -45,9 +45,7 @@ def _minimal_instance():
 
 def _minimal_solution():
     return {
-        "vehicles": [
-            {"id": 1, "route": [0, 1, 2, 0], "time": [5.0, 15.0]}
-        ],
+        "vehicles": [{"id": 1, "route": [0, 1, 2, 0], "time": [5.0, 15.0]}],
         "loaders": [],
     }
 
