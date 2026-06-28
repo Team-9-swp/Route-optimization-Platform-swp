@@ -1,19 +1,21 @@
 import asyncio
 import contextlib
 import io
+import logging
 import traceback
 from datetime import datetime, timezone
 
+from app.repository import JobRepository
 from app.schemas import JobStatus, ValidationStatus
-from app.store import JobStore
 from app.validation import validate_solution
+
+logger = logging.getLogger(__name__)
 
 
 def _solve_sync(
     instance: dict,
     seed: int,
     time_budget: float = 30.0,
-    max_restarts: int | None = None,
 ) -> dict | None:
     from beta_code.pipeline.orchestrate import solve as _solve
 
@@ -33,15 +35,15 @@ def _extract_objective_value(result: dict | None) -> float | None:
 
 async def run_solver(
     job_id: str,
-    store: JobStore,
+    repository: JobRepository,
     *,
     auto_validate: bool = False,
 ) -> None:
-    record = store.get_job(job_id)
+    record = await repository.get_job(job_id)
     if record is None:
         return
 
-    store.update_job(
+    await repository.update_job(
         job_id,
         status=JobStatus.RUNNING,
         started_at=datetime.now(timezone.utc),
@@ -55,11 +57,10 @@ async def run_solver(
                 record.input_data,
                 record.seed,
                 record.time_limit if record.time_limit is not None else 120.0,
-                record.max_restarts,
             )
 
         if result is None:
-            store.update_job(
+            await repository.update_job(
                 job_id,
                 status=JobStatus.FAILED,
                 finished_at=datetime.now(timezone.utc),
@@ -68,7 +69,7 @@ async def run_solver(
             return
 
         objective_value = _extract_objective_value(result)
-        store.update_job(
+        await repository.update_job(
             job_id,
             status=JobStatus.COMPLETED,
             finished_at=datetime.now(timezone.utc),
@@ -78,15 +79,16 @@ async def run_solver(
 
         if auto_validate:
             validation = validate_solution(record.input_data, result)
-            store.update_job(
+            await repository.update_job(
                 job_id,
                 validation_status=ValidationStatus.PASSED if validation["passed"] else ValidationStatus.FAILED,
                 validation_report=validation,
             )
     except Exception as exc:
-        store.update_job(
+        logger.exception("Solver failed for job %s", job_id)
+        await repository.update_job(
             job_id,
             status=JobStatus.FAILED,
             finished_at=datetime.now(timezone.utc),
-            error=f"{type(exc).__name__}: {exc}\n{traceback.format_exc()}",
+            error=f"{type(exc).__name__}: {exc}",
         )
