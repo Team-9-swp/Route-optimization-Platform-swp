@@ -26,7 +26,6 @@ class JobRecord(BaseModel):
     input_data: dict[str, Any] = Field(default_factory=dict)
     seed: int = 42
     time_limit: float | None = None
-    max_restarts: int | None = None
     started_at: datetime | None = None
     finished_at: datetime | None = None
     result: dict[str, Any] | None = None
@@ -57,6 +56,7 @@ class JobResponse(BaseModel):
     objective_value: float | None = None
     validation_status: ValidationStatus | None = None
     validation_report: dict[str, Any] | None = None
+    unserved_optional: list[int] | None = None
 
 
 class ValidationRequest(BaseModel):
