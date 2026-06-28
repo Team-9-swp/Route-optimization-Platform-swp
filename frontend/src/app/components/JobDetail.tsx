@@ -705,6 +705,24 @@ export function JobDetail({ id, navigate }: Props) {
           </div>
         </div>
 
+        {/* Skipped optional orders */}
+        {job.unserved_optional && job.unserved_optional.length > 0 && (
+          <div
+            className="mt-4 rounded-lg p-4 mb-5"
+            style={{ background: "#FFFBEB", border: "1px solid #FDE68A" }}
+          >
+            <h3 style={{ color: "#92400E", fontSize: 14, fontWeight: 600, margin: "0 0 6px 0" }}>
+              Skipped optional orders
+            </h3>
+            <p style={{ color: "#B45309", fontSize: 13, margin: 0 }}>
+              {job.unserved_optional.join(", ")}
+            </p>
+          </div>
+        )}
+        {job.unserved_optional && job.unserved_optional.length === 0 && (
+          <div className="mt-4 text-sm text-gray-600 mb-5">No optional orders were skipped.</div>
+        )}
+
         {/* Route map */}
         <div
           className="rounded-xl mb-5 relative overflow-hidden"
