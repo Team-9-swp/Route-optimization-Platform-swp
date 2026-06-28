@@ -21,11 +21,10 @@ async def test_api_async_responsiveness():
         transport=httpx.ASGITransport(app=app), base_url="http://test"
     ) as client:
         start = time.time()
-        response = await client.post(
-            "/solve?seed=42&time_limit=30",
-            json=instance
-        )
+        response = await client.post("/solve?seed=42&time_limit=30", json=instance)
         elapsed = time.time() - start
 
     assert response.status_code == 202
-    assert elapsed < 1.0, f"API submission blocked for {elapsed:.2f}s. Solver must be async."
+    assert (
+        elapsed < 1.0
+    ), f"API submission blocked for {elapsed:.2f}s. Solver must be async."
