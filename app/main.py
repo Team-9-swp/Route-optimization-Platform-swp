@@ -10,7 +10,7 @@ def create_app() -> FastAPI:
     app = FastAPI(
         title="Route Optimization Solver",
         description="Async wrapper around main_mvp.py CVRPTW solver",
-        version="1.0.0",
+        version="1.1.0",
     )
 
     origins = os.getenv(
