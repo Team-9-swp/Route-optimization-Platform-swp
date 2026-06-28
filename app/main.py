@@ -7,7 +7,7 @@ from app.api import router
 from app.db import close_db, init_db
 
 
-def create_app() -> FastAPI:
+def create_app(*, init_db_on_startup: bool = True) -> FastAPI:
     app = FastAPI(
         title="Route Optimization Solver",
         description="Async wrapper around OR-Tools CVRPTW solver",
@@ -25,13 +25,14 @@ def create_app() -> FastAPI:
 
     app.include_router(router)
 
-    @app.on_event("startup")
-    async def startup() -> None:
-        await init_db()
+    if init_db_on_startup:
+        @app.on_event("startup")
+        async def startup() -> None:
+            await init_db()
 
-    @app.on_event("shutdown")
-    async def shutdown() -> None:
-        await close_db()
+        @app.on_event("shutdown")
+        async def shutdown() -> None:
+            await close_db()
 
     return app
 
