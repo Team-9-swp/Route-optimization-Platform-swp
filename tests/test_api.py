@@ -5,6 +5,7 @@ import pytest
 import pytest_asyncio
 from fastapi.testclient import TestClient
 
+from app.db import dispose_engine
 from app.main import create_app
 from app.repository import JobRepository
 
@@ -19,8 +20,11 @@ def client():
 async def clean_repository():
     repo = JobRepository()
     await repo.clear_all()
+    await dispose_engine()
     yield
+    repo = JobRepository()
     await repo.clear_all()
+    await dispose_engine()
 
 
 @pytest.fixture
@@ -30,7 +34,7 @@ def integration_client(clean_repository):
 
 
 @pytest.mark.integration
-async def test_post_solve_returns_202(integration_client):
+def test_post_solve_returns_202(integration_client):
     response = integration_client.post("/solve?seed=1", json={"orders": []})
     assert response.status_code == 202
     data = response.json()

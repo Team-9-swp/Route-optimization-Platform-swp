@@ -1,3 +1,4 @@
+import asyncio
 import os
 from typing import AsyncGenerator
 
@@ -13,18 +14,29 @@ DATABASE_URL = os.getenv(
 )
 
 _engine: AsyncEngine | None = None
+_engine_loop: asyncio.AbstractEventLoop | None = None
 
 
 def get_engine() -> AsyncEngine:
-    global _engine
-    if _engine is None:
+    global _engine, _engine_loop
+    try:
+        current_loop = asyncio.get_running_loop()
+    except RuntimeError:
+        current_loop = None
+
+    if _engine is None or _engine_loop is not current_loop:
         _engine = create_async_engine(DATABASE_URL, echo=False)
+        _engine_loop = current_loop
     return _engine
 
 
 def set_engine(url: str) -> AsyncEngine:
-    global _engine
+    global _engine, _engine_loop
     _engine = create_async_engine(url, echo=False)
+    try:
+        _engine_loop = asyncio.get_running_loop()
+    except RuntimeError:
+        _engine_loop = None
     return _engine
 
 
@@ -33,10 +45,14 @@ def get_session_maker() -> async_sessionmaker[AsyncSession]:
 
 
 async def dispose_engine() -> None:
-    global _engine
+    global _engine, _engine_loop
     if _engine is not None:
-        await _engine.dispose()
+        try:
+            await _engine.dispose()
+        except Exception:
+            pass
         _engine = None
+    _engine_loop = None
 
 
 class JobModel(Base):
