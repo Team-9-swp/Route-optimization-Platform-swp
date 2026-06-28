@@ -1,6 +1,12 @@
 from fastapi import APIRouter, Body, HTTPException, Query
 
-from app.schemas import JobListResponse, JobResponse, SolveResponse, ValidationRequest, ValidationResponse
+from app.schemas import (
+    JobListResponse,
+    JobResponse,
+    SolveResponse,
+    ValidationRequest,
+    ValidationResponse,
+)
 from app.service import SolverService
 
 router = APIRouter()

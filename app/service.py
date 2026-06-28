@@ -1,5 +1,5 @@
 import asyncio
-from typing import Any, Awaitable, Callable
+from typing import Awaitable, Callable
 
 from app.repository import JobRepository
 from app.runner import run_solver
@@ -56,7 +56,9 @@ class SolverService:
             objective_value=record.objective_value,
             validation_status=record.validation_status,
             validation_report=record.validation_report,
-            unserved_optional=record.result.get("unserved_optional") if record.result else None,
+            unserved_optional=(
+                record.result.get("unserved_optional") if record.result else None
+            ),
         )
 
     async def list_jobs(
@@ -81,6 +83,8 @@ class SolverService:
             page_size=page_size,
         )
 
-    async def validate_solution(self, instance: dict, solution: dict) -> ValidationResponse:
+    async def validate_solution(
+        self, instance: dict, solution: dict
+    ) -> ValidationResponse:
         result = _validate_solution(instance, solution)
         return ValidationResponse(**result)

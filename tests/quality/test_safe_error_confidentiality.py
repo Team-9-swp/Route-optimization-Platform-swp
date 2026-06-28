@@ -12,6 +12,8 @@ from app.db import dispose_engine
 from app.main import create_app
 from app.repository import JobRepository
 
+pytestmark = [pytest.mark.qrt, pytest.mark.quality]
+
 
 @pytest_asyncio.fixture(autouse=True)
 async def clean_repository():
@@ -44,20 +46,20 @@ FORBIDDEN_PATTERNS = [
 def _assert_no_forbidden_leaks(text: str) -> None:
     lowered = text.lower()
     for pattern in FORBIDDEN_PATTERNS:
-        assert pattern.lower() not in lowered, f"Forbidden pattern leaked in response: {pattern!r}"
+        assert (
+            pattern.lower() not in lowered
+        ), f"Forbidden pattern leaked in response: {pattern!r}"
 
 
-@pytest.mark.quality
 @pytest.mark.integration
 def test_qrt_se_01_a_solver_failure_produces_safe_job_error(client, monkeypatch):
     """A controlled solver failure must store only a safe error message."""
+
     def _raising_solve(*args, **kwargs):
-        raise ValueError(
-            "SECRET_QRT_VALUE /app/solver.py\", line 42 internal crash"
-        )
+        raise ValueError('SECRET_QRT_VALUE /app/solver.py", line 42 internal crash')
 
     monkeypatch.setattr(
-        "beta_code.pipeline.orchestrate.solve",
+        "app.runner._solve_sync",
         _raising_solve,
     )
 
@@ -68,6 +70,7 @@ def test_qrt_se_01_a_solver_failure_produces_safe_job_error(client, monkeypatch)
 
     # Wait for the runner background task to record the failure.
     import time
+
     for _ in range(50):
         fetched = client.get(f"/jobs/{job_id}")
         data = fetched.json()
@@ -79,13 +82,15 @@ def test_qrt_se_01_a_solver_failure_produces_safe_job_error(client, monkeypatch)
     error_text = data.get("error", "")
     assert error_text
     _assert_no_forbidden_leaks(error_text)
-    assert "internal crash" not in error_text, "Original exception message must not be exposed"
+    assert (
+        "internal crash" not in error_text
+    ), "Original exception message must not be exposed"
 
 
-@pytest.mark.quality
 @pytest.mark.integration
 def test_qrt_se_01_b_api_response_does_not_expose_internal_details(client, monkeypatch):
     """The public API response must not contain traceback or secret patterns."""
+
     def _raising_solve(*args, **kwargs):
         raise RuntimeError(
             "SECRET_QRT_VALUE Traceback (most recent call last):\n"
@@ -93,7 +98,7 @@ def test_qrt_se_01_b_api_response_does_not_expose_internal_details(client, monke
         )
 
     monkeypatch.setattr(
-        "beta_code.pipeline.orchestrate.solve",
+        "app.runner._solve_sync",
         _raising_solve,
     )
 
@@ -103,6 +108,7 @@ def test_qrt_se_01_b_api_response_does_not_expose_internal_details(client, monke
     job_id = response.json()["job_id"]
 
     import time
+
     for _ in range(50):
         fetched = client.get(f"/jobs/{job_id}")
         data = fetched.json()

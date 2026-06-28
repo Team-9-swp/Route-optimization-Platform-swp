@@ -16,7 +16,9 @@ def format_solution_output(solution, evaluator):
             continue
         loader_output.append({"id": lid + 1, "route": route})
 
-    unserved_optional = sorted(solution.unserved_optional) if solution.unserved_optional else []
+    unserved_optional = (
+        sorted(solution.unserved_optional) if solution.unserved_optional else []
+    )
 
     return {
         "vehicles": vehicle_output,

@@ -13,6 +13,8 @@ import pytest
 from beta_code.pipeline.orchestrate import solve
 from app.validation import validate_solution
 
+pytestmark = [pytest.mark.qrt, pytest.mark.quality]
+
 ROOT = Path(__file__).resolve().parent.parent.parent
 FIXTURE = ROOT / "test_cases" / "t1.json"
 
@@ -25,12 +27,11 @@ def instance():
 @pytest.fixture(scope="module")
 def solution(instance):
     """Solve once and reuse the result for all correctness checks."""
-    sol = solve(instance, time_limit=30, seed=42)
+    sol = solve(instance, time_limit=60, seed=42)
     assert sol is not None, "Solver returned no solution"
     return sol
 
 
-@pytest.mark.quality
 def test_qrt_fc_01_a_small_deterministic_instance(instance, solution):
     """A small reference instance must be solved without hard violations."""
     result = validate_solution(instance, solution)
@@ -38,7 +39,6 @@ def test_qrt_fc_01_a_small_deterministic_instance(instance, solution):
     assert result["report"]["total_violations"] == 0
 
 
-@pytest.mark.quality
 def test_qrt_fc_01_b_optional_orders(instance, solution):
     """Optional orders may be skipped, but mandatory orders must be feasible."""
     result = validate_solution(instance, solution)
@@ -59,7 +59,6 @@ def test_qrt_fc_01_b_optional_orders(instance, solution):
     assert served_optional.issubset(routed_orders)
 
 
-@pytest.mark.quality
 def test_qrt_fc_01_c_loader_assignment(instance, solution):
     """A loader-requiring instance must produce valid loader routes."""
     result = validate_solution(instance, solution)

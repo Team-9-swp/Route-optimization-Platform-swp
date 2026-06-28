@@ -1,43 +1,55 @@
-# Sprint Retrospective — Week 4
+# Sprint Retrospective - Week 4
+
+**Status:** Interim retrospective. The product increment and public documents have been updated, but final PR CI, branch-protection evidence, deployment/access verification, post-merge release creation, and final Sprint Review verification remain open.
 
 ## What went well
 
-* The team created a clear Assignment 4 Sprint milestone and refined the selected backlog items.
-* Customer feedback was traced to specific Product Backlog issues.
-* Quality requirements and QRT specifications were documented with measurable thresholds.
-* Documentation changes were made through issue-linked pull requests.
-* Link checks were run before review.
-* The team documented incomplete work honestly instead of marking unfinished UAT, CI, or quality evidence as completed.
+- The team converted customer feedback into traceable Product Backlog issues instead of leaving it only in meeting notes.
+- PostgreSQL persistence replaced the active in-memory job store and made calculation history recoverable.
+- Skipped optional orders are now visible in solver/API/frontend output.
+- The current solver is benchmarked in a reproducible report.
+- Quality requirements use stable IDs, ISO/IEC 25010 sub-characteristics, measurable thresholds, and automated QRT links.
+- Ruff and Black are now configured as blocking CI checks instead of optional checks.
+- UAT and Sprint Review evidence are documented with a clear separation between public sanitized summaries and private recording evidence.
 
 ## What did not go well
 
-* The customer could not access the hosted application outside the Innopolis University network.
-* The customer meeting recording was not saved because of a technical failure.
-* Customer-executed UAT was not completed.
-* Automated QRT implementations and final CI evidence were not ready for the customer meeting.
-* Several documentation pull requests depended on earlier unmerged branches, which complicated review and merge order.
-* Access to the GitHub Project was limited to one team member.
+- The customer could not access the hosted product from outside the Innopolis University network during the 26 June meeting.
+- The 26 June meeting recording was not saved because of a technical failure.
+- UAT had to be moved to a separate recorded session on 27 June.
+- Public notes do not verify that the 27 June recording covers every required Sprint Review topic.
+- Final CI evidence could not be produced locally because isolated PostgreSQL and Node/npm were unavailable in this environment.
+- GitHub branch protection evidence depends on organization-admin access.
+- Commit, push, and PR creation were blocked in this Codex session by the temporary elevated-action usage limit.
 
 ## Changes compared with the previous Sprint
 
-* The team added explicit customer-feedback traceability instead of keeping feedback only in meeting notes.
-* Quality requirements now use stable IDs, measurable thresholds, and ISO/IEC 25010 sub-characteristics.
-* The team separated broad solver-refactoring work from smaller investigation PBIs.
-* Deployment accessibility and pre-UAT access verification were added to the backlog.
-* Documentation now distinguishes completed, in-progress, deferred, and blocked work.
+- The product now uses PostgreSQL-backed persistence rather than process-local storage.
+- Quality gates are treated as continuing project assets, not one-time report material.
+- QRTs now exercise solver correctness, performance, recoverability, and safe error handling.
+- Documentation distinguishes Done, deferred, blocked, private-evidence, and post-merge states.
+- Release preparation now separates draft release notes from actual release creation on protected `main`.
 
-## Process improvements for the next Sprint
+## Process improvements
 
 ### 1. Verify customer access before every review
 
 **Owner:** deployment responsible
-**Action:** Test the exact customer access path at least one day before UAT or Sprint Review. Keep Docker as a verified fallback.
 
-### 2. Use a recording checklist
+**Action:** Test the exact customer access path at least one day before UAT or Sprint Review. Keep Docker Compose as a verified fallback and record which access method the customer actually used.
+
+### 2. Use a recording and evidence checklist
 
 **Owner:** meeting facilitator
-**Action:** Before the meeting, verify recording permissions, recording status, storage location, microphone input, and backup notes. Confirm that the recording file exists immediately after the meeting.
+
+**Action:** Before the meeting, verify recording permission, recording status, audio input, storage location, and backup notes. Immediately after the meeting, confirm the recording file exists and record private Moodle-only timecodes.
 
 ## Follow-up
 
-This retrospective must be reviewed and updated after the final recorded Sprint Review and customer-executed UAT.
+This retrospective can be marked final only after:
+
+- PR CI passes with backend integration tests, QRTs, frontend typecheck, and frontend build;
+- branch-protection evidence is verified by an organization admin or explicitly documented as unavailable;
+- deployment/access and release evidence are complete;
+- private UAT recording evidence is verified;
+- final Sprint Review evidence is verified or a follow-up Sprint Review is conducted.

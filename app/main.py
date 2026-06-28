@@ -11,7 +11,7 @@ def create_app(*, init_db_on_startup: bool = True) -> FastAPI:
     app = FastAPI(
         title="Route Optimization Solver",
         description="Async wrapper around CVRPTW solver",
-        version="1.1.0",
+        version="1.2.0",
     )
 
     origins = os.getenv(
@@ -28,6 +28,7 @@ def create_app(*, init_db_on_startup: bool = True) -> FastAPI:
     app.include_router(router)
 
     if init_db_on_startup:
+
         @app.on_event("startup")
         async def startup() -> None:
             await init_db()
