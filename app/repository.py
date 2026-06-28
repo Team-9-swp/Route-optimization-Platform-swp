@@ -4,7 +4,7 @@ from typing import Any
 
 from sqlalchemy import delete, func, select, update
 
-from app.db import JobModel, async_session_maker
+from app.db import JobModel, get_session_maker
 from app.schemas import JobRecord, JobStatus, ValidationStatus
 
 
@@ -26,13 +26,13 @@ class JobRepository:
             seed=seed,
             time_limit=time_limit,
         )
-        async with async_session_maker() as session:
+        async with get_session_maker()() as session:
             session.add(JobRepository._to_model(record))
             await session.commit()
         return record
 
     async def get_job(self, job_id: str) -> JobRecord | None:
-        async with async_session_maker() as session:
+        async with get_session_maker()() as session:
             result = await session.execute(select(JobModel).where(JobModel.job_id == job_id))
             row = result.scalar_one_or_none()
             if row is None:
@@ -46,7 +46,7 @@ class JobRepository:
         page_size: int = 25,
         sort_desc: bool = True,
     ) -> tuple[list[JobRecord], int]:
-        async with async_session_maker() as session:
+        async with get_session_maker()() as session:
             total = (await session.execute(select(func.count(JobModel.job_id)))).scalar_one()
 
             order = JobModel.created_at.desc() if sort_desc else JobModel.created_at.asc()
@@ -97,7 +97,7 @@ class JobRepository:
         if not values:
             return
 
-        async with async_session_maker() as session:
+        async with get_session_maker()() as session:
             await session.execute(
                 update(JobModel).where(JobModel.job_id == job_id).values(**values)
             )
@@ -143,6 +143,6 @@ class JobRepository:
 
     async def clear_all(self) -> None:
         """Test helper to empty the jobs table."""
-        async with async_session_maker() as session:
+        async with get_session_maker()() as session:
             await session.execute(delete(JobModel))
             await session.commit()

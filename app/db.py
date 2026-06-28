@@ -2,7 +2,7 @@ import os
 from typing import AsyncGenerator
 
 from sqlalchemy import JSON, Column, DateTime, Float, Integer, String, Text
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import declarative_base
 
 Base = declarative_base()
@@ -12,8 +12,31 @@ DATABASE_URL = os.getenv(
     "postgresql+asyncpg://optimizer:optimizer@localhost:5432/optimizer",
 )
 
-engine = create_async_engine(DATABASE_URL, echo=False)
-async_session_maker = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+_engine: AsyncEngine | None = None
+
+
+def get_engine() -> AsyncEngine:
+    global _engine
+    if _engine is None:
+        _engine = create_async_engine(DATABASE_URL, echo=False)
+    return _engine
+
+
+def set_engine(url: str) -> AsyncEngine:
+    global _engine
+    _engine = create_async_engine(url, echo=False)
+    return _engine
+
+
+def get_session_maker() -> async_sessionmaker[AsyncSession]:
+    return async_sessionmaker(get_engine(), class_=AsyncSession, expire_on_commit=False)
+
+
+async def dispose_engine() -> None:
+    global _engine
+    if _engine is not None:
+        await _engine.dispose()
+        _engine = None
 
 
 class JobModel(Base):
@@ -36,14 +59,14 @@ class JobModel(Base):
 
 
 async def init_db() -> None:
-    async with engine.begin() as conn:
+    async with get_engine().begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
 
 async def close_db() -> None:
-    await engine.dispose()
+    await dispose_engine()
 
 
 async def get_session() -> AsyncGenerator[AsyncSession, None]:
-    async with async_session_maker() as session:
+    async with get_session_maker()() as session:
         yield session
