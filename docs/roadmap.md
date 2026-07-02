@@ -1,6 +1,45 @@
 # Roadmap
 
-## Current Sprint: Assignment 4 - Quality, Reliability, and Customer Feedback
+## Current Sprint — Sprint 5 / MVP v2
+
+**Sprint dates:** 2026-06-29 — 2026-07-05
+
+**Sprint Goal:** Deliver MVP v2 with improved solution usability and maintainability by fixing validator-compatible JSON export, improving loader workload distribution, adding Gantt schedule visualization, investigating stronger optimization approaches, documenting the architecture and development process, and automating deployment from the protected main branch.
+
+### Planned MVP v2 product work
+
+- Validator-compatible solution JSON export.
+- Improved loader workload balance.
+- Gantt schedule visualization.
+- Known bug fix, with reproduction details required before implementation starts.
+- Solver pipeline and greedy-stage analysis, using closed issues [#23](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/23) and [#97](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/97) only as historical context.
+- Column-generation research spike for the current route-optimization variant.
+- Automatic deployment from protected `main`.
+
+### Architecture and process work
+
+- Maintained development-process and configuration-management documentation.
+- Static, dynamic, and deployment architecture views.
+- At least three linked Architecture Decision Records.
+- Extended tests, quality evidence, and Definition of Done for MVP v2.
+- Hosted documentation site.
+
+### Sprint delivery evidence
+
+- Customer-accessible MVP v2.
+- New and updated UAT scenarios.
+- Recorded Sprint Review and customer UAT.
+- Public sanitized demo video.
+- Week 5 public report.
+- SemVer release mapped to MVP v2.
+
+### Planning and traceability notes
+
+- The selected Sprint 5 PBIs are planned for the `Sprint 5 — MVP v2` milestone. GitHub Project field and view setup requires project-scope access.
+- Every selected PBI must include a clear expected outcome, testable acceptance criteria, Story Points, implementer, different reviewer, priority, MVP version `MVP v2`, and Work Status `To Do`.
+- Completion is measured by accepted, tested, reviewed, and Done Sprint outcomes, not by the number of created issues.
+
+## Previous Sprint: Assignment 4 - Quality, Reliability, and Customer Feedback
 
 **Sprint dates:** 22 June 2026 - 3 July 2026
 
@@ -40,18 +79,18 @@ MVP v1 was released as `v1.0.0`. It delivered the REST API, React SPA, route vis
 
 The `v1.1.0` release contains Assignment 4 planning and quality-documentation work. GitHub Release `v1.2.0` contains the final Assignment 4 increment and was published from protected `main`.
 
-## Next Sprint: Product Hardening and Scalability
+## Expected next increment
 
-**Goal:** Improve solver scalability and operational readiness using the measurement and automation baseline established in Assignment 4.
+Work likely to continue after Sprint 5 includes solver redesign if the greedy-stage analysis shows that fixed early decisions materially reduce quality, deferred column-generation implementation if the research spike is accepted, performance improvements on larger scenarios, deployment hardening beyond the first automatic protected-`main` workflow, and customer feedback that is not completed in MVP v2.
 
 ### Expected Work
 
-- Complete any remaining deployment/customer-access actions from [#90](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/90).
-- Refine solver performance targets using reproducible benchmark datasets.
-- Improve solution quality and execution time without bypassing Assignment 4 quality gates.
-- Add job retention and cleanup policies for persistent storage.
-- Extend frontend automated testing where coverage remains weak.
-- Improve deployment observability, logging, and recovery procedures.
+- Continue any MVP v2 customer feedback not completed during Sprint 5.
+- Refine solver performance targets using reproducible benchmark datasets and fixed random seeds.
+- Decide whether to redesign the solver pipeline around more joint optimization.
+- Turn the column-generation spike into an implementation PBI only if the ADR decision accepts or proposes that direction.
+- Improve solution quality, execution time, and loader balance without bypassing maintained quality gates.
+- Harden deployment observability, logging, rollback, backup, and recovery procedures.
 
 ## Future Direction: Production Readiness
 
