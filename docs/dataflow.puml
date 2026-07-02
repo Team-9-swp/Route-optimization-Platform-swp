@@ -1,0 +1,69 @@
+@startuml DataFlow
+!theme plain
+
+title Solve Request — Data Flow
+
+actor "User" as user
+participant "Frontend\nDocker/nginx" as fe
+participant "FastAPI\n/api/*" as api
+participant "SolverService" as svc
+participant "JobStore\n(In-Memory)" as store
+database "solver.py\nPyVRP + Nevergrad" as solver
+participant "Validator\n(backup)" as validator
+
+== 1. Submit Job (POST /solve) ==
+
+user -> fe : Submit instance JSON
+fe -> api : POST /solve {instance} ?seed&name&time_limit
+api -> svc : submit_job()
+svc -> store : create_job() → JobRecord (status=pending)
+store --> svc : job_id
+svc -> svc : asyncio.create_task(run_solver())
+svc --> api : 202 SolveResponse{job_id}
+api --> fe : {job_id, status:"pending"}
+fe --> user : Job accepted, redirect to detail
+
+== 2. Background Solve (async) ==
+
+svc -> store : update_job(status="running", started_at)
+store -> solver : asyncio.to_thread(solve_sync)
+note right #ffaaaa
+  **solve() Pipeline:**
+  1. Nevergrad warm-up (N iterations)
+  2. run_pipeline() for each:
+     a. PyVRP vehicle routing
+     b. greedy loader assignment
+     c. Loader SA improvement
+  3. Deep convergence phase
+  4. Return {vehicles, loaders, _cost}
+end note
+
+alt Solution found
+  solver --> store : result dict
+  store -> store : update_job(status="completed", result, objective_value)
+
+  opt auto_validate=True
+    svc -> validator : validate_solution(instance, result)
+    validator --> svc : violations report
+    svc -> store : update_job(validation_status, report)
+  end
+else No solution
+  solver --> store : None
+  store -> store : update_job(status="failed", error=...)
+else Exception
+  solver --> store : raise
+  store -> store : update_job(status="failed", error=traceback)
+end
+
+== 3. Poll Result (GET /jobs/{id}) ==
+
+user -> fe : View job detail
+fe -> api : GET /jobs/{id}
+api -> svc : get_job(id)
+svc -> store : get_job(id)
+store --> svc : JobRecord
+svc --> api : JobResponse{status, result}
+api --> fe : JSON response
+fe --> user : Render routes, map, stats
+
+@enduml
