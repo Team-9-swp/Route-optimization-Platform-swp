@@ -21,7 +21,9 @@ def client():
 
 
 def test_post_solve_returns_202(client, monkeypatch):
-    async def mock_submit_job(instance, seed, name=None, auto_validate=False, time_limit=None):
+    async def mock_submit_job(
+        instance, seed, name=None, auto_validate=False, time_limit=None
+    ):
         return SolveResponse(
             job_id="test-job-id",
             status=JobStatus.PENDING,
@@ -38,7 +40,9 @@ def test_post_solve_returns_202(client, monkeypatch):
 
 
 def test_post_solve_default_seed(client, monkeypatch):
-    async def mock_submit_job(instance, seed, name=None, auto_validate=False, time_limit=None):
+    async def mock_submit_job(
+        instance, seed, name=None, auto_validate=False, time_limit=None
+    ):
         return SolveResponse(
             job_id="test-job-id",
             status=JobStatus.PENDING,
@@ -55,7 +59,9 @@ def test_post_solve_default_seed(client, monkeypatch):
 
 
 def test_post_solve_with_name_and_auto_validate(client, monkeypatch):
-    async def mock_submit_job(instance, seed, name=None, auto_validate=False, time_limit=None):
+    async def mock_submit_job(
+        instance, seed, name=None, auto_validate=False, time_limit=None
+    ):
         return SolveResponse(
             job_id="test-job-id",
             status=JobStatus.PENDING,
