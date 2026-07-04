@@ -1,6 +1,6 @@
 # Deployment
 
-This document describes how the Route Optimization Platform is deployed and operated. It covers the automatic deployment pipeline from protected `main`, the required secrets, manual redeploy and rollback, health verification, and failure handling.
+This document describes how the Route Optimization Platform is deployed and operated. It covers the automatic deployment pipeline from protected `main`, the self-hosted GitHub Actions runner that performs deployment, manual redeploy and rollback, health verification, and failure handling.
 
 The runtime topology (services, volumes, network boundary) is documented in the deployment view (`docs/architecture/deployment-view/`) and in `docs/architecture/adr/0004-docker-compose-deployment.md` (ADR-0004 — Docker Compose deployment), both maintained by A5-04 and A5-05.
 
@@ -14,73 +14,90 @@ The product runs as a three-service Docker Compose stack on a single host:
 
 The Compose file is `docker-compose.yml`, overridden for production by `docker-compose.prod.yml` (restart policy, production `CORS_ORIGINS`, `LOG_LEVEL=warning`).
 
-## Automatic deployment from protected `main`
+## How automatic deployment works
 
-Deployment is automated in the [CI Pipeline](../.github/workflows/ci.yml). A `deploy` job runs **only after the `backend` and `frontend` jobs pass**, and only for:
+Deployment is automated in the [CI Pipeline](../.github/workflows/ci.yml). The workflow has three jobs:
 
-- a push to `main`; or
-- a manual `workflow_dispatch` run.
+- `backend` and `frontend` run on **GitHub-hosted** runners (`ubuntu-latest`) on every pull request and every push to `main`. They are the quality gate (lint, tests, QRTs, build).
+- `deploy` runs on a **self-hosted runner that lives on the VM** (`runs-on: self-hosted`). It starts **only after `backend` and `frontend` pass**, and only for a push to `main` or a manual `workflow_dispatch` run.
+
+Because the VM is behind the Innopolis campus network and has no public IP, the runner connects **outbound** to GitHub over HTTPS (long-poll) to pick up jobs. This works through the NAT without opening any inbound port, without a tunnel, and without storing host SSH keys in GitHub.
 
 The `deploy` job:
 
-1. Connects to the host over SSH using `appleboy/ssh-action`.
-2. Fetches and checks out the deployed commit (`git reset --hard <commit>`).
-3. Builds and starts the stack with `docker compose ... up -d --build --wait --remove-orphans`. `--wait` blocks until the `api` and `db` health checks pass.
-4. Applies database migrations explicitly: `docker compose ... exec api alembic upgrade head`. (The API also applies migrations on startup; this step makes migration execution explicit and visible in the deploy log.)
-5. Runs a post-deployment health check from the runner: `curl -fsS --retry 5 --retry-delay 5 $DEPLOY_HEALTH_URL/health`.
+1. Checks out the deployed commit with `actions/checkout` (honoring the optional `workflow_dispatch` `ref` input).
+2. Builds and starts the stack with `docker compose ... up -d --build --wait --remove-orphans`. `--wait` blocks until the `api` and `db` health checks pass.
+3. Applies database migrations explicitly: `docker compose ... exec api alembic upgrade head`. (The API also applies migrations on startup; this step makes migration execution explicit and visible in the deploy log.)
+4. Runs a post-deployment health check **locally on the VM**: `curl -fsS --retry 5 --retry-delay 5 http://localhost:8000/health`.
 
-Because the `deploy` job depends on `backend` and `frontend`, a failing CI check on `main` prevents deployment. A failed SSH command (`script_stop: true`) or a failing `curl` (`-f`) fails the job, so failures are visible in the GitHub Actions UI.
+Because `deploy` depends on `backend` and `frontend`, a failing CI check on `main` prevents deployment. A failing `docker compose` command or a non-200 `/health` (`curl -f`) fails the job, so failures are visible in the GitHub Actions UI.
+
+## Self-hosted runner setup (on the VM, one time)
+
+Prerequisites on the VM: `bash`, `git`, `docker`, and `docker compose` (already present). The runner needs outbound HTTPS access to `github.com` (available through the campus network).
+
+```bash
+# 1. Dedicated user for the runner (do not run it as root)
+sudo useradd -m -s /bin/bash github-runner
+sudo usermod -aG docker github-runner        # allow `docker compose` without sudo
+
+# 2. Download the runner as that user
+sudo -iu github-runner
+mkdir actions-runner && cd actions-runner
+# Use the exact version/URL shown in the GitHub UI (Settings → Actions → Runners → New self-hosted runner → Linux x64)
+curl -o actions-runner.tar.gz -L https://github.com/actions/runner/releases/download/v<VERSION>/actions-runner-linux-x64-<VERSION>.tar.gz
+tar xzf actions-runner.tar.gz
+
+# 3. Register (token from the same UI page; it expires in ~1 hour)
+./config.sh --url https://github.com/Team-9-swp/Route-optimization-Platform-swp \
+  --token <TOKEN> \
+  --name vm-runner \
+  --labels self-hosted,Linux \
+  --unattended
+
+# 4. Smoke test, then stop with Ctrl+C once you see it is "Listening for Jobs"
+./run.sh
+
+# 5. Install as a systemd service so it survives reboots (run as root)
+exit
+cd /home/github-runner/actions-runner
+sudo ./svc.sh install github-runner
+sudo ./svc.sh start
+sudo ./svc.sh status
+```
+
+After this, the runner shows as **Idle** in the repo's *Settings → Actions → Runners* list and is ready to execute the `deploy` job. No GitHub Secrets are required for deployment.
 
 ## Required GitHub Secrets
 
-The `deploy` job reads its host access and paths from GitHub Secrets (stored in the `production` environment). They are never committed to the repository.
+**None.** With a self-hosted runner on the VM, the deploy job runs locally: it checks out the code with `actions/checkout` and runs `docker compose`/`alembic`/`curl` directly on the host. There is no SSH step, no tunnel, and no host credential stored in GitHub.
 
-| Secret | Purpose | Example |
-|---|---|---|
-| `DEPLOY_HOST` | Hostname or IP of the deployment VM, reachable from GitHub Actions over SSH. | `vm.example.dev` |
-| `DEPLOY_USER` | SSH user used for deployment. | `deploy` |
-| `DEPLOY_SSH_KEY` | Private SSH key for `DEPLOY_USER`. Stored as a secret only. | `-----BEGIN OPENSSH PRIVATE KEY----- ...` |
-| `DEPLOY_PORT` | SSH port. Optional; the action defaults to 22 if empty. | `22` |
-| `DEPLOY_PATH` | Absolute path of the checked-out repository on the host. | `/srv/route-optimizer` |
-| `DEPLOY_HEALTH_URL` | Base URL used for the post-deploy `/health` check, reachable from GitHub Actions. | `https://route-optimizer.example.dev` |
-
-The host must expose a public SSH endpoint and a health URL reachable from GitHub Actions runners. If the VM is behind a campus network (as noted in the root `README.md`), expose it through an agreed tunnel (for example ngrok) or a public endpoint; the tunnel command itself is not deployment evidence.
-
-To set the secrets, use the GitHub UI (Settings → Environments → `production` → Environment secrets) or the CLI:
-
-```bash
-gh secret set DEPLOY_HOST --body "vm.example.dev" --env production
-gh secret set DEPLOY_USER --body "deploy" --env production
-gh secret set DEPLOY_SSH_KEY --env production < ~/.ssh/id_route_optimizer_deploy
-gh secret set DEPLOY_PATH --body "/srv/route-optimizer" --env production
-gh secret set DEPLOY_HEALTH_URL --body "https://route-optimizer.example.dev" --env production
-```
+Production runtime configuration (`DATABASE_URL`, `CORS_ORIGINS`, `LOG_LEVEL`) comes from `docker-compose.prod.yml` and the VM environment, not from GitHub Secrets. Optionally, keep the `production` environment configured in the workflow and enable **Required reviewers** on it (Settings → Environments → `production`) so a human must approve each deployment before the `deploy` job runs.
 
 ## Manual redeploy and rollback
 
 Trigger the workflow manually from the Actions tab ("CI Pipeline" → "Run workflow"). Provide a `ref` (branch, tag, or commit SHA) to deploy a specific version.
 
 - **Redeploy the current release:** run the workflow with an empty `ref` (deploys the default branch tip).
-- **Rollback:** run the workflow with the commit SHA of the last known-good release. The job does `git reset --hard <ref>` on the host and rebuilds, so the stack returns to that exact commit.
+- **Rollback:** run the workflow with the commit SHA of the last known-good release. `actions/checkout` fetches that exact SHA and the stack is rebuilt from it.
 
-Rollback can also be performed directly on the host if Actions is unavailable:
+Rollback can also be performed directly on the VM if Actions is unavailable:
 
 ```bash
-ssh deploy@<DEPLOY_HOST>
-cd "$DEPLOY_PATH"
+cd /srv/route-optimizer        # or wherever the repo is checked out on the VM
 git fetch --all --prune
 git reset --hard <previous-good-sha>
 docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build --wait --remove-orphans
 docker compose -f docker-compose.yml -f docker-compose.prod.yml exec -T api alembic upgrade head
-curl -fsS "$DEPLOY_HEALTH_URL/health"
+curl -fsS http://localhost:8000/health
 ```
 
 ## Recovery from a failed deployment
 
-A failed `deploy` job is visible in the GitHub Actions run log (SSH errors surface because of `script_stop`, and a non-200 `/health` fails `curl -f`). To recover:
+A failed `deploy` job is visible in the GitHub Actions run log. To recover:
 
-1. Inspect the failed job output to identify whether it failed at checkout, build/start, migration, or health check.
-2. On the host, check container status and logs:
+1. Inspect the failed step output to identify whether it failed at checkout, build/start, migration, or health check.
+2. On the VM, check container status and logs:
    ```bash
    docker compose -f docker-compose.yml -f docker-compose.prod.yml ps
    docker compose -f docker-compose.yml -f docker-compose.prod.yml logs api
@@ -92,6 +109,7 @@ Database migrations are forward-compatible by convention. If a migration must be
 
 ## Security notes
 
-- All host access and credentials are delivered through GitHub Secrets (`production` environment), never through committed files.
-- The local Compose defaults (`optimizer:optimizer`) are for local/CI use only; production overrides `DATABASE_URL`, `CORS_ORIGINS`, and other values through the host environment or Docker secrets.
+- The runner runs as a dedicated `github-runner` user (not root) and is in the `docker` group only so it can run `docker compose`. No host SSH credentials are stored in GitHub.
+- Only the `deploy` job uses `runs-on: self-hosted`, and it runs only on `main` (or manual `workflow_dispatch`). The `backend` and `frontend` jobs stay on GitHub-hosted runners, so code from pull requests is never executed on the VM.
+- The local Compose defaults (`optimizer:optimizer`) are for local/CI use only; production overrides `DATABASE_URL`, `CORS_ORIGINS`, and other values through `docker-compose.prod.yml` and the VM environment.
 - The `production` environment can be configured with required reviewers or deployment branches for additional control.

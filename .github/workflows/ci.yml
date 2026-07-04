@@ -112,33 +112,21 @@ jobs:
     if: >-
       (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
       github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     environment: production
 
     steps:
-      - name: Deploy to the VM over SSH
-        uses: appleboy/ssh-action@v1
+      - name: Checkout the deployed commit
+        uses: actions/checkout@v4
         with:
-          host: ${{ secrets.DEPLOY_HOST }}
-          username: ${{ secrets.DEPLOY_USER }}
-          key: ${{ secrets.DEPLOY_SSH_KEY }}
-          port: ${{ secrets.DEPLOY_PORT || '22' }}
-          envs: DEPLOY_PATH, COMMIT_SHA
-          script_stop: true
-          script: |
-            set -euo pipefail
-            cd "$DEPLOY_PATH"
-            git fetch --all --prune
-            git reset --hard "$COMMIT_SHA"
-            docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build --wait --remove-orphans
-            docker compose -f docker-compose.yml -f docker-compose.prod.yml exec -T api alembic upgrade head
-        env:
-          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
-          COMMIT_SHA: ${{ github.event.inputs.ref || github.sha }}
+          ref: ${{ github.event.inputs.ref || github.sha }}
 
-      - name: Post-deployment API health check
+      - name: Build, start, and migrate the stack
+        run: |
+          docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build --wait --remove-orphans
+          docker compose -f docker-compose.yml -f docker-compose.prod.yml exec -T api alembic upgrade head
+
+      - name: Post-deployment API health check (local)
         run: |
           sleep 15
-          curl -fsS --retry 5 --retry-delay 5 "${HEALTH_URL}/health"
-        env:
-          HEALTH_URL: ${{ secrets.DEPLOY_HEALTH_URL }}
+          curl -fsS --retry 5 --retry-delay 5 http://localhost:8000/health
