@@ -132,6 +132,14 @@ The pipeline has two jobs:
 
 A green CI run on `main` is the signal that the increment is deployable. CI status, latest protected-default-branch run, and the SemVer release are linked from each weekly public report.
 
+## Deployment
+
+After the `backend` and `frontend` jobs pass on `main`, a `deploy` job runs on a **self-hosted GitHub Actions runner that lives on the deployment VM** (`runs-on: self-hosted`). It is the only job that uses the self-hosted runner, and it runs only on a push to `main` (or a manual `workflow_dispatch`), so code from pull requests is never executed on the VM.
+
+The `deploy` job checks out the deployed commit, rebuilds the Compose stack, applies Alembic migrations, and runs a local `/health` check. Because the VM sits behind the campus network with no public IP, the runner reaches GitHub over outbound HTTPS, so no inbound port, tunnel, or host SSH credential in GitHub is required.
+
+The full pipeline, runner setup, manual redeploy, rollback, and recovery procedures are documented in [`docs/deployment.md`](deployment.md).
+
 ---
 
 ## Release and SemVer workflow
@@ -219,8 +227,9 @@ Schema changes are managed with **Alembic** ([`alembic.ini`](../alembic.ini), [`
 | Definition of Done | [`docs/definition-of-done.md`](definition-of-done.md) | Completion standard. |
 | User acceptance tests | [`docs/user-acceptance-tests.md`](user-acceptance-tests.md) | Maintained UAT scenarios. |
 | Roadmap | [`docs/roadmap.md`](roadmap.md) | Current direction and next increment. |
-| Architecture | `docs/architecture/README.md` | Static, dynamic, and deployment views. |
-| ADRs | `docs/architecture/adr/` | Architecture Decision Records. |
+| Architecture | [`docs/architecture/README.md`](architecture/README.md) | Static, dynamic, and deployment views. |
+| ADRs | [`docs/architecture/adr/`](architecture/adr/) | Architecture Decision Records. |
+| Deployment | [`docs/deployment.md`](deployment.md) | Auto-deploy pipeline, runner setup, rollback. |
 | Changelog | [`CHANGELOG.md`](../CHANGELOG.md) | User-visible change history. |
 | Weekly reports | `reports/weekN/README.md` | Public report and submission index per week. |
 

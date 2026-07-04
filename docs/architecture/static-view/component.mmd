@@ -28,7 +28,7 @@ flowchart TB
 
   Customer --> SPA
   SPA -.->|static + proxied /api| NGINX
-  NGINX -->|HTTP / JSON REST<br/>/solve /jobs /jobs/{id} /validate /health| API
+  NGINX -->|HTTP / JSON REST<br/>/solve /jobs /jobs/:id /validate /health| API
   API --> SVC
   SVC --> REPO
   SVC --> RUN
