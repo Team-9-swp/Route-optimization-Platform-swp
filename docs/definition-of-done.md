@@ -41,6 +41,17 @@ A Product Backlog Item may be marked as `Done` only when all applicable conditio
 * Release and deployment evidence is linked when the PBI includes release or deployment work.
 * Public documentation is sanitized and contains no private recording links, credentials, customer identity, or private exact access details.
 
+## MVP v2 Specific Checks
+
+* New or changed API endpoints (export, enhanced detail responses) must be covered by automated integration tests.
+* `GET /jobs/{job_id}/export` is covered by tests in `tests/test_export.py` verifying valid JSON, schema compatibility with the validator, 404 for missing jobs, and 400 for non-completed jobs.
+* Job detail responses include `loaders` and `unserved_optional` fields for MVP v2 enhanced results.
+* Enhanced job detail tests in `tests/test_api.py` verify loader balance data, Gantt-compatible timeline structure, and Swagger docs availability.
+* The root `README.md` and `CHANGELOG.md` document the export endpoint and any API contract changes.
+* Architecture documentation (`docs/architecture/README.md`) and ADRs (`docs/architecture/adr/`) are updated when the product architecture changes.
+* Development-process documentation (`docs/development-process.md`) is current and linked from root `README.md`.
+* The hosted documentation site reflects the maintained documentation state.
+
 ## Assignment 4 Specific Checks
 
 * PostgreSQL job persistence is covered by an automated recoverability QRT or integration test that recreates the repository/application with the same database.

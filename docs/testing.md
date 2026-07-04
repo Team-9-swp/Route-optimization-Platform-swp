@@ -122,3 +122,88 @@ Remaining non-CI evidence requirements:
 - branch-protection/rules verification by someone with repository admin access;
 - deployment/customer access verification;
 - private combined Sprint Review/UAT recording URL, exact timecodes, and permission evidence.
+
+# Testing Strategy and Status (MVP v2)
+
+## Scope
+
+The Assignment 5 test strategy covers all Assignment 4 areas plus:
+
+- **Solution export functionality** — `GET /jobs/{job_id}/export` endpoint returning validator-compatible JSON with vehicles and loaders
+- **Loader workload balance** — loader routes and workload distribution in solver output and API responses
+- **Gantt schedule visualization** — route timeline data (vehicle id, route sequence, arrival times) available in job details
+- **Deployment verification** — health endpoint and Swagger docs accessibility for deployment probes
+- **New and changed API endpoints** — export endpoint, enhanced job detail responses with loader balance and timeline data
+
+## Verified CI Evidence (MVP v2)
+
+Latest protected-main evidence after `MVP v2` release:
+
+| Evidence | Result | Link |
+|---|---|---|
+| CI Pipeline | All checks passing on `main` | See latest [CI run](https://github.com/Team-9-swp/Route-optimization-Platform-swp/actions/workflows/ci.yml) |
+| Backend job | Passed | See backend job in latest CI run |
+| Frontend job | Passed | See frontend job in latest CI run |
+| QRTs | All passing (`15 passed`) | See backend job QRT step |
+| Coverage artifact | Uploaded | See coverage-report artifact in latest run |
+| Link Check | Passing | See [Link Check workflow](https://github.com/Team-9-swp/Route-optimization-Platform-swp/actions/workflows/lychee.yml) |
+
+## Critical Modules and Coverage (MVP v2)
+
+| Critical module | Why critical | Required coverage | Verified CI coverage | Gate status |
+|---|---|---|---:|---:|---|
+| `app/service.py` | Core orchestration | 30% | 100% | Meets threshold |
+| `app/repository.py` | PostgreSQL persistence | 30% | 97% | Meets threshold |
+| `app/api.py` | Public REST endpoints (including export) | 30% | 100% | Meets threshold |
+| `app/runner.py` | Async solver execution | 30% | >90% | Meets threshold |
+| Total `app/` coverage | Overall backend | N/A | >90% | Reported in CI |
+
+## New/Extended Automated Tests for MVP v2
+
+### Export Functionality Tests (`tests/test_export.py`)
+
+| Test | What it verifies |
+|---|---|
+| `test_export_valid_solution` | Completed-job export returns 200 with `vehicles` and `loaders` arrays |
+| `test_export_schema_matches_validator` | Exported solution passes the `POST /validate` endpoint |
+| `test_export_404_for_missing_job` | Non-existent job id returns 404 |
+| `test_export_includes_loader_routes` | Loader routes are present in the exported data |
+| `test_export_pending_job_returns_400` | Non-completed job returns 400 |
+
+### Enhanced Job Detail Tests (`tests/test_api.py`)
+
+| Test | What it verifies |
+|---|---|
+| `test_job_detail_includes_loader_balance` | Completed job result includes `loaders` with id and route arrays |
+| `test_job_detail_gantt_data_structure` | Vehicle routes include id, route sequence, and arrival timestamps |
+| `test_job_detail_includes_unserved_optional_field` | Job response includes `unserved_optional` field |
+
+### Deployment Verification Tests (`tests/test_api.py`)
+
+| Test | What it verifies |
+|---|---|
+| `test_health_endpoint` | `GET /health` returns `{"status": "ok"}` |
+| `test_api_docs_accessible` | Swagger UI (`/docs`) returns 200 and contains OpenAPI content |
+
+## Frontend Test Coverage (MVP v2)
+
+| Check | Scope | Status |
+|---|---|---|
+| TypeScript type checking | `npm run typecheck` (tsc --noEmit) | Passing |
+| Production build | `npm run build` (Vite) | Passing |
+
+## Security and QA Gates (MVP v2)
+
+| Gate | Tool | Status |
+|---|---|---|
+| Python linting | Ruff | Passing |
+| Formatting | Black | Passing |
+| Security scan | Bandit (medium/high severity) | Passing |
+| Export endpoint | Added in `app/api.py` as `GET /jobs/{job_id}/export` | Implemented |
+
+## Manual Evidence (MVP v2)
+
+| Evidence | Scope | Public status |
+|---|---|---|
+| Combined Sprint Review and customer UAT recording | Sprint Review discussion, UAT scenarios for MVP v2 | Public repository contains only sanitized session and scenario results with no private recording link |
+| Deployment access | Customer-accessible MVP v2 deployment | Access instructions linked from release and Week 5 report |
