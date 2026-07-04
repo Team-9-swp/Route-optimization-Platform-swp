@@ -66,6 +66,7 @@ A low objective value is not useful if the generated route violates mandatory co
 - Related issues:
   - [#23 — Refactor route optimization algorithm](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/23)
   - [#13 — Skipped optional orders report](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/13)
+- Related ADR: [ADR-0002 — PyVRP + Nevergrad bounded runner](architecture/adr/0002-pyvrp-nevergrad-bounded-runner.md)
 - Automated evidence: `QRT-FC-01`
 
 ---
@@ -114,6 +115,7 @@ The customer needs to run and validate the system directly. Predictable executio
 - Related issues:
   - [#23 — Refactor route optimization algorithm](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/23)
   - [#86 — Improve solver parameter and error handling](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/86)
+- Related ADR: [ADR-0002 — PyVRP + Nevergrad bounded runner](architecture/adr/0002-pyvrp-nevergrad-bounded-runner.md)
 - Automated evidence: `QRT-PE-01`
 
 ### Limitation
@@ -152,6 +154,7 @@ The customer requested calculation history. In-memory storage loses all jobs aft
 - Product area: job storage and job API
 - Related issue:
   - [#85 — Persist jobs and results across restarts](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/85)
+- Related ADR: [ADR-0001 — FastAPI with async SQLAlchemy and PostgreSQL](architecture/adr/0001-fastapi-async-sqlalchemy-postgresql.md)
 - Automated evidence: `QRT-RE-01`
 
 ### Limitation
@@ -195,6 +198,7 @@ Internal diagnostics can reveal implementation details and sensitive deployment 
 - Product area: solver runner, service layer, API serialization
 - Related issue:
   - [#86 — Improve solver parameter and error handling](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/86)
+- Related ADR: [ADR-0003 — User-safe error handling](architecture/adr/0003-user-safe-error-handling.md)
 - Automated evidence: `QRT-SE-01`
 
 ---
