@@ -48,7 +48,7 @@ flowchart TB
 
   Customer --> SPA
   SPA -.->|static + proxied /api| NGINX
-  NGINX -->|HTTP / JSON REST<br/>/solve /jobs /jobs/{id} /validate /health| API
+  NGINX -->|HTTP / JSON REST<br/>/solve /jobs /jobs/:id /validate /health| API
   API --> SVC
   SVC --> REPO
   SVC --> RUN
@@ -247,9 +247,9 @@ flowchart TB
 
   BROWSER -->|HTTP :3000 — public access path| NGINX
   NGINX -->|HTTP :8000 — proxy /api| APP
-  APP -->|TCP 5432 — asyncpg (DATABASE_URL)| PG
+  APP -->|TCP 5432 — asyncpg| PG
 
-  GHA -.->|(planned, issue #130) auto-deploy from green main<br/>+ run migrations + health check| HOST
+  GHA -.->|auto-deploy from green main<br/>run migrations + health check| HOST
   GH --- REL
   REL -.->|tag on protected main commit| GH
 ```
