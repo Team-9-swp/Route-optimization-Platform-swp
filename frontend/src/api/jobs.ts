@@ -19,6 +19,15 @@ export async function getJob(jobId: string): Promise<Job> {
   return data;
 }
 
+export async function getJobSolution(
+  jobId: string,
+): Promise<Record<string, unknown>> {
+  const { data } = await api.get<Record<string, unknown>>(
+    `/jobs/${jobId}/solution`,
+  );
+  return data;
+}
+
 export async function listJobs(): Promise<JobListResponse> {
   const { data } = await api.get<JobListResponse>("/jobs");
   return data;

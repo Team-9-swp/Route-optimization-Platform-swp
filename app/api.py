@@ -38,6 +38,20 @@ async def get_job(job_id: str) -> JobResponse:
     return job
 
 
+@router.get("/jobs/{job_id}/solution")
+async def get_job_solution(job_id: str) -> dict:
+    """Export the validator-compatible solution for a completed job.
+
+    The response body has top-level ``vehicles`` and ``loaders`` arrays, so it
+    can be downloaded from the web interface and passed directly to the project
+    validator (or to ``POST /validate``) without manual editing.
+    """
+    solution = await service.get_solution(job_id)
+    if solution is None:
+        raise HTTPException(status_code=404, detail="Solution not available")
+    return solution
+
+
 @router.get("/jobs", response_model=JobListResponse)
 async def list_jobs(
     page: int = Query(default=1, ge=1),
