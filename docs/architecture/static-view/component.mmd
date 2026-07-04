@@ -1,0 +1,42 @@
+%% Route Optimization Platform — Static View (Component Diagram)
+%% Authoritative diagrams-as-code source. Rendered copy lives in docs/architecture/README.md.
+flowchart TB
+  Customer([Customer])
+
+  subgraph Browser["Browser (customer device)"]
+    SPA["React SPA<br/>Dashboard · NewJob · JobDetail · Validate"]
+  end
+
+  subgraph FEHost["Frontend hosting"]
+    NGINX["nginx<br/>serves built SPA + /api reverse proxy"]
+  end
+
+  subgraph BE["Backend — FastAPI app (api container)"]
+    direction TB
+    API["API Router<br/>app/api.py"]
+    SVC["SolverService<br/>app/service.py"]
+    REPO["JobRepository<br/>app/repository.py"]
+    RUN["Solver Runner<br/>app/runner.py"]
+    VAL["Validator<br/>app/validation.py"]
+    SCHEMA["Pydantic Schemas<br/>app/schemas.py"]
+    DBS["DB Session<br/>app/db.py"]
+  end
+
+  SOLV["Solver Engine<br/>solver.py (PyVRP + Nevergrad)"]
+  DB[("PostgreSQL<br/>job history")]
+  CI{{"GitHub Actions CI"}}
+
+  Customer --> SPA
+  SPA -.->|static + proxied /api| NGINX
+  NGINX -->|HTTP / JSON REST<br/>/solve /jobs /jobs/{id} /validate /health| API
+  API --> SVC
+  SVC --> REPO
+  SVC --> RUN
+  SVC --> VAL
+  RUN --> SOLV
+  REPO --> DBS
+  DBS -->|asyncpg| DB
+  API -.-> SCHEMA
+
+  CI -.->|runs migrations<br/>alembic upgrade head| DB
+  CI -.->|lint, unit/integration,<br/>QRT, bandit, frontend build| SOLV
