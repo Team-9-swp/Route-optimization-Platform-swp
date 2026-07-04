@@ -139,6 +139,7 @@ Issue [#90](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues
 - [User acceptance tests](./docs/user-acceptance-tests.md)
 - [Definition of Done](./docs/definition-of-done.md)
 - [Roadmap](./docs/roadmap.md)
+- [Development process and configuration management](./docs/development-process.md)
 
 ## License
 
