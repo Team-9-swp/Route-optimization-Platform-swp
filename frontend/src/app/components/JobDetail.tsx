@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ArrowLeft, CheckCircle2, Download, RotateCcw, MapPin, XCircle, Loader2 } from "lucide-react";
-import { getJob } from "../../api/jobs";
+import { getJob, getJobSolution } from "../../api/jobs";
 import type { Job } from "../../types";
 import type { Page } from "../App";
 
@@ -680,14 +680,23 @@ export function JobDetail({ id, navigate }: Props) {
               <button
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors hover:bg-gray-50"
                 style={{ border: "1px solid #E5E7EB", color: "#374151", background: "#fff", cursor: "pointer" }}
-                onClick={() => {
-                  const blob = new Blob([JSON.stringify(job, null, 2)], { type: "application/json" });
-                  const url = URL.createObjectURL(blob);
-                  const a = document.createElement("a");
-                  a.href = url;
-                  a.download = `${job.job_id}.json`;
-                  a.click();
-                  URL.revokeObjectURL(url);
+                onClick={async () => {
+                  try {
+                    const solution = await getJobSolution(job.job_id);
+                    const blob = new Blob([JSON.stringify(solution, null, 2)], {
+                      type: "application/json",
+                    });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = `${job.job_id}-solution.json`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                  } catch (err) {
+                    alert(
+                      err instanceof Error ? err.message : "Solution not available",
+                    );
+                  }
                 }}
               >
                 <Download size={14} />

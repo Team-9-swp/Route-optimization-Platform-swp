@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `GET /jobs/{job_id}/solution` endpoint that exports a validator-compatible solution JSON (top-level `vehicles` and `loaders`), so a file downloaded from the web interface can be passed directly to the project validator without manual editing.
+
+### Changed
+
+- The web interface "Download JSON" button now downloads the validator-compatible solution instead of the full job envelope.
+
 ## [1.2.0] - 2026-06-29
 
 ### Added
