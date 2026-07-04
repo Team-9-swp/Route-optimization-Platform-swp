@@ -10,10 +10,10 @@ Each requirement has a stable identifier, a measurable threshold, a rationale, a
 The requirements apply to:
 
 - the route optimization solver;
-- the backend API;
+- the backend API, including the `MVP v2` export endpoint (`GET /jobs/{job_id}/export`);
 - persistent job storage;
 - error handling;
-- the deployed Assignment 4 increment.
+- the deployed `MVP v2` increment.
 
 ## Quality Requirements Summary
 
@@ -192,23 +192,25 @@ Internal diagnostics can reveal implementation details and sensitive deployment 
 
 ### Traceability
 
-- Product area: solver runner, service layer, API serialization
+- Product area: solver runner, service layer, API serialization, job export endpoint
 - Related issue:
   - [#86 — Improve solver parameter and error handling](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/86)
 - Automated evidence: `QRT-SE-01`
+- Additional coverage: export endpoint (`GET /jobs/{job_id}/export`) is tested for safe responses in `tests/test_export.py`
 
 ---
 
 ## Acceptance of This Document
 
-This document is complete for Assignment 4 when:
+This document is complete for Assignment 5 / MVP v2 when:
 
 - at least three requirements use different ISO/IEC 25010 sub-characteristics;
 - every requirement has a measurable threshold;
 - every requirement has a rationale;
 - every requirement is linked to a backlog item or documented product area;
 - every requirement has at least one automated QRT defined in `docs/quality-requirement-tests.md`;
-- the document is reviewed through an issue-linked pull request.
+- the document is reviewed through an issue-linked pull request;
+- the scope covers the `MVP v2` increment including the export endpoint and enhanced job detail responses.
 
 ## Change Control
 
@@ -217,4 +219,4 @@ Any change to a threshold must be:
 - justified in the related issue or pull request;
 - reviewed by another team member;
 - reflected in the corresponding QRT;
-- recorded in the Week 4 report if it affects submitted evidence.
+- recorded in the Week 5 report if it affects submitted evidence.
