@@ -140,6 +140,7 @@ Issue [#90](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues
 - [Definition of Done](./docs/definition-of-done.md)
 - [Roadmap](./docs/roadmap.md)
 - [Architecture documentation](./docs/architecture/README.md)
+- [Development process and configuration management](./docs/development-process.md)
 
 ## License
 

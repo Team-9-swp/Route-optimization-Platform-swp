@@ -435,12 +435,13 @@ Do not insert invented measurements. Record actual values from the final protect
 
 ## Completion Criteria
 
-This document and issue #87 are complete when:
+This document is complete for Assignment 5 / MVP v2 when:
 
 - every quality requirement has at least one automated QRT;
 - every QRT has a stable ID;
 - test location, input, threshold, and expected evidence are specified;
-- the QRT code is implemented by issue #88;
+- the QRT code is implemented;
 - all QRTs run automatically in CI;
 - the latest protected-default-branch run passes;
-- another team member reviews the requirements and QRT definitions.
+- another team member reviews the requirements and QRT definitions;
+- `MVP v2` integration tests for the export endpoint (`tests/test_export.py`) and enhanced job details (`tests/test_api.py`) are added alongside the existing QRTs.

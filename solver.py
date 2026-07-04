@@ -533,16 +533,6 @@ def run_pipeline(problem, evaluator, params, time_limit, pyvrp_cap, seed=None):
 
 
 def solve(raw_data, time_limit=900, seed=42):
-    """Solve CVRPTW+Loaders using PyVRP + Nevergrad hyperparameter tuning.
-
-    Args:
-        raw_data: dict - raw problem data from JSON
-        time_limit: float - total time budget in seconds
-        seed: int - random seed
-
-    Returns:
-        dict with 'vehicles', 'loaders', and '_cost' keys, or None if infeasible
-    """
     random.seed(seed)
 
     data = clean_json_keys(raw_data)
@@ -559,8 +549,6 @@ def solve(raw_data, time_limit=900, seed=42):
     pyvrp_cap = float("inf")
 
     if time_limit <= 60:
-        # Short CI/sanity runs: minimal hyper-parameter sweep so the total
-        # runtime stays close to the configured time limit.
         ng_budget = 2
         print("Mode: Short Time Limit (Minimal Hyperparameter Tuning)")
     elif N <= 200:
