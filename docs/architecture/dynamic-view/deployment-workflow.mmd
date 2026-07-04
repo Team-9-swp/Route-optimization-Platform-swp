@@ -1,0 +1,44 @@
+%% Route Optimization Platform — Dynamic View: Protected-main build & deployment workflow
+%% Authoritative diagrams-as-code source. Rendered copy lives in docs/architecture/README.md.
+sequenceDiagram
+  autonumber
+  actor DEV as Developer
+  participant BR as Feature Branch
+  participant PR as Pull Request
+  participant CI as GitHub Actions CI
+  participant MAIN as main (protected)
+  participant ALEMBIC as Alembic Migrations
+  participant STACK as Docker Compose Stack<br/>(db, api, frontend)
+  participant HEALTH as /health
+
+  rect rgb(235, 248, 255)
+  note over DEV,BR: Feature work and review
+  DEV->>BR: commit on feat/..., fix/..., docs/...
+  BR->>PR: open PR vs main (issue-linked, Closes #N)
+  PR->>CI: trigger CI on PR
+  end
+
+  rect rgb(255, 248, 240)
+  note over CI,ALEMBIC: CI gate (backend + frontend)
+  CI->>CI: backend: PostgreSQL service, ruff, black,<br/>unit/integration tests + coverage, QRTs, bandit
+  CI->>ALEMBIC: alembic upgrade head (CI DB)
+  CI->>CI: frontend: npm ci, typecheck, build
+  CI-->>PR: green / red
+  alt green and approved
+    PR->>MAIN: merge (issue auto-closes)
+  else red / changes requested
+    PR-->>BR: request changes
+  end
+  end
+
+  rect rgb(240, 255, 240)
+  note over MAIN,HEALTH: Protected-main build and deploy
+  MAIN->>CI: push to main triggers CI
+  CI->>CI: re-run full pipeline on main
+  CI->>STACK: (planned, issue #130) auto-deploy from green main
+  STACK->>ALEMBIC: apply migrations
+  STACK->>HEALTH: post-deploy GET /health
+  HEALTH-->>STACK: {"status":"ok"}
+  MAIN->>MAIN: tag SemVer (vX.Y.Z)
+  MAIN-->>PR: Release links milestone, run instructions,<br/>demo video, weekly report
+  end
