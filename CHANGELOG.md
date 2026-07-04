@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Automatic deployment from protected `main` in the CI pipeline: a `deploy` job runs after the `backend` and `frontend` jobs pass, applies migrations, and verifies the API with a post-deploy health check. See `docs/deployment.md` for required secrets, manual redeploy, and rollback.
+
 ## [1.2.0] - 2026-06-29
 
 ### Added

@@ -5,6 +5,12 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Git ref or SHA to deploy (used for manual redeploy/rollback)"
+        required: false
+        default: ""
 
 jobs:
   backend:
@@ -100,3 +106,39 @@ jobs:
     - name: Build frontend
       run: npm run build
       working-directory: frontend
+
+  deploy:
+    needs: [backend, frontend]
+    if: >-
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Deploy to the VM over SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          port: ${{ secrets.DEPLOY_PORT || '22' }}
+          envs: DEPLOY_PATH, COMMIT_SHA
+          script_stop: true
+          script: |
+            set -euo pipefail
+            cd "$DEPLOY_PATH"
+            git fetch --all --prune
+            git reset --hard "$COMMIT_SHA"
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build --wait --remove-orphans
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml exec -T api alembic upgrade head
+        env:
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+          COMMIT_SHA: ${{ github.event.inputs.ref || github.sha }}
+
+      - name: Post-deployment API health check
+        run: |
+          sleep 15
+          curl -fsS --retry 5 --retry-delay 5 "${HEALTH_URL}/health"
+        env:
+          HEALTH_URL: ${{ secrets.DEPLOY_HEALTH_URL }}
