@@ -41,4 +41,4 @@ Concretely:
 
 ## Follow-up work
 
-Sprint 5 includes automatic deployment from protected `main` (issue #130). When that lands, the deployment view in `docs/architecture/` and any new deployment-related decisions will be updated or recorded as additional ADRs.
+Automatic deployment from protected `main` (issue #130) is implemented: after the `backend` and `frontend` CI jobs pass, a `deploy` job runs on a **self-hosted GitHub Actions runner that lives on the VM**, rebuilds the Compose stack, applies migrations, and runs a post-deploy health check. The VM has no public IP, so the runner connects to GitHub outbound over HTTPS. See [`docs/deployment.md`](../../deployment.md) for the runner setup, required configuration, manual redeploy, and rollback.

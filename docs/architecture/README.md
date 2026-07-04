@@ -48,7 +48,7 @@ flowchart TB
 
   Customer --> SPA
   SPA -.->|static + proxied /api| NGINX
-  NGINX -->|HTTP / JSON REST<br/>/solve /jobs /jobs/{id} /validate /health| API
+  NGINX -->|HTTP / JSON REST<br/>/solve /jobs /jobs/:id /validate /health| API
   API --> SVC
   SVC --> REPO
   SVC --> RUN
@@ -199,7 +199,7 @@ sequenceDiagram
   note over MAIN,HEALTH: Protected-main build and deploy
   MAIN->>CI: push to main triggers CI
   CI->>CI: re-run full pipeline on main
-  CI->>STACK: (planned, issue #130) auto-deploy from green main
+  CI->>STACK: self-hosted runner deploys from green main
   STACK->>ALEMBIC: apply migrations
   STACK->>HEALTH: post-deploy GET /health
   HEALTH-->>STACK: {"status":"ok"}
@@ -208,9 +208,9 @@ sequenceDiagram
   end
 ```
 
-**What the scenario represents and why it matters.** This is the path a change takes from a feature branch to a customer-accessible deployment: an issue-linked PR, the CI gate (with migrations applied against a real PostgreSQL service), the protected-main merge, the (planned) automatic deployment from green `main`, the post-deploy health check, and the SemVer release. It documents how quality and recoverability evidence is produced continuously, not just at submission time.
+**What the scenario represents and why it matters.** This is the path a change takes from a feature branch to a customer-accessible deployment: an issue-linked PR, the CI gate (with migrations applied against a real PostgreSQL service), the protected-main merge, the automatic deployment from green `main` via the self-hosted runner, the post-deploy health check, and the SemVer release. It documents how quality and recoverability evidence is produced continuously, not just at submission time.
 
-**Boundaries it helps reason about.** The diagram makes the protected-default-branch and CI-gate boundaries explicit, and shows where the planned auto-deploy (issue #130) plugs in. It connects the workflow documented in `docs/development-process.md` to the runtime deployment shown in the deployment view.
+**Boundaries it helps reason about.** The diagram makes the protected-default-branch and CI-gate boundaries explicit, and shows where the self-hosted runner auto-deploy (see [`docs/deployment.md`](../deployment.md)) plugs in. It connects the workflow documented in `docs/development-process.md` to the runtime deployment shown in the deployment view.
 
 ---
 
@@ -247,9 +247,9 @@ flowchart TB
 
   BROWSER -->|HTTP :3000 — public access path| NGINX
   NGINX -->|HTTP :8000 — proxy /api| APP
-  APP -->|TCP 5432 — asyncpg (DATABASE_URL)| PG
+  APP -->|TCP 5432 — asyncpg| PG
 
-  GHA -.->|(planned, issue #130) auto-deploy from green main<br/>+ run migrations + health check| HOST
+  GHA -.->|deploy via self-hosted runner<br/>migrations + health check| HOST
   GH --- REL
   REL -.->|tag on protected main commit| GH
 ```

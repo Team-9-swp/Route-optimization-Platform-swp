@@ -35,7 +35,7 @@ sequenceDiagram
   note over MAIN,HEALTH: Protected-main build and deploy
   MAIN->>CI: push to main triggers CI
   CI->>CI: re-run full pipeline on main
-  CI->>STACK: (planned, issue #130) auto-deploy from green main
+  CI->>STACK: self-hosted runner deploys from green main
   STACK->>ALEMBIC: apply migrations
   STACK->>HEALTH: post-deploy GET /health
   HEALTH-->>STACK: {"status":"ok"}
