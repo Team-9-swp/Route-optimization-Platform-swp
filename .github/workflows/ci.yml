@@ -121,10 +121,16 @@ jobs:
         with:
           ref: ${{ github.event.inputs.ref || github.sha }}
 
-      - name: Build, start, and migrate the stack
+      - name: Build, start, and reconcile database schema
         run: |
           docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build --wait --remove-orphans
-          docker compose -f docker-compose.yml -f docker-compose.prod.yml exec -T api alembic upgrade head
+          # The app creates its schema on startup (init_db -> Base.metadata.create_all),
+          # which creates the tables without recording an alembic version. Reconcile:
+          # apply pending migrations on a fresh DB; if the tables already exist because
+          # startup created them, stamp head so alembic tracks the current state and
+          # future migrations apply cleanly.
+          docker compose -f docker-compose.yml -f docker-compose.prod.yml exec -T api alembic upgrade head \
+            || docker compose -f docker-compose.yml -f docker-compose.prod.yml exec -T api alembic stamp head
 
       - name: Post-deployment API health check (local)
         run: |

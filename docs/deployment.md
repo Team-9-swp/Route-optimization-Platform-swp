@@ -27,7 +27,7 @@ The `deploy` job:
 
 1. Checks out the deployed commit with `actions/checkout` (honoring the optional `workflow_dispatch` `ref` input).
 2. Builds and starts the stack with `docker compose ... up -d --build --wait --remove-orphans`. `--wait` blocks until the `api` and `db` health checks pass.
-3. Applies database migrations explicitly: `docker compose ... exec api alembic upgrade head`. (The API also applies migrations on startup; this step makes migration execution explicit and visible in the deploy log.)
+3. Reconciles the database schema. The app creates its tables on startup (`init_db` → `Base.metadata.create_all`), independently of alembic. The deploy runs `alembic upgrade head` to apply pending migrations; if the tables already exist because startup created them, it falls back to `alembic stamp head` so alembic tracks the current state and future migrations apply cleanly.
 4. Runs a post-deployment health check **locally on the VM**: `curl -fsS --retry 5 --retry-delay 5 http://localhost:8000/health`.
 
 Because `deploy` depends on `backend` and `frontend`, a failing CI check on `main` prevents deployment. A failing `docker compose` command or a non-200 `/health` (`curl -f`) fails the job, so failures are visible in the GitHub Actions UI.
