@@ -69,6 +69,7 @@ Current public run/access instructions:
 - [Hosted documentation](https://team-9-swp.github.io/Route-optimization-Platform-swp/)
 
 Private access details, exact deployment access instructions, credentials, recording links, and exact timecodes are submitted through Moodle only.
+| Release | GitHub Release: [v1.3.0](https://github.com/Team-9-swp/Route-optimization-Platform-swp/releases/tag/v1.3.0) |
 
 ## Customer Feedback Response
 
@@ -270,3 +271,10 @@ Screenshots are stored under `reports/week5/images/`.
 ### Product access artifact
 
 ![Product access artifact](images/product-access-artifact.png)
+| Team member | Assignment 5 responsibility | Technical / process contribution |
+|---|---|---|
+| Elvina Belorusova | Parts 1, 2, 9, Week 5 report / Moodle report | Sprint planning, customer feedback traceability, Sprint Review evidence, final reporting |
+| Adelia | Parts 7, 10, 11, 12, 13, 14 | Release support, retrospective, hosted docs, reflection, demo video, LLM report |
+| Matvey | Part 6 | Testing, QA, Definition of Done |
+| Aidar | Part 8 | UAT scenarios and customer-facing validation |
+| Valera | Parts 3, 4, 5 | Development process, architecture documentation, ADRs |
