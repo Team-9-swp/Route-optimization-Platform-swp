@@ -37,3 +37,6 @@ The following Sprint 5 items are internal product, architecture, delivery, or re
 - [#126](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/126) — validator-compatible solution JSON export; this improves product interoperability and regression coverage, but the inspected feedback does not explicitly request downloaded solution JSON compatibility.
 - [#129](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/129) — known product bug fix; the issue requires reproduction details before implementation starts and is not attributed to customer feedback here.
 - [#130](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/130) — automatic deployment from protected `main`; this supports delivery reliability, but the inspected customer feedback asks for accessible product access, not this specific automation workflow.
+
+## Documentation
+📖 **[View the Hosted Documentation](https://team-9-swp.github.io/Route-optimization-Platform-swp/)**
