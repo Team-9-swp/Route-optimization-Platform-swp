@@ -128,6 +128,8 @@ ngrok http 3000
 
 Issue [#90](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/90) remains the tracking item for deployment/customer access. GitHub Release [`v1.2.0`](https://github.com/Team-9-swp/Route-optimization-Platform-swp/releases/tag/v1.2.0) is published from protected `main`.
 
+Automatic deployment from protected `main` runs after CI passes; see [docs/deployment.md](./docs/deployment.md) for the pipeline, required secrets, manual redeploy, and rollback.
+
 ## Assignment Reports
 
 - [Week 2 report index](./reports/week2/README.md)
@@ -140,6 +142,8 @@ Issue [#90](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues
 - [Definition of Done](./docs/definition-of-done.md)
 - [Roadmap](./docs/roadmap.md)
 - [Documentation Site](https://team-9-swp.github.io/Route-optimization-Platform-swp/)
+- [Architecture documentation](./docs/architecture/README.md)
+- [Development process and configuration management](./docs/development-process.md)
 
 ## License
 

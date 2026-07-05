@@ -1,5 +1,5 @@
 import asyncio
-from typing import Awaitable, Callable
+from typing import Any, Awaitable, Callable
 
 from app.repository import JobRepository
 from app.runner import run_solver
@@ -89,3 +89,16 @@ class SolverService:
     ) -> ValidationResponse:
         result = _validate_solution(instance, solution)
         return ValidationResponse(**result)
+
+    async def get_solution(self, job_id: str) -> dict[str, Any] | None:
+        """Return the validator-compatible solution for a completed job.
+
+        The stored solver ``result`` already matches the validator's expected
+        schema (top-level ``vehicles`` and ``loaders``). This drops the
+        internal-only ``_cost`` field so the exported file can be fed directly
+        to the project validator without manual editing.
+        """
+        record = await self._repository.get_job(job_id)
+        if record is None or record.result is None:
+            return None
+        return {k: v for k, v in record.result.items() if k != "_cost"}

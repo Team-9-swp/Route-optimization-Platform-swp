@@ -39,9 +39,9 @@ A customer-accessible MVP v2 increment with selected product improvements, updat
 | A5-04: Document static, dynamic, and deployment architecture views | `whateverwillbewillbe` | `Aydar-art` | 5 | Must Have |
 | A5-05: Create and link Architecture Decision Records | `whateverwillbewillbe` | `FuFill` | 3 | Must Have |
 | A5-06: Extend testing, QA, and Definition of Done for MVP v2 | `FuFill` | `whateverwillbewillbe` | 5 | Must Have |
-| A5-07: Deploy and release MVP v2 | `FuFill` | `whateverwillbewillbe` | 5 | Must Have |
+| A5-07: Deploy and release MVP v2 | `Adelevere` | `whateverwillbewillbe` | 5 | Must Have |
 | A5-08: Update and execute MVP v2 UAT scenarios | `Aydar-art` | `FuFill` | 3 | Must Have |
-| A5-09: Conduct Sprint 5 Review | `Aydar-art` | `belelvser` | 3 | Must Have |
+| A5-09: Conduct Sprint 5 Review | `belelvser` | `Aydar-art` | 3 | Must Have |
 | A5-10: Conduct Sprint Retrospective | `Adelevere` | `belelvser` | 2 | Must Have |
 | A5-11: Publish hosted documentation | `Adelevere` | `whateverwillbewillbe` | 3 | Must Have |
 | A5-12: Write Week 5 reflection | `Adelevere` | `belelvser` | 2 | Must Have |
@@ -374,7 +374,7 @@ MVP v2
 
 ## Implementer
 
-@FuFill
+@Adelevere
 
 ## Reviewer
 
@@ -468,11 +468,11 @@ MVP v2
 
 ## Implementer
 
-@Aydar-art
+@belelvser
 
 ## Reviewer
 
-@belelvser
+@Aydar-art
 
 ## Work Status
 
@@ -1116,10 +1116,10 @@ Sprint 5 — MVP v2
 
 Story Points by implementer:
 
-- `belelvser`: 8
-- `Adelevere`: 10
-- `Aydar-art`: 16
-- `FuFill`: 23
+- `belelvser`: 11
+- `Adelevere`: 15
+- `Aydar-art`: 13
+- `FuFill`: 18
 - `whateverwillbewillbe`: 22
 
 Story Points by priority:

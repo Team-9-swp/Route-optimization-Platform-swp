@@ -1,0 +1,248 @@
+@startuml Architecture
+!theme plain
+
+title Route Optimization Platform — Architecture
+
+' =============================================
+' SECTION 1: Deployment / Container Diagram
+' =============================================
+
+package "Docker Compose (Dev)" as docker {
+  node "nginx:alpine\nport 3000" as nginx {
+    [Frontend SPA\n(React + Vite)] as fe
+    file "nginx.conf\n/api/ -> proxy_pass" as conf
+  }
+
+  node "python:3.11-slim\nport 8000" as api_node {
+    [FastAPI App\n(uvicorn)] as api_app
+  }
+
+  nginx --> api_app : HTTP /api/*
+}
+
+' =============================================
+' SECTION 2: Frontend Component Diagram
+' =============================================
+
+package "Frontend (React 18 + TypeScript)" {
+  together {
+    (main.tsx)
+    (App.tsx) as app
+    () "types/index.ts" as types
+  }
+
+  rectangle "api/" as fe_api {
+    component "client.ts\n(Axios instance)" as client
+    component "jobs.ts\nsubmitJob / getJob / listJobs" as fe_jobs
+    component "validate.ts\nvalidateSolution" as fe_val
+  }
+
+  rectangle "app/components/" as fe_comp {
+    component "NavBar.tsx" as nav
+    component "Dashboard.tsx" as dash
+    component "NewJob.tsx" as newjob
+    component "JobDetail.tsx" as detail
+    component "Validate.tsx" as val
+  }
+
+  rectangle "styles/" as fe_styles {
+    file "index.css"
+    file "tailwind.css"
+    file "theme.css"
+    file "fonts.css"
+  }
+
+  app --> nav
+  app --> dash
+  app --> newjob
+  app --> detail
+  app --> val
+  app --> types
+
+  dash --> fe_jobs
+  newjob --> fe_jobs
+  detail --> fe_jobs
+  val --> fe_val
+  fe_jobs --> client
+  fe_val --> client
+}
+
+' =============================================
+' SECTION 3: Backend Component Diagram
+' =============================================
+
+package "Backend API (FastAPI / Python 3.11)" {
+  file "app/main.py\nFastAPI app factory" as main_py
+  file "app/api.py\nPOST/GET endpoints" as api_py
+  file "app/service.py\nSolverService" as svc_py
+  file "app/schemas.py\nPydantic models" as schemas_py
+  file "app/runner.py\nasync solve runner" as runner_py
+  file "app/store.py\nIn-memory JobStore" as store_py
+  file "app/validation.py\nvalidate wrapper" as val_py
+  file "solver.py\ntop-level solve()" as solver_py
+  file "backup/validator.py\nlegacy validator" as validator_py
+
+  main_py --> api_py : include_router
+  api_py --> svc_py : SolverService
+  api_py --> schemas_py : response models
+  svc_py --> store_py : JobStore CRUD
+  svc_py --> runner_py : run_solver()
+  svc_py --> val_py : validate_solution()
+  runner_py --> solver_py : solve() via to_thread
+  val_py --> validator_py : _validate_solution()
+  store_py --> schemas_py : JobRecord
+
+  note right of runner_py
+    Runs solver in a separate thread
+    via asyncio.to_thread()
+    Captures stdout, handles errors
+  end note
+}
+
+' =============================================
+' SECTION 4: Solver Engine Class Diagram
+' =============================================
+
+package "Solver Engine (solver.py)" {
+  class "ProblemData" as PD {
+    + vehicle_capacity, speed
+    + loader_speed
+    + shift_lengths
+    + depot (x, y)
+    + orders[]
+    + weights {}
+    + dist_flat[]
+    + v_time_flat[]
+    + l_time_flat[]
+    + distance(a, b)
+    + v_time(a, b)
+    + l_time(a, b)
+  }
+
+  class "Solution" as SOL {
+    + vehicle_routes: List[List[int]]
+    + loader_routes: List[List[int]]
+    + unserved_optional: Set[int]
+    + copy()
+    + number_of_vehicles_in_use()
+    + number_of_loaders_in_use()
+  }
+
+  class "Evaluator" as EV {
+    + is_vehicle_route_feasible(route)
+    + is_loader_route_feasible(route, vtimes)
+    + evaluate(solution) -> (cost, ok, details)
+    + extract_vehicle_times(solution)
+  }
+
+  class "LoaderSA" as LSA {
+    + temp0, alpha, max_iters, time_budget
+    + improve(solution, vtimes)
+    - _relocate()
+    - _swap()
+    - _two_opt()
+    - _merge()
+  }
+
+  class "run_pipeline()" as pipe
+  class "solve()" as solve_top
+  class "solve_vehicles_pyvrp()" as pyvrp
+  class "assign_loaders_greedy()" as greedy
+
+  solve_top --> pipe : orchestrates
+  solve_top --> "nevergrad.NGOpt" : hyperparameter tuning
+  pipe --> pyvrp : vehicle routing
+  pipe --> greedy : initial loader routes
+  pipe --> LSA : improve loaders (SA)
+  pyvrp --> "pyvrp.solve" : PyVRP library
+  pyvrp --> PD
+  pipe --> EV
+  EV --> PD
+  EV --> SOL
+  LSA --> EV
+}
+
+' =============================================
+' SECTION 5: beta_code Refactored Package
+' =============================================
+
+package "beta_code/ (Refactored Modules)" {
+  package "core/" {
+    [ProblemData] as bpd
+    [Solution] as bsol
+    [Evaluator] as bev
+  }
+
+  package "solvers/" {
+    interface "VehicleSolver\n(ABC)" as vs_abc
+    [ORToolsVehicleSolver] as ort
+  }
+
+  package "loaders/" {
+    [assign_loaders_greedy()] as bgr
+    [LoaderSA (SA)] as blsa
+  }
+
+  package "pipeline/" {
+    [orchestrate.py] as borch
+    [output.py] as bout
+  }
+
+  package "utils/" {
+    [math_utils.py] as bmath
+    [parallel.py] as bpar
+  }
+
+  ort -up-|> vs_abc
+  ort --> bpd
+  ort --> bev
+  blsa --> bev
+  bgr --> bev
+  bpar --> ort : multiprocessing workers
+  bpar --> blsa
+  borch --> solver_py : wraps solve()
+  bout --> bsol
+  bout --> bev
+}
+
+' =============================================
+' SECTION 6: Infrastructure & Config
+' =============================================
+
+package "Infrastructure" {
+  file "docker-compose.yml" as dc_dev
+  file "docker-compose.prod.yml" as dc_prod
+  file "app/Dockerfile" as api_docker
+  file "frontend/Dockerfile" as fe_docker
+  file "requirements.txt" as req
+}
+
+package "Data" {
+  folder "instances/\ni1-i10.json" as inst
+  folder "cvrptw_results/\nresult_i*.json" as res
+}
+
+package "API Spec" {
+  file "api/openapi.yaml"
+  file "api/postman_collection.json"
+}
+
+package "Tests (pytest)" {
+  [test_api.py]
+  [test_e2e.py]
+  [test_runner.py]
+  [test_schemas.py]
+  [test_service.py]
+  [test_store.py]
+  [test_validation.py]
+  [test_validator.py]
+}
+
+legend bottom
+  **Route Optimization Platform**
+  CVRPTW + Loader Assignment
+  FastAPI | React | PyVRP / OR-Tools | Nevergrad
+  v1.1.0
+endlegend
+
+@enduml

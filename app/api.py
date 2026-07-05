@@ -3,6 +3,7 @@ from fastapi import APIRouter, Body, HTTPException, Query
 from app.schemas import (
     JobListResponse,
     JobResponse,
+    JobStatus,
     SolveResponse,
     ValidationRequest,
     ValidationResponse,
@@ -38,6 +39,20 @@ async def get_job(job_id: str) -> JobResponse:
     return job
 
 
+@router.get("/jobs/{job_id}/solution")
+async def get_job_solution(job_id: str) -> dict:
+    """Export the validator-compatible solution for a completed job.
+
+    The response body has top-level ``vehicles`` and ``loaders`` arrays, so it
+    can be downloaded from the web interface and passed directly to the project
+    validator (or to ``POST /validate``) without manual editing.
+    """
+    solution = await service.get_solution(job_id)
+    if solution is None:
+        raise HTTPException(status_code=404, detail="Solution not available")
+    return solution
+
+
 @router.get("/jobs", response_model=JobListResponse)
 async def list_jobs(
     page: int = Query(default=1, ge=1),
@@ -49,6 +64,21 @@ async def list_jobs(
 @router.post("/validate", response_model=ValidationResponse)
 async def validate(payload: ValidationRequest) -> ValidationResponse:
     return await service.validate_solution(payload.instance, payload.solution)
+
+
+@router.get("/jobs/{job_id}/export")
+async def export_job(job_id: str) -> dict:
+    job = await service.get_job(job_id)
+    if job is None:
+        raise HTTPException(status_code=404, detail="Job not found")
+    if job.status != JobStatus.COMPLETED:
+        raise HTTPException(status_code=400, detail="Job is not completed")
+    if job.result is None:
+        raise HTTPException(status_code=400, detail="Job has no result")
+    return {
+        "vehicles": job.result.get("vehicles", []),
+        "loaders": job.result.get("loaders", []),
+    }
 
 
 @router.get("/health")

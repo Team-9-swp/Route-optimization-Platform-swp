@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Automatic deployment from protected `main` in the CI pipeline: a `deploy` job runs on a self-hosted runner on the VM after the `backend` and `frontend` jobs pass, applies migrations, and verifies the API with a post-deploy health check. See `docs/deployment.md` for runner setup, manual redeploy, and rollback.
+- `GET /jobs/{job_id}/solution` endpoint that exports a validator-compatible solution JSON (top-level `vehicles` and `loaders`), so a file downloaded from the web interface can be passed directly to the project validator without manual editing.
+
+### Changed
+
+- The web interface "Download JSON" button now downloads the validator-compatible solution instead of the full job envelope.
+
 ## [1.2.0] - 2026-06-29
 
 ### Added
