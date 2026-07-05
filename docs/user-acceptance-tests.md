@@ -295,7 +295,7 @@ Do not commit the following to the public repository:
 
 ---
 
-## Sprint 3 UAT Summary
+## Sprint 5 UAT Summary
 
 **Session date:** 2026-07-02
 
