@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Route Optimization Platform</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 900px; margin: 40px auto; padding: 0 20px; line-height: 1.6; color: #24292f; }
+    h1 { border-bottom: 1px solid #d0d7de; padding-bottom: 10px; }
+    h2 { margin-top: 30px; }
+    a { color: #0969da; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    ul { padding-left: 20px; }
+    .status { background: #dafbe1; padding: 10px 15px; border-radius: 6px; display: inline-block; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #d0d7de; padding: 8px 12px; text-align: left; }
+    th { background: #f6f8fa; }
+  </style>
+</head>
+<body>
+
+<h1>🚚 Route Optimization Platform — Documentation</h1>
+
+<p><span class="status">✅ Documentation site is live (via Netlify)</span></p>
+
+<p>Welcome to the Route Optimization Platform documentation.</p>
+
+<h2>Quick Links</h2>
+<ul>
+  <li><a href="https://github.com/Team-9-swp/Route-optimization-Platform-swp">Repository</a></li>
+  <li><a href="CHANGELOG.md">Changelog</a></li>
+  <li><a href="LICENSE">License</a></li>
+</ul>
+
+<h2>Product Documentation</h2>
+<ul>
+  <li><a href="interface.md">Interface Documentation</a> — Web UI and REST API description</li>
+  <li><a href="user-stories.md">User Stories</a> — Product backlog user stories</li>
+  <li><a href="roadmap.md">Roadmap</a> — Product roadmap and future plans</li>
+</ul>
+
+<h2>Quality &amp; Testing</h2>
+<ul>
+  <li><a href="quality-requirements.md">Quality Requirements</a> — Measurable quality requirements</li>
+  <li><a href="quality-requirement-tests.md">Quality Requirement Tests</a> — Test specifications</li>
+  <li><a href="testing.md">Testing Strategy</a> — Testing approach and coverage</li>
+  <li><a href="definition-of-done.md">Definition of Done</a> — Completion criteria</li>
+</ul>
+
+<h2>Development Process</h2>
+<ul>
+  <li><a href="development-process.md">Development Process</a> — Workflow and configuration management</li>
+</ul>
+
+<h2>User Acceptance Tests</h2>
+<ul>
+  <li><a href="user-acceptance-tests.md">User Acceptance Tests</a> — UAT scenarios and results</li>
+</ul>
+
+<h2>Architecture Documentation</h2>
+<ul>
+  <li><a href="architecture/README.md">Architecture Overview</a></li>
+  <li><a href="architecture/static-view/">Static View (Component Diagram)</a></li>
+  <li><a href="architecture/dynamic-view/">Dynamic View (Sequence Diagram)</a></li>
+  <li><a href="architecture/deployment-view/">Deployment View</a></li>
+  <li><a href="architecture/adr/">Architecture Decision Records (ADRs)</a></li>
+</ul>
+
+<h2>Assignment Planning</h2>
+<ul>
+  <li><a href="assignment5-sprint5-planning.md">Assignment 5 Sprint 5 Planning</a></li>
+</ul>
+
+<h2>Interface Documentation</h2>
+<h3>Web User Interface</h3>
+<ul>
+  <li><strong>Framework:</strong> React + TypeScript</li>
+  <li><strong>Primary users:</strong> Dispatchers and logistics managers</li>
+  <li><strong>Figma Prototype:</strong> <a href="https://carry-race-78764713.figma.site/">Interactive prototype</a></li>
+</ul>
+
+<h3>REST API</h3>
+<ul>
+  <li><strong>Framework:</strong> FastAPI</li>
+  <li><strong>Base URL (local):</strong> <code>http://localhost:8000</code></li>
+  <li><strong>Swagger UI:</strong> <code>http://localhost:8000/docs</code></li>
+  <li><strong>OpenAPI spec:</strong> <code>api/openapi.yaml</code></li>
+</ul>
+
+<h2>Current Status</h2>
+<table>
+  <tr><th>Component</th><th>Status</th></tr>
+  <tr><td>REST API</td><td>✅ Implemented (MVP v1)</td></tr>
+  <tr><td>Web UI</td><td>🔄 Figma prototype, React implementation in progress</td></tr>
+  <tr><td>Persistent Storage</td><td>📋 Planned (PostgreSQL)</td></tr>
+  <tr><td>Solver</td><td>✅ PyVRP + Nevergrad</td></tr>
+</ul>
+
+<hr>
+<p><em>This documentation is maintained as part of the Route Optimization Platform project.</em></p>
+<p><a href="https://github.com/Team-9-swp/Route-optimization-Platform-swp">View on GitHub →</a></p>
+
+</body>
+</html>
