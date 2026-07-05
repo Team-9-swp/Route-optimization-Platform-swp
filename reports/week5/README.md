@@ -45,3 +45,5 @@ The following Sprint 5 items are internal product, architecture, delivery, or re
 - [Sprint 5 Review Summary](sprint-review-summary.md)
 - Combined Sprint Review and UAT recording: private Moodle submission only.
 - Exact recording timecodes, recording permission evidence, and private access details are intentionally excluded from the public repository.
+## Demo
+**[view Demo](https://disk.yandex.ru/i/CXjgSum-9lTAjg)**
