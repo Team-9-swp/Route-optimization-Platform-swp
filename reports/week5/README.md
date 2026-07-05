@@ -17,7 +17,7 @@
 | LLM usage | [LLM usage report](llm-report.md) |
 | Hosted documentation | [Hosted documentation](https://team-9-swp.github.io/Route-optimization-Platform-swp/) |
 | Demo video | [MVP v2 demo](https://disk.yandex.ru/i/CXjgSum-9lTAjg) |
-| Release | GitHub Release `v1.3.0` — TBD after release |
+| Release | GitHub Release: [v1.3.0](https://github.com/Team-9-swp/Route-optimization-Platform-swp/releases/tag/v1.3.0) |
 
 ## Customer Feedback Response
 
