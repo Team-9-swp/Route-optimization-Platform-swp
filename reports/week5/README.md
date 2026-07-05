@@ -40,3 +40,8 @@ The following Sprint 5 items are internal product, architecture, delivery, or re
 
 ## Documentation
 📖 **[View the Hosted Documentation](https://team-9-swp.github.io/Route-optimization-Platform-swp/)**
+
+## Sprint Review
+- [Sprint 5 Review Summary](sprint-review-summary.md)
+- Combined Sprint Review and UAT recording: private Moodle submission only.
+- Exact recording timecodes, recording permission evidence, and private access details are intentionally excluded from the public repository.
