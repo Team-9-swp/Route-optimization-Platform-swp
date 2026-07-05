@@ -7,14 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-07-05
+
 ### Added
 
-- Automatic deployment from protected `main` in the CI pipeline: a `deploy` job runs on a self-hosted runner on the VM after the `backend` and `frontend` jobs pass, applies migrations, and verifies the API with a post-deploy health check. See `docs/deployment.md` for runner setup, manual redeploy, and rollback.
-- `GET /jobs/{job_id}/solution` endpoint that exports a validator-compatible solution JSON (top-level `vehicles` and `loaders`), so a file downloaded from the web interface can be passed directly to the project validator without manual editing.
+- Automatic deployment from protected `main` in the CI pipeline.
+- `GET /jobs/{job_id}/solution` endpoint that exports a validator-compatible solution JSON.
+- Sprint 5 Review summary.
+- Hosted documentation site.
+- Public MVP v2 demo video.
 
 ### Changed
 
 - The web interface "Download JSON" button now downloads the validator-compatible solution instead of the full job envelope.
+
+### Deferred
+
+- Gantt schedule visualization is deferred to the next Sprint.
+- Loader workload balance improvement is deferred to future work.
+- Solver pipeline and greedy-stage analysis continues in #127.
+- Column generation was investigated and considered not useful enough for the current task scope.
 
 ## [1.2.0] - 2026-06-29
 
@@ -92,7 +104,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - JobDetail route map: custom SVG zoom/pan, per-route visibility filter, color legend and body-scroll lock on hover.
 
-[Unreleased]: https://github.com/Team-9-swp/Route-optimization-Platform-swp/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/Team-9-swp/Route-optimization-Platform-swp/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/Team-9-swp/Route-optimization-Platform-swp/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/Team-9-swp/Route-optimization-Platform-swp/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/Team-9-swp/Route-optimization-Platform-swp/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/Team-9-swp/Route-optimization-Platform-swp/releases/tag/v1.0.0

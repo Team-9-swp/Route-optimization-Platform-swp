@@ -1,5 +1,24 @@
 # Week 5 Report — MVP v2
 
+## Assignment 5 Evidence Index
+
+| Requirement area | Public evidence |
+|---|---|
+| Sprint 5 planning | [Roadmap](../../docs/roadmap.md), [Sprint 5 planning artifact](../../docs/assignment5-sprint5-planning.md) |
+| Customer feedback response | [Customer Feedback Response](#customer-feedback-response) |
+| Development process | [Development process](../../docs/development-process.md) |
+| Architecture views | [Architecture documentation](../../docs/architecture/README.md) |
+| ADRs | [ADR index](../../docs/architecture/adr/README.md) |
+| Testing / QA / DoD | [Testing strategy](../../docs/testing.md), [Definition of Done](../../docs/definition-of-done.md) |
+| UAT | [User Acceptance Tests](../../docs/user-acceptance-tests.md) |
+| Sprint Review | [Sprint 5 Review Summary](sprint-review-summary.md) |
+| Retrospective | [Retrospective](retrospective.md) |
+| Reflection | [Reflection](reflection.md) |
+| LLM usage | [LLM usage report](llm-report.md) |
+| Hosted documentation | [Hosted documentation](https://team-9-swp.github.io/Route-optimization-Platform-swp/) |
+| Demo video | [MVP v2 demo](https://disk.yandex.ru/i/CXjgSum-9lTAjg) |
+| Release | GitHub Release `v1.3.0` — TBD after release |
+
 ## Customer Feedback Response
 
 Public sources reviewed:
@@ -39,11 +58,46 @@ The following Sprint 5 items are internal product, architecture, delivery, or re
 - [#130](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/130) — automatic deployment from protected `main`; this supports delivery reliability, but the inspected customer feedback asks for accessible product access, not this specific automation workflow.
 
 ## Documentation
+
 📖 **[View the Hosted Documentation](https://team-9-swp.github.io/Route-optimization-Platform-swp/)**
 
 ## Sprint Review
+
 - [Sprint 5 Review Summary](sprint-review-summary.md)
 - Combined Sprint Review and UAT recording: private Moodle submission only.
 - Exact recording timecodes, recording permission evidence, and private access details are intentionally excluded from the public repository.
+
 ## Demo
+
 **[view Demo](https://disk.yandex.ru/i/CXjgSum-9lTAjg)**
+
+## MVP v2 Release and Deployment
+
+MVP v2 is released as `v1.3.0`.
+
+Public release evidence:
+- GitHub Release: TBD
+- Changelog: [CHANGELOG.md](../../CHANGELOG.md)
+- Hosted documentation: https://team-9-swp.github.io/Route-optimization-Platform-swp/
+- Demo video: https://disk.yandex.ru/i/CXjgSum-9lTAjg
+
+Private access details, exact deployment access instructions, recording links, and exact timecodes are submitted through Moodle only.
+
+## Deferred and Follow-up Work
+
+| Item | Issue | Sprint 5 decision |
+|---|---|---|
+| Gantt schedule visualization | #125 | Deferred to the next Sprint. |
+| Loader workload balance | #124 | Kept as future work. |
+| Solver pipeline and greedy-stage impact | #127 | Continued next week because more investigation time is required. |
+| Column generation | #128 | Investigated and considered not useful enough for the current problem scope. |
+
+## Contribution Traceability
+
+| Team member | Assignment 5 responsibility | Technical / process contribution |
+|---|---|---|
+| Elvina Belorusova | Parts 1, 2, 9, Week 5 report / Moodle report | Sprint planning, customer feedback traceability, Sprint Review evidence, final reporting |
+| Adelia | Parts 7, 10, 11, 12, 13, 14 | Release support, retrospective, hosted docs, reflection, demo video, LLM report |
+| Matvey | Part 6 | Testing, QA, Definition of Done |
+| Aidar | Part 8 | UAT scenarios and customer-facing validation |
+| Valera | Parts 3, 4, 5 | Development process, architecture documentation, ADRs |
