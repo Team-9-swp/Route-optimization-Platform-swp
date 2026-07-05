@@ -141,6 +141,7 @@ Automatic deployment from protected `main` runs after CI passes; see [docs/deplo
 - [User acceptance tests](./docs/user-acceptance-tests.md)
 - [Definition of Done](./docs/definition-of-done.md)
 - [Roadmap](./docs/roadmap.md)
+- [Documentation Site](https://team-9-swp.github.io/Route-optimization-Platform-swp/)
 - [Architecture documentation](./docs/architecture/README.md)
 - [Development process and configuration management](./docs/development-process.md)
 
