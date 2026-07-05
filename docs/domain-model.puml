@@ -1,0 +1,213 @@
+@startuml DomainModel
+!theme plain
+skinparam classAttributeIconSize 0
+
+title Domain Model — Core Entities
+
+' ===================== App Layer (API) =====================
+
+namespace "app.schemas" {
+  enum JobStatus {
+    PENDING
+    RUNNING
+    COMPLETED
+    FAILED
+  }
+
+  enum ValidationStatus {
+    PENDING
+    PASSED
+    FAILED
+  }
+
+  class JobRecord {
+    + job_id: str
+    + status: JobStatus
+    + created_at: datetime
+    + name: str | None
+    + input_data: dict
+    + seed: int
+    + time_limit: float | None
+    + max_restarts: int | None
+    + started_at: datetime | None
+    + finished_at: datetime | None
+    + result: dict | None
+    + error: str | None
+    + objective_value: float | None
+    + validation_status: ValidationStatus | None
+    + validation_report: dict | None
+  }
+
+  class SolveResponse {
+    + job_id: str
+    + status: JobStatus
+    + created_at: datetime
+    + name: str | None
+  }
+
+  class JobResponse {
+    + job_id: str
+    + status: JobStatus
+    + created_at: datetime
+    + input_data: dict
+    + seed: int
+    + started_at: datetime | None
+    + finished_at: datetime | None
+    + result: dict | None
+    + error: str | None
+    + objective_value: float | None
+    + validation_status: ValidationStatus | None
+    + validation_report: dict | None
+  }
+
+  class ValidationRequest {
+    + instance: dict
+    + solution: dict
+  }
+
+  class ValidationResponse {
+    + passed: bool
+    + objective_value: float | None
+    + violations: list[str]
+    + report: dict
+  }
+
+  class JobListResponse {
+    + items: list[JobResponse]
+    + total: int
+    + page: int
+    + page_size: int
+  }
+}
+
+namespace "app.store" {
+  class JobStore {
+    - _jobs: dict[str, JobRecord]
+    - _lock: Lock
+    + create_job() -> JobRecord
+    + get_job(id) -> JobRecord | None
+    + list_jobs(page, page_size) -> (list[JobRecord], int)
+    + update_job(id, **fields)
+  }
+
+  JobStore --> JobRecord : stores
+}
+
+namespace "app.service" {
+  class SolverService {
+    - _store: JobStore
+    - _runner: Callable
+    + submit_job() -> SolveResponse
+    + get_job(id) -> JobResponse | None
+    + list_jobs() -> JobListResponse
+    + validate_solution() -> ValidationResponse
+  }
+
+  SolverService --> JobStore
+  SolverService --> JobRecord
+}
+
+' ===================== Solver Domain =====================
+
+namespace "solver.py / beta_code.core" {
+  class ProblemData {
+    + vehicle_capacity: float
+    + vehicle_speed: float
+    + loader_speed: float
+    + vehicle_shift_length: float
+    + loader_shift_length: float
+    + depot_x, depot_y: float
+    + orders: list[Order]
+    + weights: dict
+    + number_of_orders: int
+    + size: int
+    + dist_flat, v_time_flat, l_time_flat: list
+    + distance(a, b) -> float
+    + v_time(a, b) -> float
+    + l_time(a, b) -> float
+  }
+
+  class Solution {
+    + vehicle_routes: list[list[int]]
+    + loader_routes: list[list[int]]
+    + unserved_optional: set[int]
+    + copy() -> Solution
+    + number_of_vehicles_in_use() -> int
+    + number_of_loaders_in_use() -> int
+  }
+
+  class Evaluator {
+    + is_vehicle_route_feasible(route) -> (bool, list, float)
+    + is_loader_route_feasible(route, vtimes) -> bool
+    + evaluate(solution) -> (cost, is_valid, details)
+    + extract_vehicle_times(solution) -> dict
+  }
+
+  Evaluator --> ProblemData : reads
+  Evaluator --> Solution : evaluates
+
+  class Order {
+    + id: int
+    + x, y: float
+    + volume: float
+    + time_window: (float, float)
+    + vehicle_service_time: float
+    + loader_cnt: int
+    + loader_service_time: float
+    + optional: int (0/1)
+    + ... (other fields)
+  }
+
+  ProblemData *--> Order : orders[]
+}
+
+namespace "beta_code.solvers" {
+  abstract class VehicleSolver {
+    # problem: ProblemData
+    # evaluator: Evaluator
+    + {abstract} solve(time_limit, seed) -> Solution
+  }
+
+  class ORToolsVehicleSolver {
+    + SCALE = 100
+    + solve(time_limit, seed, strategy) -> Solution
+    - _estimate_max_vehicles() -> int
+  }
+
+  ORToolsVehicleSolver -up-|> VehicleSolver
+}
+
+namespace "beta_code.loaders" {
+  class LoaderSA {
+    + temp0, alpha, max_iters, time_budget
+    + improve(solution, vtimes) -> Solution
+    - _relocate(solution, vtimes) -> bool
+    - _swap(solution, vtimes) -> bool
+    - _two_opt(solution, vtimes) -> bool
+    - _merge(solution, vtimes) -> bool
+  }
+}
+
+' ===================== Relationships =====================
+
+JobRecord --> JobStatus
+JobRecord --> ValidationStatus
+SolveResponse --> JobStatus
+JobResponse --> JobStatus
+JobResponse --> ValidationStatus
+
+' Solver relationship
+ORToolsVehicleSolver --> ProblemData : solves
+LoaderSA --> Evaluator : uses
+ORToolsVehicleSolver --> Solution : produces
+
+legend bottom
+  **Core Entities**
+  - API layer: Pydantic models (app/schemas)
+  - Store: in-memory dict with Lock
+  - Solver domain: ProblemData → Solution → Evaluator
+  - Solvers: VehicleSolver strategy pattern
+  - Loaders: Greedy + Simulated Annealing
+endlegend
+
+@enduml
