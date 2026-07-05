@@ -9,8 +9,15 @@ class LoaderSA:
     Operators: relocate, swap, two_opt, merge.
     """
 
-    def __init__(self, problem, evaluator, temp0=100, alpha=0.998,
-                 max_iters=50000, time_budget=60.0):
+    def __init__(
+        self,
+        problem,
+        evaluator,
+        temp0=100,
+        alpha=0.998,
+        max_iters=50000,
+        time_budget=60.0,
+    ):
         self.problem = problem
         self.evaluator = evaluator
         self.temp0 = temp0
@@ -76,7 +83,9 @@ class LoaderSA:
         idx = random.randrange(len(solution.loader_routes[ri]))
         order_id = solution.loader_routes[ri][idx]
 
-        route_without = solution.loader_routes[ri][:idx] + solution.loader_routes[ri][idx + 1:]
+        route_without = (
+            solution.loader_routes[ri][:idx] + solution.loader_routes[ri][idx + 1 :]
+        )
 
         candidates = list(range(len(solution.loader_routes)))
         random.shuffle(candidates)
@@ -102,7 +111,9 @@ class LoaderSA:
                 solution.loader_routes[:] = new_routes
                 return True
 
-        if route_without and self.evaluator.is_loader_route_feasible([order_id], vehicle_times):
+        if route_without and self.evaluator.is_loader_route_feasible(
+            [order_id], vehicle_times
+        ):
             solution.loader_routes[ri] = route_without
             solution.loader_routes.append([order_id])
             return True
@@ -123,8 +134,11 @@ class LoaderSA:
             return False
 
         solution.loader_routes[ri][i], solution.loader_routes[rj][j] = oj, oi
-        ok = (self.evaluator.is_loader_route_feasible(solution.loader_routes[ri], vehicle_times)
-              and self.evaluator.is_loader_route_feasible(solution.loader_routes[rj], vehicle_times))
+        ok = self.evaluator.is_loader_route_feasible(
+            solution.loader_routes[ri], vehicle_times
+        ) and self.evaluator.is_loader_route_feasible(
+            solution.loader_routes[rj], vehicle_times
+        )
         if not ok:
             solution.loader_routes[ri][i], solution.loader_routes[rj][j] = oi, oj
             return False
@@ -139,7 +153,7 @@ class LoaderSA:
             return False
         i = random.randrange(len(route) - 1)
         j = random.randrange(i + 1, len(route))
-        candidate = route[:i] + route[i:j + 1][::-1] + route[j + 1:]
+        candidate = route[:i] + route[i : j + 1][::-1] + route[j + 1 :]
         if self.evaluator.is_loader_route_feasible(candidate, vehicle_times):
             solution.loader_routes[ri] = candidate
             return True
@@ -154,7 +168,9 @@ class LoaderSA:
             return False
         for merged in (a + b, b + a):
             if self.evaluator.is_loader_route_feasible(merged, vehicle_times):
-                new_routes = [r for k, r in enumerate(solution.loader_routes) if k not in (ri, rj)]
+                new_routes = [
+                    r for k, r in enumerate(solution.loader_routes) if k not in (ri, rj)
+                ]
                 new_routes.append(merged)
                 solution.loader_routes[:] = new_routes
                 return True

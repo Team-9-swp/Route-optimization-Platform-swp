@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This document defines end-user-facing acceptance test scenarios for the Route Optimization Platform. Each scenario has a stable identifier, traceability to requirements, and an execution history recorded during customer UAT sessions.
+This document defines end-user-facing acceptance test scenarios for the Route Optimization Platform and records sanitized public execution results. Private recording links, exact timecodes, customer identity, credentials, and private access details are intentionally excluded from the repository.
 
 ## Table of Contents
 
@@ -24,36 +24,45 @@ This document defines end-user-facing acceptance test scenarios for the Route Op
 | UAT-04 | View route visualization for each vehicle and loader | Passed | High | US-10; QR-FC-01 |
 | UAT-05 | Review the skipped optional orders report | Passed | Medium | US-09 |
 
----
+## Active Scenarios
 
-## UAT-01: Submit a delivery instance and receive an optimised solution
+| ID | Title | Public result | Priority | Traceability |
+|---|---|---|---|---|
+| UAT-01 | Submit a delivery instance and receive an optimized solution | Passed in the 27 June combined Sprint Review/UAT session | High | US-01a, US-01b, US-02, US-07, US-08; QR-FC-01 |
+| UAT-02 | Validate a custom solution through the validator | Passed in the 27 June combined Sprint Review/UAT session | High | US-03; QR-FC-01; QR-SE-01 |
+| UAT-03 | Retrieve previously submitted solutions from history | Passed in the 27 June combined Sprint Review/UAT session | High | US-08; QR-RE-01 |
 
-**Title:** Submit a delivery instance and receive an optimised solution
+## UAT-01: Submit a Delivery Instance and Receive an Optimized Solution
 
-**Status:** Passed
+**Stable ID:** UAT-01
 
-**Priority:** High
+**Title:** Submit a delivery instance and receive an optimized solution
 
 **Traceability:**
-- User stories: [US-01a — Vehicle route output](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/18), [US-01b — Vehicle arrival schedule](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/19), [US-02 — Loader route](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/6), [US-07 — Objective function value](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/11), [US-08 — Planned routes overview](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/12)
-- Quality requirements: [QR-FC-01 — Solver functional correctness](quality-requirements.md#qr-fc-01--solver-functional-correctness)
+
+- [US-01a - Vehicle route output](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/18)
+- [US-01b - Vehicle arrival schedule](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/19)
+- [US-02 - Loader route](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/6)
+- [US-07 - Objective function value](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/11)
+- [US-08 - Planned routes overview](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/12)
+- [QR-FC-01 - Solver functional correctness](quality-requirements.md#qr-fc-01--solver-functional-correctness)
 
 ### Preconditions
 
-1. The application is running (Docker Compose or local dev).
-2. The user has a valid CVRPTW problem instance JSON file (e.g. `test_cases/t1.json`).
+1. The product is available through an agreed customer access method or local Docker run.
+2. The customer has a valid CVRPTW problem instance JSON such as `test_cases/t1.json`.
 
-### Test steps
+### Steps
 
-1. Open the web interface at `http://localhost:3000`.
-2. Navigate to the **New Job** page.
+1. Open the web interface.
+2. Open the New Job page.
 3. Upload or paste the problem instance JSON.
-4. Optionally set a job name, seed, and time limit.
+4. Optionally set job name, seed, and time limit.
 5. Submit the job.
-6. Wait for the solver to complete (the dashboard polls automatically).
-7. Open the completed job from the **Dashboard**.
+6. Wait for the job to reach a terminal state.
+7. Open the completed job details.
 
-### Expected results
+### Expected Result
 
 1. The job completes with status `completed`.
 2. The solution is automatically validated — validation status shows `valid`.
@@ -65,81 +74,100 @@ This document defines end-user-facing acceptance test scenarios for the Route Op
    - skipped optional orders report if applicable.
 4. All displayed routes satisfy hard constraints (capacity, time windows, shift length).
 
-### Execution history
+### Execution Record
 
 | Date | Tester | Result | Evidence |
 |---|---|---|---|
 | 2026-06-27 | Customer | Passed — all expected results confirmed. Solution completed, auto-validated as valid, route map and tables displayed correctly. | Private UAT recording (submitted via Moodle) |
 | 2026-07-02 | Customer | Passed — all original results confirmed. Skipped optional orders report now correctly displayed alongside existing detail. | Private UAT recording (submitted via Moodle) |
 
----
+## UAT-02: Validate a Custom Solution Through the Validator
 
-## UAT-02: Validate a custom solution through the validator
+**Stable ID:** UAT-02
 
 **Title:** Validate a custom solution through the validator
 
-**Status:** Passed
-
-**Priority:** High
-
 **Traceability:**
-- User stories: [US-03 — Hard constraint validation](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/7)
-- Quality requirements: [QR-FC-01 — Solver functional correctness](quality-requirements.md#qr-fc-01--solver-functional-correctness)
+
+- [US-03 - Hard constraint validation](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/7)
+- [QR-FC-01 - Solver functional correctness](quality-requirements.md#qr-fc-01--solver-functional-correctness)
+- [QR-SE-01 - Safe error confidentiality](quality-requirements.md#qr-se-01--safe-error-confidentiality)
 
 ### Preconditions
 
-1. The application is running.
-2. The user has a problem instance JSON and a candidate solution JSON.
+1. The product is available through an agreed customer access method or local Docker run.
+2. The customer has a problem instance JSON and a candidate solution JSON.
 
-### Test steps
+### Steps
 
 1. Open the web interface.
-2. Navigate to the **Validate** page.
-3. Paste or upload the problem instance JSON in the left panel.
-4. Paste or upload the candidate solution JSON in the right panel.
-5. Click **Validate**.
+2. Open the Validate page.
+3. Paste or upload the problem instance JSON.
+4. Paste or upload the candidate solution JSON.
+5. Run validation.
 
-### Expected results
+### Expected Result
 
 1. The validator returns a clear pass/fail result.
-2. If the solution is valid: a green `valid` status with zero hard-constraint violations is displayed.
-3. If the solution is invalid: a red `invalid` status with specific violation details is displayed (which orders, vehicles, or constraints are violated).
-4. The response does not expose stack traces or internal file paths.
+2. Valid solutions show a successful validation status and zero hard-constraint violations.
+3. Invalid solutions show specific violation details.
+4. Public responses do not expose stack traces, internal file paths, or private implementation details.
 
-### Execution history
+### Execution Record
 
 | Date | Tester | Result | Evidence |
 |---|---|---|---|
 | 2026-06-27 | Customer | Passed — both valid and invalid solutions correctly identified. Valid solution displayed green status; invalid solution showed specific violation details. No internal details exposed. | Private UAT recording (submitted via Moodle) |
 | 2026-07-02 | Customer | Passed — validator continues to work correctly with no regressions. | Private UAT recording (submitted via Moodle) |
 
----
+## UAT-03: Retrieve Previously Submitted Solutions from History
 
-## UAT-03: Retrieve previously submitted solutions from history
+**Stable ID:** UAT-03
 
 **Title:** Retrieve previously submitted solutions from history
 
-**Status:** Passed
-
-**Priority:** High
-
 **Traceability:**
-- User stories: [US-08 — Planned routes overview](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/12)
-- Quality requirements: [QR-RE-01 — Job recoverability](quality-requirements.md#qr-re-01--job-recoverability)
+
+- [US-08 - Planned routes overview](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/12)
+- [QR-RE-01 - Job recoverability](quality-requirements.md#qr-re-01--job-recoverability)
+- [#85 - Persist jobs and results across restarts](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/85)
 
 ### Preconditions
 
-1. The application is running.
-2. At least one job has been previously submitted and completed.
+1. The product is available through an agreed customer access method or local Docker run.
+2. At least one job has previously been submitted and completed.
+3. PostgreSQL persistence is enabled.
 
-### Test steps
+### Steps
 
 1. Open the web interface.
-2. Navigate to the **Dashboard** page.
-3. Observe the list of previously submitted jobs.
-4. Click on a historical job to view its details.
+2. Open the Dashboard page.
+3. Review the list of previously submitted jobs.
+4. Open a completed historical job.
+5. Where possible, verify the history remains after application restart.
 
-### Expected results
+### Expected Result
+
+1. The Dashboard lists previously submitted jobs with status, name, and creation time.
+2. Opening a completed historical job displays the stored solution, validation status, objective value, route visualization, and route tables.
+3. Completed job data remains available when the application is recreated with the same PostgreSQL database.
+
+### Execution Record
+
+| Field | Value |
+|---|---|
+| Execution date | 27 June 2026 |
+| Customer role | Customer representative |
+| Public result | Passed according to sanitized combined Sprint Review/UAT notes |
+| Sanitized public evidence | A recorded 27 June customer session included Sprint Review discussion and UAT execution; repository contains only this sanitized summary. |
+| Private evidence required | Recording URL, exact UAT/Sprint Review timecodes, and recording permission evidence for Moodle/private submission. |
+
+## Resulting Backlog Items
+
+| Feedback or observation | Resulting issue | Public status |
+|---|---|---|
+| Customer access must be reliable outside the university network or explicitly agreed through another method. | [#90](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/90) | Still open until deployment/access criteria are verified. |
+| Combined Sprint Review/UAT evidence must remain available privately without exposing customer identity or links publicly. | [#91](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/91), [#92](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/92) | Private recording details are supplied through Moodle only and are intentionally excluded from the repository. |
 
 1. The Dashboard shows all previously submitted jobs with their status, name, and submission time.
 2. Clicking a completed job opens the full **Job Detail** view with:
@@ -149,7 +177,7 @@ This document defines end-user-facing acceptance test scenarios for the Route Op
    - skipped optional orders report if applicable.
 3. After an application restart, previously completed jobs remain accessible and their data is unchanged.
 
-### Execution history
+Do not commit the following to the public repository:
 
 | Date | Tester | Result | Evidence |
 |---|---|---|---|

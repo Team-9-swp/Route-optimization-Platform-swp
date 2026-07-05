@@ -74,13 +74,13 @@ All MVP v1 PBIs have been implemented, reviewed and merged into `main`. The back
 1. Deploy the Docker Compose stack and run a smoke test.
 2. Record the public video demonstration and paste the link above.
 3. Capture the required screenshots and embed them in this report.
-4. Fill real names/roles in the contribution table.
+4. Contribution names and roles are recorded in the contribution table.
 5. Update the GitHub Project board fields if not already done.
 6. Generate and submit the Moodle PDF.
 
 ## Contribution traceability
 
-> Replace `Name (TBD)` and `Role (TBD)` with the university-required full names and Scrum roles before generating the PDF.
+The contribution table records the public names, GitHub usernames, roles, issue links, PRs, and reviews used for the Week 3 submission.
 
 | Name | GitHub username | Role | Issues / PBIs | PRs | Reviews |
 |---|---|---|---|---|---|

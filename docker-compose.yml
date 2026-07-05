@@ -1,4 +1,20 @@
 services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: optimizer
+      POSTGRES_PASSWORD: optimizer
+      POSTGRES_DB: optimizer
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U optimizer -d optimizer"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5432:5432"
+
   api:
     build:
       context: .
@@ -7,16 +23,25 @@ services:
       - "8000:8000"
     environment:
       - PYTHONUNBUFFERED=1
-      - CORS_ORIGINS=http://localhost:5173,http://localhost:3000
+      - DATABASE_URL=postgresql+asyncpg://optimizer:optimizer@db:5432/optimizer
+      - CORS_ORIGINS=http://localhost:3000,http://localhost:5173
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 10s
       timeout: 5s
       retries: 5
+    depends_on:
+      db:
+        condition: service_healthy
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
     ports:
       - "3000:80"
     depends_on:
       - api
+
+volumes:
+  pgdata:
