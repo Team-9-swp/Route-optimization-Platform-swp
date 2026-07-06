@@ -800,6 +800,7 @@ def solve(raw_data, time_limit=900, seed=42):
     result = {
         "vehicles": vehicle_output,
         "loaders": loader_output,
+        "unserved_optional": list(best_solution.unserved_optional),
         "_cost": best_cost,
         "_evaluator": evaluator,
     }
