@@ -15,7 +15,6 @@ from pyvrp import (
     solve as pyvrp_solve,
 )
 from pyvrp.stop import MaxRuntime
-from ortools.constraint_solver import routing_enums_pb2, pywrapcp
 
 warnings.filterwarnings("ignore", category=UserWarning)
 
@@ -115,7 +114,8 @@ class Evaluator:
         self.dist_flat = problem.dist_flat
 
     def is_vehicle_route_feasible(self, route):
-        if len(route) <= 2: return True, [], 0.0
+        if len(route) <= 2:
+            return True, [], 0.0
 
         v_tf = self.v_time_flat
         df = self.dist_flat
@@ -157,11 +157,14 @@ class Evaluator:
 
             upper_bound = float("inf")
             for node in trip:
-                if node == 0: continue
+                if node == 0:
+                    continue
                 tw_start, tw_end = obi[node]["time_window"]
                 ub = tw_end - raw_arrival[node]
-                if ub < upper_bound: upper_bound = ub
-            if upper_bound < -1e-6: return False, [], 0.0
+                if ub < upper_bound:
+                    upper_bound = ub
+            if upper_bound < -1e-6:
+                return False, [], 0.0
 
             departure = upper_bound if upper_bound > 0.0 else 0.0
             if shift_start is None:
@@ -176,7 +179,8 @@ class Evaluator:
                 if t != 0:
                     tw_start, tw_end = obi[t]["time_window"]
                     actual = current_time if current_time > tw_start else tw_start
-                    if actual > tw_end + 1e-6: return False, [], 0.0
+                    if actual > tw_end + 1e-6:
+                        return False, [], 0.0
                     trip_start_times.append(round_mathematically(actual, 2))
                     current_time = actual + obi[t]["vehicle_service_time"]
 
@@ -184,7 +188,8 @@ class Evaluator:
             all_start_times.extend(trip_start_times)
 
             total_volume = sum(obi[n]["volume"] for n in trip if n != 0)
-            if total_volume > self.problem.vehicle_capacity + 1e-6: return False, [], 0.0
+            if total_volume > self.problem.vehicle_capacity + 1e-6:
+                return False, [], 0.0
 
         # NOTE: Uses > rather than >= to match PyVRP's internal tolerance.
         # Defensive post-check in the output section handles the boundary case.
@@ -682,9 +687,11 @@ def solve(raw_data, time_limit=900, seed=42):
     vehicle_output, loader_output = [], []
     vid = 0
     for route in best_solution.vehicle_routes:
-        if len(route) <= 2: continue
+        if len(route) <= 2:
+            continue
         ok, times, _ = evaluator.is_vehicle_route_feasible(route)
-        if not ok: continue
+        if not ok:
+            continue
         # Split multi-trip route into individual trips for output
         trips = []
         current = [0]
@@ -709,9 +716,11 @@ def solve(raw_data, time_limit=900, seed=42):
             sz = evaluator.size
 
             def _trip_shift_ok(trip_route, trip_tms):
-                if not trip_route: return True
+                if not trip_route:
+                    return True
                 oids = [n for n in trip_route if n != 0]
-                if not oids: return True
+                if not oids:
+                    return True
                 dep = trip_tms[0] - vtf[0 * sz + oids[0]]
                 ret = trip_tms[-1] + vtf[oids[-1] * sz + 0] + oi[oids[-1]]["vehicle_service_time"]
                 return ret - dep < shift_limit - 1e-6
@@ -739,7 +748,8 @@ def solve(raw_data, time_limit=900, seed=42):
                 vid += 1
                 vehicle_output.append({"id": vid, "route": trip, "time": trip_times})
     for lid, route in enumerate(best_solution.loader_routes):
-        if route: loader_output.append({"id": lid + 1, "route": route})
+        if route:
+            loader_output.append({"id": lid + 1, "route": route})
 
     result = {"vehicles": vehicle_output, "loaders": loader_output, "_cost": best_cost, "_evaluator": evaluator}
     return result
