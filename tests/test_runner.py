@@ -1,18 +1,23 @@
 import pytest
+import pytest_asyncio
 
+from app.repository import JobRepository
 from app.runner import run_solver
 from app.schemas import JobStatus, ValidationStatus
-from app.store import JobStore
 
 
-@pytest.fixture
-def store():
-    return JobStore()
+@pytest_asyncio.fixture
+async def repository():
+    repo = JobRepository()
+    await repo.clear_all()
+    yield repo
+    await repo.clear_all()
 
 
+@pytest.mark.integration
 @pytest.mark.asyncio
-async def test_run_solver_success(store, monkeypatch):
-    def _fast_solve(instance, seed, time_budget, max_restarts):
+async def test_run_solver_success(repository, monkeypatch):
+    def _fast_solve(instance, seed, time_budget):
         return {
             "vehicles": [{"id": 1, "route": [0, 1, 0], "time": [0.0]}],
             "loaders": [],
@@ -21,13 +26,13 @@ async def test_run_solver_success(store, monkeypatch):
 
     monkeypatch.setattr("app.runner._solve_sync", _fast_solve)
 
-    record = store.create_job(
+    record = await repository.create_job(
         instance={"orders": []},
         seed=42,
         time_limit=2,
     )
-    await run_solver(record.job_id, store)
-    updated = store.get_job(record.job_id)
+    await run_solver(record.job_id, repository)
+    updated = await repository.get_job(record.job_id)
     assert updated.status == JobStatus.COMPLETED
     assert updated.objective_value == 42.0
     assert updated.result["vehicles"][0]["id"] == 1
@@ -35,16 +40,16 @@ async def test_run_solver_success(store, monkeypatch):
     assert "loaders" in updated.result
 
 
+@pytest.mark.integration
 @pytest.mark.asyncio
-async def test_run_solver_failure(store):
-    record = store.create_job(instance={"orders": []}, seed=42)
-    await run_solver(record.job_id, store)
-    updated = store.get_job(record.job_id)
+async def test_run_solver_failure(repository):
+    record = await repository.create_job(instance={"orders": []}, seed=42)
+    await run_solver(record.job_id, repository)
+    updated = await repository.get_job(record.job_id)
     assert updated.status == JobStatus.FAILED
     assert updated.error is not None
 
 
-@pytest.mark.asyncio
 def _valid_instance():
     return {
         "vehicle_capacity": 100,
@@ -76,22 +81,24 @@ def _valid_instance():
     }
 
 
+@pytest.mark.integration
 @pytest.mark.asyncio
-async def test_runner_extracts_objective_value(monkeypatch, store):
+async def test_runner_extracts_objective_value(monkeypatch, repository):
     def fake_solve(instance, seed, *args, **kwargs):
         return {"objective_value": 99.5, "vehicles": [], "loaders": []}
 
     monkeypatch.setattr("app.runner._solve_sync", fake_solve)
-    record = store.create_job(_valid_instance(), seed=1)
-    await run_solver(record.job_id, store, auto_validate=False)
+    record = await repository.create_job(_valid_instance(), seed=1)
+    await run_solver(record.job_id, repository, auto_validate=False)
 
-    updated = store.get_job(record.job_id)
+    updated = await repository.get_job(record.job_id)
     assert updated.status == JobStatus.COMPLETED
     assert updated.objective_value == 99.5
 
 
+@pytest.mark.integration
 @pytest.mark.asyncio
-async def test_runner_auto_validate(monkeypatch, store):
+async def test_runner_auto_validate(monkeypatch, repository):
     def fake_solve(instance, seed, *args, **kwargs):
         return {
             "objective_value": 99.5,
@@ -100,9 +107,25 @@ async def test_runner_auto_validate(monkeypatch, store):
         }
 
     monkeypatch.setattr("app.runner._solve_sync", fake_solve)
-    record = store.create_job(_valid_instance(), seed=1)
-    await run_solver(record.job_id, store, auto_validate=True)
+    record = await repository.create_job(_valid_instance(), seed=1)
+    await run_solver(record.job_id, repository, auto_validate=True)
 
-    updated = store.get_job(record.job_id)
+    updated = await repository.get_job(record.job_id)
     assert updated.status == JobStatus.COMPLETED
     assert updated.validation_status == ValidationStatus.PASSED
+
+
+@pytest.mark.integration
+@pytest.mark.asyncio
+async def test_runner_does_not_leak_traceback(repository, monkeypatch):
+    def failing_solver(*args, **kwargs):
+        raise RuntimeError("boom")
+
+    monkeypatch.setattr("app.runner._solve_sync", failing_solver)
+    record = await repository.create_job({"orders": []}, seed=42)
+    await run_solver(record.job_id, repository)
+    updated = await repository.get_job(record.job_id)
+    assert updated.status == JobStatus.FAILED
+    assert "Traceback" not in (updated.error or "")
+    assert "RuntimeError" in (updated.error or "")
+    assert "boom" not in (updated.error or "")

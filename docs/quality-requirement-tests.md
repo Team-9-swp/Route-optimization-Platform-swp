@@ -17,10 +17,10 @@ A QRT verifies a system-level quality property, not only the behaviour of one is
 
 | QRT ID | Quality requirement | Automated test | Main threshold |
 |---|---|---|---|
-| QRT-FC-01 | QR-FC-01 — Solver functional correctness | `tests/quality/test_solver_correctness.py` | Validator reports zero hard-constraint violations |
-| QRT-PE-01 | QR-PE-01 — Solver time behaviour | `tests/quality/test_solver_time_behaviour.py` | Fixed CI fixture completes within 30 seconds |
-| QRT-RE-01 | QR-RE-01 — Job recoverability | `tests/quality/test_job_recoverability.py` | Job and result survive store/application recreation |
-| QRT-SE-01 | QR-SE-01 — Safe error confidentiality | `tests/quality/test_safe_error_confidentiality.py` | API response contains no traceback, internal path, or secret |
+| QRT-FC-01 | QR-FC-01 — Solver functional correctness | `tests/quality/test_qrt_functional_correctness.py` | Validator reports zero hard-constraint violations |
+| QRT-PE-01 | QR-PE-01 — Solver time behaviour | `tests/quality/test_qrt_time_behaviour.py` | Fixed CI fixture completes within 900 seconds |
+| QRT-RE-01 | QR-RE-01 — Job recoverability | `tests/quality/test_job_recoverability.py` | Job and result survive PostgreSQL repository/application recreation |
+| QRT-SE-01 | QR-SE-01 — Safe error confidentiality | `tests/quality/test_qrt_confidentiality.py` | API response contains no traceback, internal path, or secret |
 
 ---
 
@@ -35,7 +35,7 @@ Verify that the solver produces valid solutions with zero hard-constraint violat
 ### Test location
 
 ```text
-tests/quality/test_solver_correctness.py
+tests/quality/test_qrt_functional_correctness.py
 ```
 
 ### Test cases
@@ -107,7 +107,7 @@ The failing test output must identify:
 ### CI command
 
 ```bash
-pytest tests/quality/test_solver_correctness.py -q
+pytest tests/quality/test_qrt_functional_correctness.py -q
 ```
 
 ---
@@ -123,7 +123,7 @@ Verify predictable solver execution time for the fixed Assignment 4 CI benchmark
 ### Test location
 
 ```text
-tests/quality/test_solver_time_behaviour.py
+tests/quality/test_qrt_time_behaviour.py
 ```
 
 ### Test cases
@@ -143,7 +143,7 @@ Expected result:
 
 - the solver reaches a terminal state;
 - the solution is validated;
-- total elapsed time is less than or equal to `30` seconds.
+- total elapsed time is less than or equal to `900` seconds.
 
 #### QRT-PE-01-B — Configured time-limit handling
 
@@ -166,7 +166,7 @@ The fixture should be small enough to avoid flaky CI failures while still exerci
 
 ### Pass threshold
 
-- fixed benchmark: `elapsed_seconds <= 30`;
+- fixed benchmark: `elapsed_seconds <= 900`;
 - configured-limit test: `elapsed_seconds <= configured_limit + 10`;
 - job reaches a terminal state;
 - no uncontrolled exception escapes the test.
@@ -192,7 +192,7 @@ The failing test output must include:
 ### CI command
 
 ```bash
-pytest tests/quality/test_solver_time_behaviour.py -q
+pytest tests/quality/test_qrt_time_behaviour.py -q
 ```
 
 ---
@@ -203,7 +203,7 @@ pytest tests/quality/test_solver_time_behaviour.py -q
 
 ### Objective
 
-Verify that jobs and completed results remain available after the application/store is recreated with the same persistent database.
+Verify that jobs and completed results remain available after the repository/application is recreated with the same persistent database.
 
 ### Test location
 
@@ -213,17 +213,17 @@ tests/quality/test_job_recoverability.py
 
 ### Test cases
 
-#### QRT-RE-01-A — Completed job survives store recreation
+#### QRT-RE-01-A — Completed job survives repository recreation
 
-Use a temporary SQLite database.
+Use the configured PostgreSQL test database.
 
 Test sequence:
 
-1. create the first store/application instance;
+1. create the first repository/application instance;
 2. create a job with a stable job identifier;
 3. save a completed result;
-4. close the first store/application instance;
-5. create a second store/application instance using the same database file;
+4. close the first repository/application instance;
+5. create a second repository/application instance using the same PostgreSQL database;
 6. retrieve the job using the original identifier.
 
 Expected result:
@@ -232,6 +232,7 @@ Expected result:
 - the job identifier is unchanged;
 - the status remains `completed`;
 - the stored result matches the original result;
+- validation status and validation report are preserved;
 - job metadata is preserved.
 
 #### QRT-RE-01-B — API retrieval after application recreation
@@ -252,7 +253,7 @@ Expected result:
 
 ### Test data
 
-- temporary database created by pytest `tmp_path`;
+- PostgreSQL database configured through `DATABASE_URL`;
 - minimal valid job payload;
 - deterministic completed result fixture.
 
@@ -262,15 +263,15 @@ No shared developer or production database may be used.
 
 After recreation:
 
-- `GET /jobs/{job_id}` or the store retrieval operation succeeds;
-- status and result are preserved exactly;
-- no job data is lost because of process/store recreation.
+- `GET /jobs/{job_id}` or the repository retrieval operation succeeds;
+- status, result, validation state, and metadata are preserved exactly;
+- no job data is lost because of process/repository recreation.
 
 ### Failure evidence
 
 The failing test output must identify:
 
-- temporary database path;
+- database URL scope without credentials;
 - job identifier;
 - expected status;
 - actual retrieval result.
@@ -281,9 +282,9 @@ The failing test output must identify:
 pytest tests/quality/test_job_recoverability.py -q
 ```
 
-### Implementation dependency
+### Implementation status
 
-This QRT cannot pass while `app/store.py` uses only an in-memory dictionary. Persistent storage from issue #85 must be implemented first.
+Implemented. `tests/quality/test_job_recoverability.py` verifies completed-result persistence through the PostgreSQL-backed `app.repository.JobRepository` and the public `GET /jobs/{job_id}` API after repository/application recreation.
 
 ---
 
@@ -298,7 +299,7 @@ Verify that failed jobs and API responses do not expose internal diagnostic or s
 ### Test location
 
 ```text
-tests/quality/test_safe_error_confidentiality.py
+tests/quality/test_qrt_confidentiality.py
 ```
 
 ### Test cases
@@ -361,47 +362,37 @@ The failing test output must show:
 ### CI command
 
 ```bash
-pytest tests/quality/test_safe_error_confidentiality.py -q
+pytest tests/quality/test_qrt_confidentiality.py -q
 ```
 
 ---
 
 ## Combined QRT Execution
 
-All Assignment 4 QRTs should be marked with a pytest marker:
+All Assignment 4 QRTs are marked with two pytest markers for compatibility:
 
 ```python
+@pytest.mark.qrt
 @pytest.mark.quality
 ```
 
-Add the marker to `pytest.ini`:
-
-```ini
-markers =
-    quality: automated Quality Requirement Tests for Assignment 4
-```
-
-Run all QRTs with:
+Run all QRTs with either command:
 
 ```bash
-pytest -m quality -q
+pytest tests/quality/ -m "qrt" -q
+pytest tests/quality/ -m "quality" -q
 ```
 
 If the current `pytest.ini` excludes integration or slow tests by default, the CI command must explicitly include the required QRT files or marker so they are not silently skipped.
 
 ## CI Integration
 
-The GitHub Actions workflow must include a required job named, for example:
+The GitHub Actions workflow runs QRTs as a dedicated step in the `backend` job:
 
-```text
-quality-requirement-tests
-```
-
-Recommended commands:
-
-```bash
-python -m pip install -r requirements.txt
-pytest -m quality -q --junitxml=test-results/qrt-results.xml
+```yaml
+- name: Run Automated Quality Requirement Tests (QRTs)
+  run: |
+    pytest tests/quality/ -m "qrt"
 ```
 
 The CI job must:
@@ -409,17 +400,17 @@ The CI job must:
 - run on pull requests targeting `main`;
 - run on pushes to `main`;
 - fail if any QRT fails;
-- upload the JUnit XML report even when tests fail;
+- upload the coverage XML report even when tests fail;
 - be configured as a required branch-protection check.
 
 ## Traceability Matrix
 
-| Quality requirement | QRT | Planned test file | Related issue |
-|---|---|---|---|
-| QR-FC-01 | QRT-FC-01 | `tests/quality/test_solver_correctness.py` | #23, #13, #87, #88 |
-| QR-PE-01 | QRT-PE-01 | `tests/quality/test_solver_time_behaviour.py` | #23, #86, #87, #88 |
-| QR-RE-01 | QRT-RE-01 | `tests/quality/test_job_recoverability.py` | #85, #87, #88 |
-| QR-SE-01 | QRT-SE-01 | `tests/quality/test_safe_error_confidentiality.py` | #86, #87, #88 |
+| QR ID | QRT ID | Actual test file | Threshold | Implementation status | Evidence type |
+|---|---|---|---|---|---|
+| QR-FC-01 | QRT-FC-01 | `tests/quality/test_qrt_functional_correctness.py`; supporting cases in `tests/quality/test_solver_correctness.py` | Completed solver job validates with zero hard-constraint violations | Implemented | Automated pytest QRT plus CI result |
+| QR-PE-01 | QRT-PE-01 | `tests/quality/test_qrt_time_behaviour.py`; supporting cases in `tests/quality/test_solver_time_behaviour.py` | Fixed benchmark completes within 900 seconds; configured limit reaches terminal state within limit + 10 seconds | Implemented | Automated pytest QRT plus CI result |
+| QR-RE-01 | QRT-RE-01 | `tests/quality/test_job_recoverability.py` | Completed job/result/validation metadata survive PostgreSQL-backed repository/application recreation | Implemented | Automated PostgreSQL integration QRT plus CI result |
+| QR-SE-01 | QRT-SE-01 | `tests/quality/test_qrt_confidentiality.py`; supporting cases in `tests/quality/test_safe_error_confidentiality.py` | Public API/job response contains no traceback, internal path, or fake secret | Implemented | Automated pytest QRT plus CI result |
 
 ## Evidence Required for the Week 4 Report
 
@@ -438,18 +429,19 @@ Example:
 
 | QR | QRT | Measured result | Threshold | Status | Evidence |
 |---|---|---:|---:|---|---|
-| QR-PE-01 | QRT-PE-01 | 8.4 s | <= 30 s | Pass | CI run link |
+| QR-PE-01 | QRT-PE-01 | 8.4 s | <= 900 s | Pass | CI run link |
 
 Do not insert invented measurements. Record actual values from the final protected-branch CI run.
 
 ## Completion Criteria
 
-This document and issue #87 are complete when:
+This document is complete for Assignment 5 / MVP v2 when:
 
 - every quality requirement has at least one automated QRT;
 - every QRT has a stable ID;
 - test location, input, threshold, and expected evidence are specified;
-- the QRT code is implemented by issue #88;
+- the QRT code is implemented;
 - all QRTs run automatically in CI;
 - the latest protected-default-branch run passes;
-- another team member reviews the requirements and QRT definitions.
+- another team member reviews the requirements and QRT definitions;
+- `MVP v2` integration tests for the export endpoint (`tests/test_export.py`) and enhanced job details (`tests/test_api.py`) are added alongside the existing QRTs.

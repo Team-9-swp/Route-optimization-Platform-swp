@@ -1,0 +1,37 @@
+%% Route Optimization Platform — Deployment View
+%% Authoritative diagrams-as-code source. Rendered copy lives in docs/architecture/README.md.
+flowchart TB
+  subgraph CUSTOMER["Customer device"]
+    BROWSER["Browser"]
+  end
+
+  subgraph HOST["Single host — Docker Compose (docker-compose.yml)"]
+    direction TB
+    subgraph FC["frontend container :3000"]
+      NGINX["nginx — built SPA + /api reverse proxy"]
+    end
+    subgraph AC["api container :8000"]
+      APP["FastAPI app (uvicorn)"]
+    end
+    subgraph DBC["db container :5432"]
+      PG[("PostgreSQL 16")]
+      VOL[("pgdata volume")]
+    end
+    PG -.-> VOL
+  end
+
+  GH{{"GitHub — protected main + CI"}}
+  GHA["GitHub Actions"]
+  REL["SemVer Releases"]
+
+  BROWSER -->|HTTP :3000 — public access path| NGINX
+  NGINX -->|HTTP :8000 — proxy /api| APP
+  APP -->|TCP 5432 — asyncpg| PG
+
+  GHA -.->|deploy via self-hosted runner<br/>migrations + health check| HOST
+  GH --- REL
+  REL -.->|tag on protected main commit| GH
+
+  %% network boundary note
+  note["Network boundary: service-to-service traffic stays<br/>inside the Compose network; only :3000<br/>(and optionally :8000) reach the customer"]
+  HOST -.-> note

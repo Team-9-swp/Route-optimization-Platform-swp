@@ -1,102 +1,278 @@
-# Week 4 Report — Assignment 4
+# Week 4 Public Submission Index - Assignment 4
 
 ## Project
 
-**Route Optimization Platform** — a logistics optimisation system that generates vehicle and loader routes for the BIA CVRPTW problem variant.  
+**Route Optimization Platform** is a logistics optimization system for the BIA CVRPTW problem variant. It provides a FastAPI backend, PostgreSQL-backed job history, a PyVRP/Nevergrad solver pipeline, validation, skipped optional order reporting, and a React web interface.
+
 License: [MIT](../../LICENSE)
 
-## Summary of scope since Assignment 3
+## Planning Links
 
-The Assignment 4 Sprint (22 June – 3 July 2026) shifts focus from feature delivery to quality, reliability, and customer validation. Key outcomes:
+| Item | Public link |
+|---|---|
+| Product Backlog | [GitHub Project Product Backlog](https://github.com/orgs/Team-9-swp/projects/1/views/1) |
+| Assignment 4 Sprint Backlog | [GitHub Project Sprint Backlog](https://github.com/orgs/Team-9-swp/projects/1/views/3) |
+| Assignment 4 milestone | [Assignment 4 Sprint milestone](https://github.com/Team-9-swp/Route-optimization-Platform-swp/milestone/5) |
+| Roadmap | [docs/roadmap.md](../../docs/roadmap.md) |
 
-- Defined 4 measurable quality requirements with distinct ISO/IEC 25010 sub-characteristics in [`docs/quality-requirements.md`](../../docs/quality-requirements.md)
-- Automated quality requirement test specifications in [`docs/quality-requirement-tests.md`](../../docs/quality-requirement-tests.md)
-- Created and executed 3 end-user-facing UAT scenarios in [`docs/user-acceptance-tests.md`](../../docs/user-acceptance-tests.md)
-- Assignment 4 sprint plan and roadmap in [`docs/roadmap.md`](../../docs/roadmap.md)
-- Released [`v1.1.0`](https://github.com/Team-9-swp/Route-optimization-Platform-swp/releases/tag/v1.1.0) for the Assignment 4 Sprint increment
+**Sprint dates:** 22 June 2026 - 3 July 2026
 
-## UAT results summary
+**Sprint Goal:** Deliver a more reliable and verifiable Route Optimization Platform by addressing selected customer feedback, preserving submitted jobs across restarts, improving solver robustness, and enforcing automated quality gates through tests and CI.
 
-All 3 active UAT scenarios were executed by the customer during a recorded session and accepted. No scenarios failed or require product changes at this stage.
+**Selected Assignment 4 scope:** skipped optional order reporting, PostgreSQL persistence, solver robustness, quality requirements, automated QRTs, CI/test/coverage gates, deployment/release preparation, customer UAT evidence, Sprint Review evidence, and public Week 4 reporting.
 
-### Passed scenarios
+**Total selected Story Points:** 46, derived from the Assignment 4 milestone scope inspected during PR #95 planning.
 
-| ID | Title | Result |
-|---|---|---|
-| UAT-01 | Submit a delivery instance and receive an optimised solution | Passed |
-| UAT-02 | Validate a custom solution through the validator | Passed |
-| UAT-03 | Retrieve previously submitted solutions from history | Passed |
+## Screenshot Evidence
 
-### Failed or blocked scenarios
+![Sprint milestone](./images/sprint-milestone.png)
 
-None.
+![Product Backlog](./images/product-backlog.png)
 
-### Most important customer feedback
+![Sprint Backlog](./images/sprint-backlog.png)
 
-- The customer confirmed that the core workflow (submit → solve → view results) works as expected.
-- The route map and route tables were found clear and useful for understanding vehicle and loader assignments.
-- The validation page was appreciated for testing custom solutions before deployment.
-- No blocking issues or usability problems were identified during the session.
+![Latest protected default branch CI run](./images/protected-main-ci.png)
 
-### Resulting PBIs or issues
+![Branch protection or rules evidence](./images/branch-protection.png)
 
-No new PBIs or issues were created as a direct result of UAT. The customer accepted the current increment as-is. Any follow-up items will be triaged into the Product Backlog for the next sprint.
+![Coverage and test report](./images/coverage-tests.png)
 
-## Backlog and Sprint views
+![Additional QA Bandit result](./images/additional-qa-bandit.png)
 
-- **GitHub Project (board)**: https://github.com/orgs/Team-9-swp/projects/1
-- **Sprint Backlog view**: https://github.com/orgs/Team-9-swp/projects/1/views/2
-- **Sprint milestone**: https://github.com/Team-9-swp/Route-optimization-Platform-swp/milestone/5
+![SemVer release](./images/semver-release.png)
 
-## Release and changelog
+![Reviewed issue-linked PR](./images/reviewed-pr.png)
 
-- **SemVer release**: https://github.com/Team-9-swp/Route-optimization-Platform-swp/releases/tag/v1.1.0
-- **CHANGELOG**: [CHANGELOG.md](../../CHANGELOG.md)
+## Delivered Product Changes
 
-## Deployment
+| Change | Evidence |
+|---|---|
+| PostgreSQL persistence for jobs, results, validation metadata, and history. | [#85](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/85), [PR #105](https://github.com/Team-9-swp/Route-optimization-Platform-swp/pull/105), `app/repository.py` |
+| Skipped optional orders returned in solver output and API responses. | [#13](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/13), [PR #105](https://github.com/Team-9-swp/Route-optimization-Platform-swp/pull/105) |
+| PyVRP/Nevergrad solver integrated with async runner. | [PR #105](https://github.com/Team-9-swp/Route-optimization-Platform-swp/pull/105), [solver benchmark](./solver-benchmark.md) |
+| Safe solver failure handling. | [#86](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/86), `tests/quality/test_qrt_confidentiality.py` |
+| Assignment 4 quality requirements and QRT specifications. | [quality requirements](../../docs/quality-requirements.md), [QRT specification](../../docs/quality-requirement-tests.md) |
+| Blocking CI lint/format gates and frontend type checking. | [PR #106](https://github.com/Team-9-swp/Route-optimization-Platform-swp/pull/106), [CI workflow](../../.github/workflows/ci.yml), [main CI run 28335038211](https://github.com/Team-9-swp/Route-optimization-Platform-swp/actions/runs/28335038211) |
+| Published `v1.2.0` Assignment 4 release. | [GitHub Release v1.2.0](https://github.com/Team-9-swp/Route-optimization-Platform-swp/releases/tag/v1.2.0), [release notes](./release-notes-v1.2.0.md), [CHANGELOG.md](../../CHANGELOG.md) |
 
-- **Docker Compose:** `docker compose -f docker-compose.yml -f docker-compose.prod.yml up --build -d`
-- **Run instructions:** [README.md → Quick start](../../README.md#quick-start)
-- **Remote access:** via ngrok (see [README.md → Deployment](../../README.md#deployment))
+## Deployment and Runnable Product Status
 
-## Maintained quality assets
+The product is runnable through Docker Compose:
 
-- [`docs/quality-requirements.md`](../../docs/quality-requirements.md)
-- [`docs/quality-requirement-tests.md`](../../docs/quality-requirement-tests.md)
-- [`docs/user-acceptance-tests.md`](../../docs/user-acceptance-tests.md)
+```bash
+docker compose up --build
+```
 
-## Process and templates
+Open:
 
-- [Definition of Done](../../docs/definition-of-done.md)
-- [Roadmap](../../docs/roadmap.md)
-- [Issue templates](../../.github/ISSUE_TEMPLATE)
-- [Pull Request template](../../.github/pull_request_template.md)
+- API docs: `http://localhost:8000/docs`
+- Web app: `http://localhost:3000`
 
-## Reviewed PRs (Assignment 4)
+PostgreSQL and migrations for local development:
 
-- #95 — Assignment 4 sprint planning and roadmap update
-- #96 — Quality requirements and quality requirement tests
-- #97 — (placeholder for additional sprint PRs)
+```bash
+docker compose up -d db
+alembic upgrade head
+python -m uvicorn app.main:app --reload
+```
 
-## Video demonstration
+Current access status:
 
-- **Public demo video:** *Coming soon — will be linked once recorded*
+- Docker Compose is the documented runnable fallback.
+- The university VM deployment is documented as limited to the Innopolis University network.
+- Customer access from outside that network is not publicly verified.
+- An ngrok or similar tunnel is only evidence if it is explicitly agreed and verified during a customer session.
+- [#90](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/90) remains open until deployment/access criteria are verified.
 
-## Screenshots
+## Customer Feedback Response
 
-See [`reports/week4/images/`](./images/). The following screenshots should be added before final submission:
+See also [customer-feedback-response.md](./customer-feedback-response.md).
 
-- Sprint Backlog view (Assignment 4)
-- SemVer release v1.1.0
-- Quality requirements document
-- UAT document with execution history
+| Feedback point | Resulting PBI or issue | Status | Response |
+|---|---|---|---|
+| Show skipped optional orders. | [#13](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/13) | Implemented | Completed solutions expose `unserved_optional`. |
+| Preserve calculation history. | [#85](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/85) | Implemented | Jobs/results are persisted in PostgreSQL. |
+| Measure solver execution time. | [#87](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/87), [#88](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/88) | Implemented and verified in CI | `QR-PE-01` and `QRT-PE-01` use a 900 second threshold; PR #106 QRT CI passed. |
+| Compare solver quality and investigate greedy-stage impact. | [#97](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/97), [#23](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/23) | Benchmark prepared; broader work deferred | Current solver benchmark is recorded in [solver-benchmark.md](./solver-benchmark.md). |
+| Provide accessible deployment or another agreed customer access method. | [#90](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/90) | Open | Docker fallback is documented; external access verification is still required. |
+| Consider joint vehicle/loader/optional-order optimization. | [#23](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/23) | Deferred | Requires solver redesign and additional benchmarking. |
 
-## Private UAT recording
+## Definition of Done and Quality Model
 
-The private customer UAT recording has been submitted via Moodle. The recording link is **not** committed to the public repository per team policy.
+| Artifact | Link |
+|---|---|
+| Definition of Done | [docs/definition-of-done.md](../../docs/definition-of-done.md) |
+| Quality requirements | [docs/quality-requirements.md](../../docs/quality-requirements.md) |
+| Quality requirement tests | [docs/quality-requirement-tests.md](../../docs/quality-requirement-tests.md) |
+| Testing strategy and status | [docs/testing.md](../../docs/testing.md) |
+| User acceptance tests | [docs/user-acceptance-tests.md](../../docs/user-acceptance-tests.md) |
 
-## Contribution traceability
+Quality-model summary:
 
-| Name | GitHub username | Role | PRs | Reviews |
+| ID | ISO/IEC 25010 characteristic | Sub-characteristic | Automated evidence |
+|---|---|---|---|
+| `QR-FC-01` | Functional suitability | Functional correctness | `QRT-FC-01` |
+| `QR-PE-01` | Performance efficiency | Time behaviour | `QRT-PE-01`, 900 second threshold |
+| `QR-RE-01` | Reliability | Recoverability | `QRT-RE-01` |
+| `QR-SE-01` | Security | Confidentiality | `QRT-SE-01` |
+
+## Coverage and Test Evidence
+
+Verified protected-main CI evidence after merged [PR #106](https://github.com/Team-9-swp/Route-optimization-Platform-swp/pull/106):
+
+- CI Pipeline: [run 28335038211](https://github.com/Team-9-swp/Route-optimization-Platform-swp/actions/runs/28335038211), passed on `main` commit `95cc4804922d8ce053afea607f172817747f742a`.
+- Link Check: [run 28335038205](https://github.com/Team-9-swp/Route-optimization-Platform-swp/actions/runs/28335038205), passed.
+- Backend job: [job 83939639107](https://github.com/Team-9-swp/Route-optimization-Platform-swp/actions/runs/28335038211/job/83939639107), passed.
+- Frontend job: [job 83939639096](https://github.com/Team-9-swp/Route-optimization-Platform-swp/actions/runs/28335038211/job/83939639096), passed.
+- Coverage/JUnit artifact: [coverage-report artifact 7938363794](https://api.github.com/repos/Team-9-swp/Route-optimization-Platform-swp/actions/artifacts/7938363794), uploaded.
+
+Backend unit/integration command:
+
+```bash
+pytest tests/ --ignore=tests/quality --ignore=tests/test_e2e.py -m "not slow" --cov=app --cov-report=xml --cov-report=term-missing --junitxml=backend-test-results.xml
+```
+
+Verified result:
+
+- `39 passed`
+- `1 deselected`
+- `43 warnings`
+
+| Critical module | Required coverage | Verified CI coverage | Gate status |
+|---|---:|---:|---|
+| `app/service.py` | 30% | 100% | Meets threshold |
+| `app/repository.py` | 30% | 97% | Meets threshold |
+| `app/api.py` | 30% | 100% | Meets threshold |
+| Total `app/` coverage | N/A | 94% | Reported in CI |
+
+Test links:
+
+- Unit and integration tests: [tests/](../../tests/)
+- Repository integration tests: [tests/test_repository.py](../../tests/test_repository.py)
+- API persistence tests: [tests/test_api_persistence.py](../../tests/test_api_persistence.py)
+- Validator integration tests: [tests/test_validator.py](../../tests/test_validator.py)
+- QRTs: [tests/quality/](../../tests/quality/)
+
+QRT result table:
+
+| QRT | Files | Threshold | Verified result | Evidence |
 |---|---|---|---|---|
-| TBD | TBD | TBD | TBD | TBD |
+| `QRT-FC-01` | `test_qrt_functional_correctness.py`, `test_solver_correctness.py` | Completed solver job validates with zero hard-constraint violations | Included in `15 passed` QRT CI run | [backend job](https://github.com/Team-9-swp/Route-optimization-Platform-swp/actions/runs/28335038211/job/83939639107) |
+| `QRT-PE-01` | `test_qrt_time_behaviour.py`, `test_solver_time_behaviour.py` | Fixed benchmark <= 900 s; configured limit terminal within limit + 10 s | Included in `15 passed` QRT CI run | [backend job](https://github.com/Team-9-swp/Route-optimization-Platform-swp/actions/runs/28335038211/job/83939639107) |
+| `QRT-RE-01` | `test_job_recoverability.py` | Completed job/result/validation metadata survive repository/application recreation | Included in `15 passed` QRT CI run | [backend job](https://github.com/Team-9-swp/Route-optimization-Platform-swp/actions/runs/28335038211/job/83939639107) |
+| `QRT-SE-01` | `test_qrt_confidentiality.py`, `test_safe_error_confidentiality.py` | Public response contains no traceback, internal path, or fake secret | Included in `15 passed` QRT CI run | [backend job](https://github.com/Team-9-swp/Route-optimization-Platform-swp/actions/runs/28335038211/job/83939639107) |
+
+## CI and QA Status
+
+| Gate | Verified status |
+|---|---|
+| CI workflow | [ci.yml](../../.github/workflows/ci.yml) configured and passed on protected `main` |
+| Latest protected-main CI run | [CI Pipeline run 28335038211](https://github.com/Team-9-swp/Route-optimization-Platform-swp/actions/runs/28335038211), success |
+| Latest protected-main Link Check | [Link Check run 28335038205](https://github.com/Team-9-swp/Route-optimization-Platform-swp/actions/runs/28335038205), success |
+| Ruff | Passed and blocking in workflow |
+| Black | Passed and blocking in workflow; 53 files unchanged |
+| Backend unit/integration tests | Passed: `39 passed`, `1 deselected` |
+| QRT execution | Passed: `15 passed`, `41 warnings`, `267.41s` |
+| Coverage artifact upload | Uploaded as artifact `7938363794` |
+| Bandit | Passed: no medium/high severity issues across 539 lines |
+| Frontend typecheck | Passed: `tsc --noEmit` |
+| Frontend production build | Passed: Vite built in `2.48s` |
+| Branch protection / required checks | Manual/admin verification still required |
+
+Continued governance:
+
+- Ruff and Black must remain blocking.
+- Unit, integration, and QRT suites must keep running on PRs and pushes to `main`.
+- Critical modules must maintain at least 30% coverage.
+- Bandit remains the additional QA gate for medium/high severity findings.
+- Branch protection should require the backend, frontend, and link-check workflows once verified by a repository admin.
+
+## Release Status
+
+GitHub Release [`v1.2.0`](https://github.com/Team-9-swp/Route-optimization-Platform-swp/releases/tag/v1.2.0) is published from protected `main` commit `1fb36d1d17c7a85b548ce3fa180b4f3d460a4d64`.
+
+Release artifacts:
+
+- release notes: [release-notes-v1.2.0.md](./release-notes-v1.2.0.md);
+- changelog: [CHANGELOG.md](../../CHANGELOG.md);
+- public demo video: https://drive.google.com/file/d/15Dh_azNvTxptEjW1XX4S__jnOmg84rHg/view?usp=sharing;
+- presentation: [presentation.pdf](./presentation.pdf).
+
+## Demo, Presentation, and Reports
+
+| Artifact | Link |
+|---|---|
+| Public sanitized demo video | [Google Drive video](https://drive.google.com/file/d/15Dh_azNvTxptEjW1XX4S__jnOmg84rHg/view?usp=sharing) |
+| Presentation | [presentation.pdf](./presentation.pdf) |
+| Customer review notes | [customer-review-notes.md](./customer-review-notes.md) |
+| Customer review summary | [customer-review-summary.md](./customer-review-summary.md) |
+| Retrospective | [retrospective.md](./retrospective.md) |
+| Reflection | [reflection.md](./reflection.md) |
+| LLM usage report | [llm-report.md](./llm-report.md) |
+| Solver benchmark | [solver-benchmark.md](./solver-benchmark.md) |
+
+No public customer-review transcript is included because publication permission for a transcript is not documented.
+
+## UAT and Sprint Review Status
+
+A recorded customer session took place on 27 June 2026 and included both the Sprint Review and customer UAT.
+
+The session covered:
+
+- the Sprint Goal;
+- the delivered product increment;
+- product demonstration;
+- customer feedback;
+- remaining risks and next Product Backlog Items;
+- execution of UAT-01, UAT-02, and UAT-03.
+
+All three active UAT scenarios were recorded as passed in the maintained UAT documentation.
+
+The private recording URL, customer identity, and any private access information are supplied only through Moodle and are intentionally excluded from the public repository.
+
+Resulting PBIs:
+
+- deployment/access: [#90](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/90);
+- private Moodle-only recording evidence: [#91](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/91), [#92](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/92);
+- solver-quality follow-up: [#23](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/23), [#97](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/97).
+
+## Current Product Status
+
+Implemented and verified through merged PR #106:
+
+- PostgreSQL job persistence;
+- skipped optional orders;
+- current PyVRP/Nevergrad solver integration;
+- user-safe solver failure messages;
+- QRT implementation and CI execution;
+- blocking Ruff and Black;
+- backend unit/integration tests with coverage;
+- Bandit additional QA check;
+- frontend typecheck and production build;
+- protected-main CI and Link Check success;
+- published GitHub Release `v1.2.0` from protected `main`.
+
+Pending public or private evidence:
+
+- branch-protection / required-check verification by an organization admin;
+- private Moodle-only recording URL, exact timecodes, and recording permission evidence;
+- deployment/customer-access verification.
+
+## Contribution Traceability
+
+This table maps repository accounts to public evidence visible in git history, issues, or PRs. It does not invent private work.
+
+| Contributor/account | Evidence | Area |
+|---|---|---|
+| `quaaow` / `whateverwillbewillbe` | [PR #105](https://github.com/Team-9-swp/Route-optimization-Platform-swp/pull/105), [PR #102](https://github.com/Team-9-swp/Route-optimization-Platform-swp/pull/102), repository history under both accounts | Backend implementation, persistence, tests, CI, benchmark, quality gates |
+| `belelvser` | [PR #95](https://github.com/Team-9-swp/Route-optimization-Platform-swp/pull/95), [PR #96](https://github.com/Team-9-swp/Route-optimization-Platform-swp/pull/96), [PR #98](https://github.com/Team-9-swp/Route-optimization-Platform-swp/pull/98), [PR #106](https://github.com/Team-9-swp/Route-optimization-Platform-swp/pull/106) | Sprint planning, quality requirements, customer-feedback traceability, final evidence documentation |
+| `Adelevere` | [PR #103](https://github.com/Team-9-swp/Route-optimization-Platform-swp/pull/103), [PR #104](https://github.com/Team-9-swp/Route-optimization-Platform-swp/pull/104), commits adding Week 4 reports and presentation assets | Presentation, Week 4 report artifacts, documentation |
+| `Aydar-art` | Repository history and Assignment 4 issue ownership; Aydar also appears in commit history as `Aydar_Gaifullin` | Solver transition, release/deployment documentation |
+| `FuFill` | Commits `a8ee9a5`, `a21a585`, and video-related commits visible in history | Tests/CI contribution and video evidence |
+| Other repository contributors | Git shortlog entries and earlier merged PRs | Earlier MVP, frontend, documentation, and review support |
+
+## Next Steps
+
+1. Ask a repository or organization admin to verify branch protection/rules and required checks.
+2. Keep private Moodle evidence available outside the repository: recording URL, exact timecodes, and recording permission evidence.
+3. Verify deployment/customer access or document the explicitly agreed remote access method.

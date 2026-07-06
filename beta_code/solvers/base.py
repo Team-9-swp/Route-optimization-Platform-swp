@@ -13,5 +13,4 @@ class VehicleSolver(ABC):
         self.evaluator = evaluator
 
     @abstractmethod
-    def solve(self, time_limit: float, seed: int, **kwargs) -> Solution:
-        ...
+    def solve(self, time_limit: float, seed: int, **kwargs) -> Solution: ...

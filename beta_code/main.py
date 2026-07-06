@@ -21,15 +21,18 @@ def main():
     parser.add_argument("--output", default="solution.json")
     parser.add_argument("--time-limit", type=int, default=900, help="seconds")
     parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument("--solver", default=None,
-                        help="Force a specific solver (default: auto-select)")
+    parser.add_argument(
+        "--solver", default=None, help="Force a specific solver (default: auto-select)"
+    )
     args = parser.parse_args()
 
     with open(args.input) as f:
         data = json.load(f)
 
-    print(f"Orders: {len(data['orders'])}, Time limit: {args.time_limit}s, "
-          f"Seed: {args.seed}")
+    print(
+        f"Orders: {len(data['orders'])}, Time limit: {args.time_limit}s, "
+        f"Seed: {args.seed}"
+    )
 
     result = solve(data, time_limit=args.time_limit, seed=args.seed)
 

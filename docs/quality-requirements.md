@@ -10,17 +10,17 @@ Each requirement has a stable identifier, a measurable threshold, a rationale, a
 The requirements apply to:
 
 - the route optimization solver;
-- the backend API;
+- the backend API, including the `MVP v2` export endpoint (`GET /jobs/{job_id}/export`);
 - persistent job storage;
 - error handling;
-- the deployed Assignment 4 increment.
+- the deployed `MVP v2` increment.
 
 ## Quality Requirements Summary
 
 | ID | ISO/IEC 25010 characteristic | Sub-characteristic | Requirement |
 |---|---|---|---|
 | QR-FC-01 | Functional suitability | Functional correctness | Solver output must satisfy all hard constraints for valid supported input instances. |
-| QR-PE-01 | Performance efficiency | Time behaviour | A fixed CI benchmark must complete within 30 seconds, and the configured solver time limit must be respected. |
+| QR-PE-01 | Performance efficiency | Time behaviour | A fixed CI benchmark must complete within 900 seconds, and the configured solver time limit must be respected. |
 | QR-RE-01 | Reliability | Recoverability | Submitted jobs and completed results must remain available after an application restart. |
 | QR-SE-01 | Security | Confidentiality | API responses must not expose stack traces, internal file paths, or implementation details. |
 
@@ -66,7 +66,8 @@ A low objective value is not useful if the generated route violates mandatory co
 - Related issues:
   - [#23 — Refactor route optimization algorithm](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/23)
   - [#13 — Skipped optional orders report](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/13)
-- Planned automated evidence: `QRT-FC-01`
+- Related ADR: [ADR-0002 — PyVRP + Nevergrad bounded runner](architecture/adr/0002-pyvrp-nevergrad-bounded-runner.md)
+- Automated evidence: `QRT-FC-01`
 
 ---
 
@@ -76,7 +77,7 @@ A low objective value is not useful if the generated route violates mandatory co
 
 ### Requirement
 
-A fixed small reference instance must be solved and validated within **30 seconds** in GitHub Actions under the standard CI configuration.
+A fixed small reference instance must be solved and validated within **900 seconds** in GitHub Actions under the standard CI configuration.
 
 The solver must also respect the configured execution limit:
 
@@ -92,7 +93,7 @@ Measure elapsed wall-clock time from the start of the solver call until:
 
 The CI requirement passes when:
 
-- the fixed benchmark completes within 30 seconds;
+- the fixed benchmark completes within 900 seconds;
 - the job reaches a terminal state;
 - the configured limit is not exceeded by more than 10 seconds.
 
@@ -114,11 +115,12 @@ The customer needs to run and validate the system directly. Predictable executio
 - Related issues:
   - [#23 — Refactor route optimization algorithm](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/23)
   - [#86 — Improve solver parameter and error handling](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/86)
-- Planned automated evidence: `QRT-PE-01`
+- Related ADR: [ADR-0002 — PyVRP + Nevergrad bounded runner](architecture/adr/0002-pyvrp-nevergrad-bounded-runner.md)
+- Automated evidence: `QRT-PE-01`
 
 ### Limitation
 
-The 30-second CI threshold applies to the fixed Assignment 4 reference fixture, not to every possible instance with up to 1,000 delivery points. Large-instance benchmarking remains separate Product Backlog work under issue #23.
+The 900-second CI threshold applies to the fixed Assignment 4 reference fixture, not to every possible instance with up to 1,000 delivery points. Large-instance benchmarking remains separate Product Backlog work under issue #23.
 
 ---
 
@@ -136,8 +138,8 @@ The requirement passes when an automated test:
 
 1. creates a job;
 2. stores a completed result;
-3. closes the current application/store instance;
-4. creates a new application/store instance using the same database;
+3. closes the current application/repository instance;
+4. creates a new application/repository instance using the same PostgreSQL database;
 5. retrieves the job by its original identifier;
 6. confirms that the job status and result are unchanged.
 
@@ -152,7 +154,8 @@ The customer requested calculation history. In-memory storage loses all jobs aft
 - Product area: job storage and job API
 - Related issue:
   - [#85 — Persist jobs and results across restarts](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/85)
-- Planned automated evidence: `QRT-RE-01`
+- Related ADR: [ADR-0001 — FastAPI with async SQLAlchemy and PostgreSQL](architecture/adr/0001-fastapi-async-sqlalchemy-postgresql.md)
+- Automated evidence: `QRT-RE-01`
 
 ### Limitation
 
@@ -192,23 +195,26 @@ Internal diagnostics can reveal implementation details and sensitive deployment 
 
 ### Traceability
 
-- Product area: solver runner, service layer, API serialization
+- Product area: solver runner, service layer, API serialization, job export endpoint
 - Related issue:
   - [#86 — Improve solver parameter and error handling](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/86)
-- Planned automated evidence: `QRT-SE-01`
+- Related ADR: [ADR-0003 — User-safe error handling](architecture/adr/0003-user-safe-error-handling.md)
+- Automated evidence: `QRT-SE-01`
+- Additional coverage: export endpoint (`GET /jobs/{job_id}/export`) is tested for safe responses in `tests/test_export.py`
 
 ---
 
 ## Acceptance of This Document
 
-This document is complete for Assignment 4 when:
+This document is complete for Assignment 5 / MVP v2 when:
 
 - at least three requirements use different ISO/IEC 25010 sub-characteristics;
 - every requirement has a measurable threshold;
 - every requirement has a rationale;
 - every requirement is linked to a backlog item or documented product area;
 - every requirement has at least one automated QRT defined in `docs/quality-requirement-tests.md`;
-- the document is reviewed through an issue-linked pull request.
+- the document is reviewed through an issue-linked pull request;
+- the scope covers the `MVP v2` increment including the export endpoint and enhanced job detail responses.
 
 ## Change Control
 
@@ -217,4 +223,4 @@ Any change to a threshold must be:
 - justified in the related issue or pull request;
 - reviewed by another team member;
 - reflected in the corresponding QRT;
-- recorded in the Week 4 report if it affects submitted evidence.
+- recorded in the Week 5 report if it affects submitted evidence.

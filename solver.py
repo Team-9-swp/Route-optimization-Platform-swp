@@ -7,8 +7,13 @@ import time
 import warnings
 import numpy as np
 import nevergrad as ng
-from typing import List, Dict, Tuple, Set
-from pyvrp import ProblemData as PyVRPProblemData, Client, Depot, VehicleType, solve as pyvrp_solve
+from pyvrp import (
+    ProblemData as PyVRPProblemData,
+    Client,
+    Depot,
+    VehicleType,
+    solve as pyvrp_solve,
+)
 from pyvrp.stop import MaxRuntime
 from ortools.constraint_solver import routing_enums_pb2, pywrapcp
 
@@ -24,8 +29,9 @@ def clean_json_keys(obj):
 
 
 def round_mathematically(value, decimals=2):
-    if decimals == 0: return math.floor(value + 0.5)
-    factor = 10 ** decimals
+    if decimals == 0:
+        return math.floor(value + 0.5)
+    factor = 10**decimals
     return math.floor(value * factor + 0.5 * (1 if value >= 0 else -1)) / factor
 
 
@@ -52,7 +58,9 @@ class ProblemData:
         self.v_time_flat = [0.0] * total_cells
         self.l_time_flat = [0.0] * total_cells
 
-        coords = [(self.depot_x, self.depot_y)] + [(o["x"], o["y"]) for o in self.orders]
+        coords = [(self.depot_x, self.depot_y)] + [
+            (o["x"], o["y"]) for o in self.orders
+        ]
 
         for i in range(self.size):
             xi, yi = coords[i]
@@ -90,9 +98,11 @@ class Solution:
         s.unserved_optional = set(self.unserved_optional)
         return s
 
-    def number_of_vehicles_in_use(self): return sum(1 for r in self.vehicle_routes if len(r) > 2)
+    def number_of_vehicles_in_use(self):
+        return sum(1 for r in self.vehicle_routes if len(r) > 2)
 
-    def number_of_loaders_in_use(self): return sum(1 for r in self.loader_routes if r)
+    def number_of_loaders_in_use(self):
+        return sum(1 for r in self.loader_routes if r)
 
 
 class Evaluator:
@@ -184,9 +194,11 @@ class Evaluator:
         return True, all_start_times, total_distance
 
     def is_loader_route_feasible(self, route, vehicle_times):
-        if not route: return True
+        if not route:
+            return True
         first = route[0]
-        if first not in vehicle_times: return False
+        if first not in vehicle_times:
+            return False
 
         l_tf = self.l_time_flat
         obi = self.order_by_idx
@@ -196,8 +208,10 @@ class Evaluator:
         for i in range(1, len(route)):
             prev, node = route[i - 1], route[i]
             t += l_tf[prev * sz + node]
-            if node not in vehicle_times: return False
-            if t > vehicle_times[node] + 1e-6: return False
+            if node not in vehicle_times:
+                return False
+            if t > vehicle_times[node] + 1e-6:
+                return False
             t = vehicle_times[node] + obi[node]["loader_service_time"]
 
         t += l_tf[route[-1] * sz + first]
@@ -205,79 +219,109 @@ class Evaluator:
 
     def evaluate(self, solution):
         all_visited = [n for r in solution.vehicle_routes for n in r if n != 0]
-        if len(all_visited) != len(set(all_visited)): return float("inf"), False, {}
+        if len(all_visited) != len(set(all_visited)):
+            return float("inf"), False, {}
         served = set(all_visited)
         obi = self.order_by_idx
         for o in self.problem.orders:
-            if o["optional"] == 0 and o["id"] not in served: return float("inf"), False, {}
+            if o["optional"] == 0 and o["id"] not in served:
+                return float("inf"), False, {}
 
         vehicle_times = {}
         total_v_dist = 0.0
-        df = self.dist_flat
-        sz = self.size
 
         for route in solution.vehicle_routes:
-            if len(route) <= 2: continue
+            if len(route) <= 2:
+                continue
             ok, times, d = self.is_vehicle_route_feasible(route)
-            if not ok: return float("inf"), False, {}
+            if not ok:
+                return float("inf"), False, {}
             total_v_dist += d
             idx = 0
             for n in route:
-                if n != 0: vehicle_times[n] = times[idx]; idx += 1
+                if n != 0:
+                    vehicle_times[n] = times[idx]
+                    idx += 1
 
         total_l_work = 0.0
         loader_cnt = {o["id"]: 0 for o in self.problem.orders}
         for lr in solution.loader_routes:
-            if not lr: continue
-            for n in lr: loader_cnt[n] += 1
-            if not self.is_loader_route_feasible(lr, vehicle_times): return float("inf"), False, {}
+            if not lr:
+                continue
+            for n in lr:
+                loader_cnt[n] += 1
+            if not self.is_loader_route_feasible(lr, vehicle_times):
+                return float("inf"), False, {}
             total_l_work += obi[lr[0]]["loader_service_time"]
 
         if any(lr for lr in solution.loader_routes):
             for o in self.problem.orders:
-                if o["id"] in served and o["loader_cnt"] > 0 and loader_cnt[o["id"]] < o["loader_cnt"]:
+                if (
+                    o["id"] in served
+                    and o["loader_cnt"] > 0
+                    and loader_cnt[o["id"]] < o["loader_cnt"]
+                ):
                     return float("inf"), False, {}
 
         used_v = solution.number_of_vehicles_in_use()
         used_l = solution.number_of_loaders_in_use()
         w = self.problem.weights
-        cost = (used_v * w["vehicle_salary"] + total_v_dist * w["fuel_cost"] +
-                used_l * w["loader_salary"] + total_l_work * w["loader_work"] +
-                len(solution.unserved_optional) * w["optional_order_penalty"])
+        cost = (
+            used_v * w["vehicle_salary"]
+            + total_v_dist * w["fuel_cost"]
+            + used_l * w["loader_salary"]
+            + total_l_work * w["loader_work"]
+            + len(solution.unserved_optional) * w["optional_order_penalty"]
+        )
         return cost, True, {"vehicle_times": vehicle_times}
 
     def extract_vehicle_times(self, solution):
         times = {}
         for route in solution.vehicle_routes:
-            if len(route) <= 2: continue
+            if len(route) <= 2:
+                continue
             ok, start_times, _ = self.is_vehicle_route_feasible(route)
             if ok:
                 idx = 0
                 for n in route:
-                    if n != 0: times[n] = start_times[idx]; idx += 1
+                    if n != 0:
+                        times[n] = start_times[idx]
+                        idx += 1
         return times
 
 
-def solve_vehicles_pyvrp(problem, time_limit, penalty_scale=1.0, loader_penalty_weight=0.0, seed=None):
+def solve_vehicles_pyvrp(
+    problem, time_limit, penalty_scale=1.0, loader_penalty_weight=0.0, seed=None
+):
     N = problem.number_of_orders
     coords = np.zeros((N + 1, 2))
     coords[0] = [problem.depot_x, problem.depot_y]
-    for i, o in enumerate(problem.orders): coords[i + 1] = [o["x"], o["y"]]
+    for i, o in enumerate(problem.orders):
+        coords[i + 1] = [o["x"], o["y"]]
 
     dist_mat = np.zeros((N + 1, N + 1))
     dur_mat = np.zeros((N + 1, N + 1))
 
     for i in range(N + 1):
         for j in range(N + 1):
-            d = math.sqrt((coords[i][0] - coords[j][0]) ** 2 + (coords[i][1] - coords[j][1]) ** 2)
+            d = math.sqrt(
+                (coords[i][0] - coords[j][0]) ** 2 + (coords[i][1] - coords[j][1]) ** 2
+            )
             dist_mat[i, j] = round(d, 2)
             dur_mat[i, j] = round(d / problem.vehicle_speed, 2)
             if i > 0 and j > 0 and i != j:
-                if problem.orders[i - 1]["loader_cnt"] > 0 and problem.orders[j - 1]["loader_cnt"] > 0:
-                    dur_mat[i, j] += ((d / problem.loader_speed) - (d / problem.vehicle_speed)) * loader_penalty_weight
+                if (
+                    problem.orders[i - 1]["loader_cnt"] > 0
+                    and problem.orders[j - 1]["loader_cnt"] > 0
+                ):
+                    dur_mat[i, j] += (
+                        (d / problem.loader_speed) - (d / problem.vehicle_speed)
+                    ) * loader_penalty_weight
 
     SCALE = 100
-    dist_mat_scaled = np.round(dist_mat * problem.weights["fuel_cost"] * SCALE).astype(np.int64)
+    dist_mat_scaled = np.round(dist_mat * problem.weights["fuel_cost"] * SCALE).astype(
+        np.int64
+    )
     dur_mat_scaled = np.round(dur_mat * SCALE).astype(np.int64)
 
     penalty_val = problem.weights["optional_order_penalty"] * penalty_scale
@@ -309,24 +353,37 @@ def solve_vehicles_pyvrp(problem, time_limit, penalty_scale=1.0, loader_penalty_
                               prize=int(prize * SCALE), required=(o["optional"] == 0)))
 
     depots = [Depot(x=float(problem.depot_x), y=float(problem.depot_y))]
-    vehicle_types = [VehicleType(num_available=N, capacity=[int(problem.vehicle_capacity)],
-                                 shift_duration=int(problem.vehicle_shift_length * SCALE),
-                                 fixed_cost=int(problem.weights["vehicle_salary"] * SCALE))]
+    vehicle_types = [
+        VehicleType(
+            num_available=N,
+            capacity=[int(problem.vehicle_capacity)],
+            shift_duration=int(problem.vehicle_shift_length * SCALE),
+            fixed_cost=int(problem.weights["vehicle_salary"] * SCALE),
+        )
+    ]
 
-    data = PyVRPProblemData(clients=clients, depots=depots, vehicle_types=vehicle_types,
-                            distance_matrices=[dist_mat_scaled], duration_matrices=[dur_mat_scaled])
+    data = PyVRPProblemData(
+        clients=clients,
+        depots=depots,
+        vehicle_types=vehicle_types,
+        distance_matrices=[dist_mat_scaled],
+        duration_matrices=[dur_mat_scaled],
+    )
 
     result = pyvrp_solve(data, stop=MaxRuntime(time_limit), seed=seed)
     solution = Solution()
-    if not result.is_feasible() or not result.best: return None
+    if not result.is_feasible() or not result.best:
+        return None
 
     for route in result.best.routes():
         pyvrp_route = [0] + list(route.visits()) + [0]
-        if len(pyvrp_route) > 2: solution.vehicle_routes.append(pyvrp_route)
+        if len(pyvrp_route) > 2:
+            solution.vehicle_routes.append(pyvrp_route)
 
     served = set(n for r in solution.vehicle_routes for n in r)
     for o in problem.orders:
-        if o["optional"] == 1 and o["id"] not in served: solution.unserved_optional.add(o["id"])
+        if o["optional"] == 1 and o["id"] not in served:
+            solution.unserved_optional.add(o["id"])
     return solution
 
 def optimize_routes_multitrip(problem, evaluator, solution):
@@ -385,91 +442,133 @@ def assign_loaders_greedy(problem, evaluator, vehicle_times):
     for o in problem.orders:
         if o["loader_cnt"] > 0 and o["id"] in vehicle_times:
             for _ in range(o["loader_cnt"]):
-                demands.append((o["id"], vehicle_times[o["id"]], o["loader_service_time"]))
+                demands.append(
+                    (o["id"], vehicle_times[o["id"]], o["loader_service_time"])
+                )
     demands.sort(key=lambda x: (x[1], x[2]))
     loader_routes = []
     for order_id, _, _ in demands:
         placed, best_ri, best_pos, best_fs = False, -1, -1, float("inf")
         for ri, route in enumerate(loader_routes):
-            if order_id in route: continue
+            if order_id in route:
+                continue
             for pos in range(len(route) + 1):
                 candidate = route[:pos] + [order_id] + route[pos:]
                 if evaluator.is_loader_route_feasible(candidate, vehicle_times):
                     fs = obi[candidate[0]]["loader_service_time"]
-                    if fs < best_fs: best_fs, best_ri, best_pos = fs, ri, pos; break
+                    if fs < best_fs:
+                        best_fs, best_ri, best_pos = fs, ri, pos
+                        break
         if best_ri >= 0:
             r = loader_routes[best_ri]
             loader_routes[best_ri] = r[:best_pos] + [order_id] + r[best_pos:]
             placed = True
-        if not placed: loader_routes.append([order_id])
+        if not placed:
+            loader_routes.append([order_id])
     return loader_routes
 
 
 class LoaderSA:
-    def __init__(self, problem, evaluator, temp0=100, alpha=0.995, max_iters=50000, time_budget=60.0):
+    def __init__(
+        self,
+        problem,
+        evaluator,
+        temp0=100,
+        alpha=0.995,
+        max_iters=50000,
+        time_budget=60.0,
+    ):
         self.problem, self.evaluator = problem, evaluator
-        self.temp0, self.alpha, self.max_iters, self.time_budget = temp0, alpha, max_iters, time_budget
+        self.temp0, self.alpha, self.max_iters, self.time_budget = (
+            temp0,
+            alpha,
+            max_iters,
+            time_budget,
+        )
 
     def improve(self, solution, vehicle_times):
         best, current = solution.copy(), solution.copy()
         best_cost, ok, _ = self.evaluator.evaluate(best)
-        if not ok: return best
+        if not ok:
+            return best
         current_cost, temperature, start_time = best_cost, self.temp0, time.time()
         for _ in range(self.max_iters):
-            if time.time() - start_time > self.time_budget: break
+            if time.time() - start_time > self.time_budget:
+                break
             neighbor = current.copy()
             op = random.choice(["relocate", "swap", "two_opt", "merge"])
             generated = getattr(self, f"_{op}")(neighbor, vehicle_times)
-            if not generated: temperature *= self.alpha; continue
+            if not generated:
+                temperature *= self.alpha
+                continue
             cost, valid, _ = self.evaluator.evaluate(neighbor)
-            if not valid: temperature *= self.alpha; continue
+            if not valid:
+                temperature *= self.alpha
+                continue
             delta = cost - current_cost
             if delta < 0 or random.random() < math.exp(-delta / (temperature + 1e-9)):
                 current, current_cost = neighbor, cost
-                if current_cost < best_cost: best, best_cost = neighbor.copy(), current_cost
+                if current_cost < best_cost:
+                    best, best_cost = neighbor.copy(), current_cost
             temperature *= self.alpha
         return best
 
     def _relocate(self, sol, vt):
-        if len(sol.loader_routes) < 1: return False
+        if len(sol.loader_routes) < 1:
+            return False
         ri = random.randrange(len(sol.loader_routes))
-        if not sol.loader_routes[ri]: return False
+        if not sol.loader_routes[ri]:
+            return False
         idx = random.randrange(len(sol.loader_routes[ri]))
         oid = sol.loader_routes[ri][idx]
-        r_without = sol.loader_routes[ri][:idx] + sol.loader_routes[ri][idx + 1:]
+        r_without = sol.loader_routes[ri][:idx] + sol.loader_routes[ri][idx + 1 :]
         for rj in random.sample(range(len(sol.loader_routes)), len(sol.loader_routes)):
-            if rj == ri or oid in sol.loader_routes[rj]: continue
+            if rj == ri or oid in sol.loader_routes[rj]:
+                continue
             pos = random.randrange(len(sol.loader_routes[rj]) + 1)
             cand = sol.loader_routes[rj][:pos] + [oid] + sol.loader_routes[rj][pos:]
             if self.evaluator.is_loader_route_feasible(cand, vt):
-                new_r = [r for k, r in enumerate(sol.loader_routes) if k != ri and k != rj]
-                if r_without: new_r.append(r_without)
+                new_r = [
+                    r for k, r in enumerate(sol.loader_routes) if k != ri and k != rj
+                ]
+                if r_without:
+                    new_r.append(r_without)
                 new_r.append(cand)
                 sol.loader_routes[:] = new_r
                 return True
         return False
 
     def _swap(self, sol, vt):
-        if len(sol.loader_routes) < 2: return False
+        if len(sol.loader_routes) < 2:
+            return False
         ri, rj = random.sample(range(len(sol.loader_routes)), 2)
-        if not sol.loader_routes[ri] or not sol.loader_routes[rj]: return False
-        i, j = random.randrange(len(sol.loader_routes[ri])), random.randrange(len(sol.loader_routes[rj]))
+        if not sol.loader_routes[ri] or not sol.loader_routes[rj]:
+            return False
+        i, j = random.randrange(len(sol.loader_routes[ri])), random.randrange(
+            len(sol.loader_routes[rj])
+        )
         oi, oj = sol.loader_routes[ri][i], sol.loader_routes[rj][j]
-        if oi in sol.loader_routes[rj] or oj in sol.loader_routes[ri]: return False
+        if oi in sol.loader_routes[rj] or oj in sol.loader_routes[ri]:
+            return False
         sol.loader_routes[ri][i], sol.loader_routes[rj][j] = oj, oi
-        if not (self.evaluator.is_loader_route_feasible(sol.loader_routes[ri], vt) and
-                self.evaluator.is_loader_route_feasible(sol.loader_routes[rj], vt)):
+        if not (
+            self.evaluator.is_loader_route_feasible(sol.loader_routes[ri], vt)
+            and self.evaluator.is_loader_route_feasible(sol.loader_routes[rj], vt)
+        ):
             sol.loader_routes[ri][i], sol.loader_routes[rj][j] = oi, oj
             return False
         return True
 
     def _two_opt(self, sol, vt):
-        if not sol.loader_routes: return False
+        if not sol.loader_routes:
+            return False
         ri = random.randrange(len(sol.loader_routes))
         route = sol.loader_routes[ri]
-        if len(route) < 3: return False
+        if len(route) < 3:
+            return False
         i, j = random.randrange(len(route) - 1), random.randrange(1, len(route))
-        if i >= j: i, j = j, i
+        if i >= j:
+            i, j = j, i
         cand = route[:i] + route[i:j][::-1] + route[j:]
         if self.evaluator.is_loader_route_feasible(cand, vt):
             sol.loader_routes[ri] = cand
@@ -477,13 +576,17 @@ class LoaderSA:
         return False
 
     def _merge(self, sol, vt):
-        if len(sol.loader_routes) < 2: return False
+        if len(sol.loader_routes) < 2:
+            return False
         ri, rj = random.sample(range(len(sol.loader_routes)), 2)
         a, b = sol.loader_routes[ri], sol.loader_routes[rj]
-        if set(a) & set(b): return False
+        if set(a) & set(b):
+            return False
         for merged in (a + b, b + a):
             if self.evaluator.is_loader_route_feasible(merged, vt):
-                sol.loader_routes[:] = [r for k, r in enumerate(sol.loader_routes) if k not in (ri, rj)] + [merged]
+                sol.loader_routes[:] = [
+                    r for k, r in enumerate(sol.loader_routes) if k not in (ri, rj)
+                ] + [merged]
                 return True
         return False
 
@@ -508,16 +611,6 @@ def run_pipeline(problem, evaluator, params, time_limit, pyvrp_cap, seed=None, u
 
 
 def solve(raw_data, time_limit=900, seed=42):
-    """Solve CVRPTW+Loaders using PyVRP + Nevergrad hyperparameter tuning.
-
-    Args:
-        raw_data: dict - raw problem data from JSON
-        time_limit: float - total time budget in seconds
-        seed: int - random seed
-
-    Returns:
-        dict with 'vehicles', 'loaders', and '_cost' keys, or None if infeasible
-    """
     random.seed(seed)
 
     data = clean_json_keys(raw_data)
@@ -528,12 +621,15 @@ def solve(raw_data, time_limit=900, seed=42):
 
     print(f"Orders: {N}, Time limit: {time_limit}s")
 
-    best_cost, best_params, best_solution = float('inf'), None, None
+    best_cost, best_params, best_solution = float("inf"), None, None
 
     pyvrp_frac_bounds = (0.7, 1.05)
-    pyvrp_cap = float('inf')
+    pyvrp_cap = float("inf")
 
-    if N <= 200:
+    if time_limit <= 60:
+        ng_budget = 2
+        print("Mode: Short Time Limit (Minimal Hyperparameter Tuning)")
+    elif N <= 200:
         ng_budget = 10
         print("Mode: Small/Medium Instance (Hyperparameter Tuning)")
     else:
@@ -542,8 +638,10 @@ def solve(raw_data, time_limit=900, seed=42):
 
     parametrization = ng.p.Dict(
         penalty_scale=ng.p.Scalar(lower=0.8, upper=2.0),
-        pyvrp_time_frac=ng.p.Scalar(lower=pyvrp_frac_bounds[0], upper=pyvrp_frac_bounds[1]),
-        loader_penalty_weight=ng.p.Scalar(lower=0.0, upper=3.0)
+        pyvrp_time_frac=ng.p.Scalar(
+            lower=pyvrp_frac_bounds[0], upper=pyvrp_frac_bounds[1]
+        ),
+        loader_penalty_weight=ng.p.Scalar(lower=0.0, upper=3.0),
     )
 
     optimizer = ng.optimizers.NGOpt(parametrization=parametrization, budget=ng_budget)
@@ -552,7 +650,8 @@ def solve(raw_data, time_limit=900, seed=42):
     def objective(params):
         nonlocal best_cost, best_params, best_solution
         sol = run_pipeline(problem, evaluator, params, eval_time, pyvrp_cap, seed=seed)
-        if sol is None: return float('inf')
+        if sol is None:
+            return float("inf")
 
         cost, valid, _ = evaluator.evaluate(sol)
         if valid and cost < best_cost:
@@ -560,7 +659,7 @@ def solve(raw_data, time_limit=900, seed=42):
             print(f"  [NG Sweep] Best: {cost:.2f} | Params: {params}")
         else:
             print(f"  [NG Sweep] Cur: {cost:.2f} | Params: {params}")
-        return cost if valid else float('inf')
+        return cost if valid else float("inf")
 
     print(f"Starting Nevergrad Warm-Up ({ng_budget} iterations)...")
     optimizer.minimize(objective)

@@ -1,0 +1,60 @@
+%% Route Optimization Platform — Dynamic View: Solve, Export, Validate workflow
+%% Authoritative diagrams-as-code source. Rendered copy lives in docs/architecture/README.md.
+sequenceDiagram
+  autonumber
+  actor U as Customer
+  participant FE as React SPA<br/>(NewJob/Dashboard/JobDetail/Validate)
+  participant API as API Router<br/>app/api.py
+  participant SVC as SolverService<br/>app/service.py
+  participant REPO as JobRepository<br/>app/repository.py
+  participant RUN as Solver Runner<br/>app/runner.py
+  participant SOLV as Solver Engine<br/>solver.py (PyVRP/Nevergrad)
+  participant VAL as Validator<br/>app/validation.py
+  participant DB as PostgreSQL
+
+  rect rgb(235, 248, 255)
+  note over U,FE: Submit and solve
+  U->>FE: instance, seed, time_limit, name, auto_validate
+  FE->>API: POST /solve?seed=&time_limit=&name=&auto_validate=true
+  API->>SVC: submit_job(...)
+  SVC->>REPO: create job (status = in_progress)
+  REPO->>DB: INSERT job
+  SVC->>RUN: run(instance, seed, time_limit)
+  RUN->>SOLV: solve within time budget
+  SOLV-->>RUN: solution (routes, objective_value, unserved_optional)
+  opt auto_validate = true
+    SVC->>VAL: validate(instance, solution)
+    VAL-->>SVC: valid/invalid + violations
+  end
+  alt accepted
+    SVC->>REPO: store result, validation, unserved_optional (completed)
+  else failure / timeout
+    SVC->>REPO: store user-safe error + category (failed)
+  end
+  REPO->>DB: UPDATE job
+  API-->>FE: 202 + job_id
+  end
+
+  rect rgb(240, 255, 240)
+  note over U,FE: Poll and export
+  loop until terminal
+    FE->>API: GET /jobs/{job_id}
+    API->>SVC: get_job(job_id)
+    SVC->>REPO: fetch job
+    REPO-->>SVC: job record
+    API-->>FE: status, result, validation
+  end
+  U->>FE: download solution JSON (export)
+  FE-->>U: solution file
+  end
+
+  rect rgb(255, 248, 240)
+  note over U,FE: Validate exported solution
+  U->>FE: load instance + exported solution
+  FE->>API: POST /validate { instance, solution }
+  API->>SVC: validate_solution(...)
+  SVC->>VAL: validate(instance, solution)
+  VAL-->>SVC: { valid, violations }
+  API-->>FE: validation result
+  FE-->>U: valid / violations report
+  end
