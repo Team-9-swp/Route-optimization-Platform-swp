@@ -193,7 +193,10 @@ class Evaluator:
 
         # NOTE: Uses > rather than >= to match PyVRP's internal tolerance.
         # Defensive post-check in the output section handles the boundary case.
-        if round_mathematically(shift_end - shift_start, 2) > self.problem.vehicle_shift_length:
+        if (
+            round_mathematically(shift_end - shift_start, 2)
+            > self.problem.vehicle_shift_length
+        ):
             return False, [], 0.0
 
         return True, all_start_times, total_distance
@@ -342,9 +345,12 @@ def solve_vehicles_pyvrp(
             loader_est = 0.0
             if o["loader_cnt"] > 0:
                 loader_est = (
-                    (o["loader_service_time"] / problem.loader_shift_length) * problem.weights["loader_salary"]
-                    + o["loader_service_time"] * problem.weights["loader_work"]
-                )
+                    o["loader_service_time"] / problem.loader_shift_length
+                ) * problem.weights["loader_salary"] + o[
+                    "loader_service_time"
+                ] * problem.weights[
+                    "loader_work"
+                ]
             capacity_est = (o["volume"] / problem.vehicle_capacity) * vs * 0.5
             discount = fuel_est + loader_est + capacity_est
             if N <= 200:
@@ -352,10 +358,18 @@ def solve_vehicles_pyvrp(
             prize = max(1.0, penalty_val - discount)
         else:
             prize = 0.0
-        clients.append(Client(x=float(o["x"]), y=float(o["y"]), delivery=[int(o["volume"])],
-                              service_duration=int(o["vehicle_service_time"] * SCALE),
-                              tw_early=int(o["time_window"][0] * SCALE), tw_late=int(o["time_window"][1] * SCALE),
-                              prize=int(prize * SCALE), required=(o["optional"] == 0)))
+        clients.append(
+            Client(
+                x=float(o["x"]),
+                y=float(o["y"]),
+                delivery=[int(o["volume"])],
+                service_duration=int(o["vehicle_service_time"] * SCALE),
+                tw_early=int(o["time_window"][0] * SCALE),
+                tw_late=int(o["time_window"][1] * SCALE),
+                prize=int(prize * SCALE),
+                required=(o["optional"] == 0),
+            )
+        )
 
     depots = [Depot(x=float(problem.depot_x), y=float(problem.depot_y))]
     vehicle_types = [
@@ -390,6 +404,7 @@ def solve_vehicles_pyvrp(
         if o["optional"] == 1 and o["id"] not in served:
             solution.unserved_optional.add(o["id"])
     return solution
+
 
 def optimize_routes_multitrip(problem, evaluator, solution):
     """Post-processing: merge PyVRP routes by allowing vehicles to do multiple trips (depot reloads) within shift."""
@@ -430,7 +445,9 @@ def optimize_routes_multitrip(problem, evaluator, solution):
         if o["optional"] == 1 and o["id"] not in served:
             optional_unserved.add(o["id"])
 
-    mandatory_missing = [o["id"] for o in problem.orders if o["optional"] == 0 and o["id"] not in served]
+    mandatory_missing = [
+        o["id"] for o in problem.orders if o["optional"] == 0 and o["id"] not in served
+    ]
     if mandatory_missing:
         merged = [r for r in solution.vehicle_routes if len(r) > 2]
         optional_unserved = set(solution.unserved_optional)
@@ -595,11 +612,20 @@ class LoaderSA:
                 return True
         return False
 
-def run_pipeline(problem, evaluator, params, time_limit, pyvrp_cap, seed=None, use_multitrip=False):
+
+def run_pipeline(
+    problem, evaluator, params, time_limit, pyvrp_cap, seed=None, use_multitrip=False
+):
     solver_time = min(time_limit * params["pyvrp_time_frac"], pyvrp_cap)
     sa_time = max(time_limit - solver_time - 2.0, 10.0)
 
-    sol = solve_vehicles_pyvrp(problem, solver_time, params["penalty_scale"], params["loader_penalty_weight"], seed=seed)
+    sol = solve_vehicles_pyvrp(
+        problem,
+        solver_time,
+        params["penalty_scale"],
+        params["loader_penalty_weight"],
+        seed=seed,
+    )
     if not sol or not sol.vehicle_routes:
         return None
     best_sol = sol
@@ -670,9 +696,19 @@ def solve(raw_data, time_limit=900, seed=42):
     optimizer.minimize(objective)
 
     remaining_time = time_limit * 0.6
-    print(f"\nStarting Deep Convergence Phase ({remaining_time:.0f}s, with multi-trip merge)...")
+    print(
+        f"\nStarting Deep Convergence Phase ({remaining_time:.0f}s, with multi-trip merge)..."
+    )
 
-    final_sol = run_pipeline(problem, evaluator, best_params, remaining_time, pyvrp_cap, seed=seed, use_multitrip=True)
+    final_sol = run_pipeline(
+        problem,
+        evaluator,
+        best_params,
+        remaining_time,
+        pyvrp_cap,
+        seed=seed,
+        use_multitrip=True,
+    )
 
     if final_sol:
         final_cost, valid, _ = evaluator.evaluate(final_sol)
@@ -706,7 +742,7 @@ def solve(raw_data, time_limit=900, seed=42):
         time_idx = 0
         for trip in trips:
             route_ids = [n for n in trip if n != 0]
-            trip_times = times[time_idx:time_idx + len(route_ids)]
+            trip_times = times[time_idx : time_idx + len(route_ids)]
             time_idx += len(route_ids)
 
             # Defensive shift check matching validator's exact formula
@@ -722,7 +758,11 @@ def solve(raw_data, time_limit=900, seed=42):
                 if not oids:
                     return True
                 dep = trip_tms[0] - vtf[0 * sz + oids[0]]
-                ret = trip_tms[-1] + vtf[oids[-1] * sz + 0] + oi[oids[-1]]["vehicle_service_time"]
+                ret = (
+                    trip_tms[-1]
+                    + vtf[oids[-1] * sz + 0]
+                    + oi[oids[-1]]["vehicle_service_time"]
+                )
                 return ret - dep < shift_limit - 1e-6
 
             if not _trip_shift_ok(trip, trip_times):
@@ -734,11 +774,17 @@ def solve(raw_data, time_limit=900, seed=42):
                     right_route = [0] + route_ids[split_idx:] + [0]
                     left_times = trip_times[:split_idx]
                     right_times = trip_times[split_idx:]
-                    if _trip_shift_ok(left_route, left_times) and _trip_shift_ok(right_route, right_times):
+                    if _trip_shift_ok(left_route, left_times) and _trip_shift_ok(
+                        right_route, right_times
+                    ):
                         vid += 1
-                        vehicle_output.append({"id": vid, "route": left_route, "time": left_times})
+                        vehicle_output.append(
+                            {"id": vid, "route": left_route, "time": left_times}
+                        )
                         vid += 1
-                        vehicle_output.append({"id": vid, "route": right_route, "time": right_times})
+                        vehicle_output.append(
+                            {"id": vid, "route": right_route, "time": right_times}
+                        )
                         split_ok = True
                         break
                     split_idx += 1
@@ -751,7 +797,12 @@ def solve(raw_data, time_limit=900, seed=42):
         if route:
             loader_output.append({"id": lid + 1, "route": route})
 
-    result = {"vehicles": vehicle_output, "loaders": loader_output, "_cost": best_cost, "_evaluator": evaluator}
+    result = {
+        "vehicles": vehicle_output,
+        "loaders": loader_output,
+        "_cost": best_cost,
+        "_evaluator": evaluator,
+    }
     return result
 
 
