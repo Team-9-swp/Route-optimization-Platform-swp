@@ -621,7 +621,7 @@ def run_pipeline(
     problem, evaluator, params, time_limit, pyvrp_cap, seed=None, use_multitrip=False
 ):
     solver_time = min(time_limit * params["pyvrp_time_frac"], pyvrp_cap)
-    sa_time = max(time_limit - solver_time - 2.0, 10.0)
+    sa_time = max(time_limit - solver_time - 2.0, min(10.0, time_limit * 0.2))
 
     sol = solve_vehicles_pyvrp(
         problem,
