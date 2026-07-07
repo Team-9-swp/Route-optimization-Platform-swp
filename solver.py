@@ -499,6 +499,7 @@ class LoaderSA:
         alpha=0.995,
         max_iters=50000,
         time_budget=60.0,
+        rng=None,
     ):
         self.problem, self.evaluator = problem, evaluator
         self.temp0, self.alpha, self.max_iters, self.time_budget = (
@@ -507,6 +508,7 @@ class LoaderSA:
             max_iters,
             time_budget,
         )
+        self.rng = rng if rng is not None else random
 
     def improve(self, solution, vehicle_times):
         best, current = solution.copy(), solution.copy()
@@ -518,7 +520,7 @@ class LoaderSA:
             if time.time() - start_time > self.time_budget:
                 break
             neighbor = current.copy()
-            op = random.choice(["relocate", "swap", "two_opt", "merge"])
+            op = self.rng.choice(["relocate", "swap", "two_opt", "merge"])
             generated = getattr(self, f"_{op}")(neighbor, vehicle_times)
             if not generated:
                 temperature *= self.alpha
@@ -528,7 +530,7 @@ class LoaderSA:
                 temperature *= self.alpha
                 continue
             delta = cost - current_cost
-            if delta < 0 or random.random() < math.exp(-delta / (temperature + 1e-9)):
+            if delta < 0 or self.rng.random() < math.exp(-delta / (temperature + 1e-9)):
                 current, current_cost = neighbor, cost
                 if current_cost < best_cost:
                     best, best_cost = neighbor.copy(), current_cost
@@ -538,16 +540,18 @@ class LoaderSA:
     def _relocate(self, sol, vt):
         if len(sol.loader_routes) < 1:
             return False
-        ri = random.randrange(len(sol.loader_routes))
+        ri = self.rng.randrange(len(sol.loader_routes))
         if not sol.loader_routes[ri]:
             return False
-        idx = random.randrange(len(sol.loader_routes[ri]))
+        idx = self.rng.randrange(len(sol.loader_routes[ri]))
         oid = sol.loader_routes[ri][idx]
         r_without = sol.loader_routes[ri][:idx] + sol.loader_routes[ri][idx + 1 :]
-        for rj in random.sample(range(len(sol.loader_routes)), len(sol.loader_routes)):
+        for rj in self.rng.sample(
+            range(len(sol.loader_routes)), len(sol.loader_routes)
+        ):
             if rj == ri or oid in sol.loader_routes[rj]:
                 continue
-            pos = random.randrange(len(sol.loader_routes[rj]) + 1)
+            pos = self.rng.randrange(len(sol.loader_routes[rj]) + 1)
             cand = sol.loader_routes[rj][:pos] + [oid] + sol.loader_routes[rj][pos:]
             if self.evaluator.is_loader_route_feasible(cand, vt):
                 new_r = [
@@ -563,10 +567,10 @@ class LoaderSA:
     def _swap(self, sol, vt):
         if len(sol.loader_routes) < 2:
             return False
-        ri, rj = random.sample(range(len(sol.loader_routes)), 2)
+        ri, rj = self.rng.sample(range(len(sol.loader_routes)), 2)
         if not sol.loader_routes[ri] or not sol.loader_routes[rj]:
             return False
-        i, j = random.randrange(len(sol.loader_routes[ri])), random.randrange(
+        i, j = self.rng.randrange(len(sol.loader_routes[ri])), self.rng.randrange(
             len(sol.loader_routes[rj])
         )
         oi, oj = sol.loader_routes[ri][i], sol.loader_routes[rj][j]
@@ -584,11 +588,11 @@ class LoaderSA:
     def _two_opt(self, sol, vt):
         if not sol.loader_routes:
             return False
-        ri = random.randrange(len(sol.loader_routes))
+        ri = self.rng.randrange(len(sol.loader_routes))
         route = sol.loader_routes[ri]
         if len(route) < 3:
             return False
-        i, j = random.randrange(len(route) - 1), random.randrange(1, len(route))
+        i, j = self.rng.randrange(len(route) - 1), self.rng.randrange(1, len(route))
         if i >= j:
             i, j = j, i
         cand = route[:i] + route[i:j][::-1] + route[j:]
@@ -600,7 +604,7 @@ class LoaderSA:
     def _merge(self, sol, vt):
         if len(sol.loader_routes) < 2:
             return False
-        ri, rj = random.sample(range(len(sol.loader_routes)), 2)
+        ri, rj = self.rng.sample(range(len(sol.loader_routes)), 2)
         a, b = sol.loader_routes[ri], sol.loader_routes[rj]
         if set(a) & set(b):
             return False
@@ -636,13 +640,15 @@ def run_pipeline(
     vt = evaluator.extract_vehicle_times(best_sol)
     best_sol.loader_routes = assign_loaders_greedy(problem, evaluator, vt)
 
-    loader_sa = LoaderSA(problem, evaluator, time_budget=sa_time)
+    rng = random.Random(seed)
+    loader_sa = LoaderSA(problem, evaluator, time_budget=sa_time, rng=rng)
     best_sol = loader_sa.improve(best_sol, vt)
     return best_sol
 
 
 def solve(raw_data, time_limit=900, seed=42):
     random.seed(seed)
+    np.random.seed(seed)
 
     data = clean_json_keys(raw_data)
 
