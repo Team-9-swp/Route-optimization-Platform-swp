@@ -69,25 +69,27 @@ async def run_solver(
 
         objective_value = _extract_objective_value(result)
         result = {k: v for k, v in result.items() if not k.startswith("_")}
+
+        validation_status = None
+        validation_report = None
+        if auto_validate:
+            validation = validate_solution(record.input_data, result)
+            validation_status = (
+                ValidationStatus.PASSED
+                if validation["passed"]
+                else ValidationStatus.FAILED
+            )
+            validation_report = validation
+
         await repository.update_job(
             job_id,
             status=JobStatus.COMPLETED,
             finished_at=datetime.now(timezone.utc),
             result=result,
             objective_value=objective_value,
+            validation_status=validation_status,
+            validation_report=validation_report,
         )
-
-        if auto_validate:
-            validation = validate_solution(record.input_data, result)
-            await repository.update_job(
-                job_id,
-                validation_status=(
-                    ValidationStatus.PASSED
-                    if validation["passed"]
-                    else ValidationStatus.FAILED
-                ),
-                validation_report=validation,
-            )
     except Exception as exc:
         logger.exception("Solver failed for job %s", job_id)
         # Store a user-safe error message. Detailed diagnostics are written to
