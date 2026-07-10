@@ -788,7 +788,7 @@ def solve(raw_data, time_limit=900, seed=42):
 
     output_sol = Solution()
     output_sol.vehicle_routes = [v["route"] for v in vehicle_output]
-    output_sol.loader_routes = [l["route"] for l in loader_output]
+    output_sol.loader_routes = [loader["route"] for loader in loader_output]
     output_sol.unserved_optional = set(best_solution.unserved_optional)
     output_cost, output_valid, _ = evaluator.evaluate(output_sol)
     if output_valid:
