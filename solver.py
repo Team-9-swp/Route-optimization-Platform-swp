@@ -113,6 +113,9 @@ class Evaluator:
         self.order_by_idx = problem.order_by_idx
         self.dist_flat = problem.dist_flat
 
+    def _node_index(self, n):
+        return 0 if n == -1 else n
+
     def is_vehicle_route_feasible(self, route):
         if len(route) <= 2:
             return True, [], 0.0
@@ -122,7 +125,6 @@ class Evaluator:
         obi = self.order_by_idx
         sz = self.size
 
-        # Split route into trips at depot visits (0 markers)
         trips = []
         current_trip = [0]
         for n in route[1:]:
@@ -148,16 +150,21 @@ class Evaluator:
 
             for i in range(len(trip) - 1):
                 f, t = trip[i], trip[i + 1]
-                cell = f * sz + t
+                f_idx = self._node_index(f)
+                t_idx = self._node_index(t)
+                cell = f_idx * sz + t_idx
                 current_time += v_tf[cell]
                 total_distance += df[cell]
-                if t != 0:
+                if t not in (0, -1):
                     raw_arrival[t] = current_time
                     current_time += obi[t]["vehicle_service_time"]
+                elif t == -1:
+                    raw_arrival[t] = current_time
+                    current_time += self.problem.loading_time_at_depot
 
             upper_bound = float("inf")
             for node in trip:
-                if node == 0:
+                if node in (0, -1):
                     continue
                 tw_start, tw_end = obi[node]["time_window"]
                 ub = tw_end - raw_arrival[node]
@@ -175,27 +182,31 @@ class Evaluator:
 
             for i in range(len(trip) - 1):
                 f, t = trip[i], trip[i + 1]
-                current_time += v_tf[f * sz + t]
-                if t != 0:
+                f_idx = self._node_index(f)
+                t_idx = self._node_index(t)
+                current_time += v_tf[f_idx * sz + t_idx]
+                if t not in (0, -1):
                     tw_start, tw_end = obi[t]["time_window"]
                     actual = current_time if current_time > tw_start else tw_start
                     if actual > tw_end + 1e-6:
                         return False, [], 0.0
                     trip_start_times.append(round_mathematically(actual, 2))
                     current_time = actual + obi[t]["vehicle_service_time"]
+                elif t == -1:
+                    actual = current_time
+                    trip_start_times.append(round_mathematically(actual, 2))
+                    current_time = actual + self.problem.loading_time_at_depot
 
             shift_end = current_time
             all_start_times.extend(trip_start_times)
 
-            total_volume = sum(obi[n]["volume"] for n in trip if n != 0)
+            total_volume = sum(obi[n]["volume"] for n in trip if n not in (0, -1))
             if total_volume > self.problem.vehicle_capacity + 1e-6:
                 return False, [], 0.0
 
-        # NOTE: Uses > rather than >= to match PyVRP's internal tolerance.
-        # Defensive post-check in the output section handles the boundary case.
         if (
             round_mathematically(shift_end - shift_start, 2)
-            > self.problem.vehicle_shift_length
+            >= self.problem.vehicle_shift_length
         ):
             return False, [], 0.0
 
@@ -226,7 +237,9 @@ class Evaluator:
         return t - vehicle_times[first] < self.problem.loader_shift_length - 1e-6
 
     def evaluate(self, solution):
-        all_visited = [n for r in solution.vehicle_routes for n in r if n != 0]
+        all_visited = [
+            n for r in solution.vehicle_routes for n in r if n not in (0, -1)
+        ]
         if len(all_visited) != len(set(all_visited)):
             return float("inf"), False, {}
         served = set(all_visited)
@@ -247,8 +260,10 @@ class Evaluator:
             total_v_dist += d
             idx = 0
             for n in route:
-                if n != 0:
+                if n not in (0, -1):
                     vehicle_times[n] = times[idx]
+                    idx += 1
+                elif n == -1:
                     idx += 1
 
         total_l_work = 0.0
@@ -292,8 +307,10 @@ class Evaluator:
             if ok:
                 idx = 0
                 for n in route:
-                    if n != 0:
+                    if n not in (0, -1):
                         times[n] = start_times[idx]
+                        idx += 1
+                    elif n == -1:
                         idx += 1
         return times
 
@@ -302,25 +319,31 @@ def solve_vehicles_pyvrp(
     problem, time_limit, penalty_scale=1.0, loader_penalty_weight=0.0, seed=None
 ):
     N = problem.number_of_orders
-    coords = np.zeros((N + 1, 2))
-    coords[0] = [problem.depot_x, problem.depot_y]
-    for i, o in enumerate(problem.orders):
-        coords[i + 1] = [o["x"], o["y"]]
+    load_time = problem.loading_time_at_depot
 
-    dist_mat = np.zeros((N + 1, N + 1))
-    dur_mat = np.zeros((N + 1, N + 1))
+    M = N + 2
+    coords = [
+        (problem.depot_x, problem.depot_y),
+        (problem.depot_x, problem.depot_y),
+    ]
+    for o in problem.orders:
+        coords.append((o["x"], o["y"]))
 
-    for i in range(N + 1):
-        for j in range(N + 1):
+    dist_mat = np.zeros((M, M))
+    dur_mat = np.zeros((M, M))
+
+    for i in range(M):
+        for j in range(M):
             d = math.sqrt(
                 (coords[i][0] - coords[j][0]) ** 2 + (coords[i][1] - coords[j][1]) ** 2
             )
             dist_mat[i, j] = round(d, 2)
             dur_mat[i, j] = round(d / problem.vehicle_speed, 2)
-            if i > 0 and j > 0 and i != j:
+
+            if i >= 2 and j >= 2 and i != j:
                 if (
-                    problem.orders[i - 1]["loader_cnt"] > 0
-                    and problem.orders[j - 1]["loader_cnt"] > 0
+                    problem.orders[i - 2]["loader_cnt"] > 0
+                    and problem.orders[j - 2]["loader_cnt"] > 0
                 ):
                     dur_mat[i, j] += (
                         (d / problem.loader_speed) - (d / problem.vehicle_speed)
@@ -339,8 +362,8 @@ def solve_vehicles_pyvrp(
     clients = []
     for i, o in enumerate(problem.orders):
         if o["optional"] == 1:
-            idx = i + 1
-            nearest = min(dist_mat[idx][j] for j in range(N + 1) if j != idx)
+            idx = i + 2
+            nearest = min(dist_mat[idx][j] for j in range(M) if j != idx)
             fuel_est = 2 * nearest * fc
             loader_est = 0.0
             if o["loader_cnt"] > 0:
@@ -371,13 +394,28 @@ def solve_vehicles_pyvrp(
             )
         )
 
-    depots = [Depot(x=float(problem.depot_x), y=float(problem.depot_y))]
+    depots = [
+        Depot(
+            x=float(problem.depot_x),
+            y=float(problem.depot_y),
+            service_duration=0,
+        ),
+        Depot(
+            x=float(problem.depot_x),
+            y=float(problem.depot_y),
+            service_duration=int(load_time * SCALE),
+        ),
+    ]
+
     vehicle_types = [
         VehicleType(
             num_available=N,
             capacity=[int(problem.vehicle_capacity)],
             shift_duration=int(problem.vehicle_shift_length * SCALE),
             fixed_cost=int(problem.weights["vehicle_salary"] * SCALE),
+            start_depot=0,
+            end_depot=0,
+            reload_depots=[1],
         )
     ]
 
@@ -395,67 +433,24 @@ def solve_vehicles_pyvrp(
         return None
 
     for route in result.best.routes():
-        pyvrp_route = [0] + list(route.visits()) + [0]
+        pyvrp_route = [0]
+        for trip in route.trips():
+            if len(pyvrp_route) > 1:
+                pyvrp_route[-1] = -1
+
+            for client_idx in trip.visits():
+                order_id = client_idx - 1
+                pyvrp_route.append(order_id)
+            pyvrp_route.append(0)
+
         if len(pyvrp_route) > 2:
             solution.vehicle_routes.append(pyvrp_route)
 
-    served = set(n for r in solution.vehicle_routes for n in r)
+    served = set(n for r in solution.vehicle_routes for n in r if n not in (0, -1))
     for o in problem.orders:
         if o["optional"] == 1 and o["id"] not in served:
             solution.unserved_optional.add(o["id"])
     return solution
-
-
-def optimize_routes_multitrip(problem, evaluator, solution):
-    """Post-processing: merge PyVRP routes by allowing vehicles to do multiple trips (depot reloads) within shift."""
-    routes = [r for r in solution.vehicle_routes if len(r) > 2]
-    if not routes:
-        return solution
-
-    merged = []
-    used = [False] * len(routes)
-
-    for i in range(len(routes)):
-        if used[i]:
-            continue
-        current = list(routes[i])
-        used[i] = True
-        changed = True
-        while changed:
-            changed = False
-            for j in range(i + 1, len(routes)):
-                if used[j]:
-                    continue
-                other = list(routes[j][1:-1])  # orders without depot
-                if not other:
-                    continue
-                candidate = current + other + [0]  # depot → orders → 0 → orders → 0
-                ok, _, _ = evaluator.is_vehicle_route_feasible(candidate)
-                if ok:
-                    current = candidate
-                    used[j] = True
-                    changed = True
-        merged.append(current)
-
-    optional_unserved = set()
-    served = set()
-    for r in merged:
-        served.update(n for n in r if n != 0)
-    for o in problem.orders:
-        if o["optional"] == 1 and o["id"] not in served:
-            optional_unserved.add(o["id"])
-
-    mandatory_missing = [
-        o["id"] for o in problem.orders if o["optional"] == 0 and o["id"] not in served
-    ]
-    if mandatory_missing:
-        merged = [r for r in solution.vehicle_routes if len(r) > 2]
-        optional_unserved = set(solution.unserved_optional)
-
-    result = Solution()
-    result.vehicle_routes = merged
-    result.unserved_optional = optional_unserved
-    return result
 
 
 def assign_loaders_greedy(problem, evaluator, vehicle_times):
@@ -617,9 +612,7 @@ class LoaderSA:
         return False
 
 
-def run_pipeline(
-    problem, evaluator, params, time_limit, pyvrp_cap, seed=None, use_multitrip=False
-):
+def run_pipeline(problem, evaluator, params, time_limit, pyvrp_cap, seed=None):
     solver_time = min(time_limit * params["pyvrp_time_frac"], pyvrp_cap)
     sa_time = max(time_limit - solver_time - 2.0, min(10.0, time_limit * 0.2))
 
@@ -633,9 +626,6 @@ def run_pipeline(
     if not sol or not sol.vehicle_routes:
         return None
     best_sol = sol
-
-    if use_multitrip:
-        best_sol = optimize_routes_multitrip(problem, evaluator, best_sol)
 
     vt = evaluator.extract_vehicle_times(best_sol)
     best_sol.loader_routes = assign_loaders_greedy(problem, evaluator, vt)
@@ -702,9 +692,7 @@ def solve(raw_data, time_limit=900, seed=42):
     optimizer.minimize(objective)
 
     remaining_time = time_limit * 0.6
-    print(
-        f"\nStarting Deep Convergence Phase ({remaining_time:.0f}s, with multi-trip merge)..."
-    )
+    print(f"\nStarting Deep Convergence Phase ({remaining_time:.0f}s)...")
 
     final_sol = run_pipeline(
         problem,
@@ -713,7 +701,6 @@ def solve(raw_data, time_limit=900, seed=42):
         remaining_time,
         pyvrp_cap,
         seed=seed,
-        use_multitrip=True,
     )
 
     if final_sol:
@@ -734,24 +721,14 @@ def solve(raw_data, time_limit=900, seed=42):
         ok, times, _ = evaluator.is_vehicle_route_feasible(route)
         if not ok:
             continue
-        # Split multi-trip route into individual trips for output
-        trips = []
-        current = [0]
-        for n in route[1:]:
-            current.append(n)
-            if n == 0 and len(current) > 2:
-                trips.append(current)
-                current = [0]
-        if len(current) > 1:
-            trips.append(current)
+        trips = [route]
 
         time_idx = 0
         for trip in trips:
-            route_ids = [n for n in trip if n != 0]
-            trip_times = times[time_idx : time_idx + len(route_ids)]
-            time_idx += len(route_ids)
+            node_ids = [0 if n == -1 else n for n in trip if n != 0]
+            trip_times = times[time_idx : time_idx + len(node_ids)]
+            time_idx += len(node_ids)
 
-            # Defensive shift check matching validator's exact formula
             vtf = evaluator.v_time_flat
             oi = evaluator.order_by_idx
             shift_limit = evaluator.problem.vehicle_shift_length
@@ -760,7 +737,7 @@ def solve(raw_data, time_limit=900, seed=42):
             def _trip_shift_ok(trip_route, trip_tms):
                 if not trip_route:
                     return True
-                oids = [n for n in trip_route if n != 0]
+                oids = [n for n in trip_route if n not in (0, -1)]
                 if not oids:
                     return True
                 dep = trip_tms[0] - vtf[0 * sz + oids[0]]
@@ -769,15 +746,17 @@ def solve(raw_data, time_limit=900, seed=42):
                     + vtf[oids[-1] * sz + 0]
                     + oi[oids[-1]]["vehicle_service_time"]
                 )
-                return ret - dep < shift_limit - 1e-6
+                return ret - dep <= shift_limit + 1e-6
 
             if not _trip_shift_ok(trip, trip_times):
-                # Try splitting the trip to avoid shift violation
+                pure_orders = [n for n in trip if n not in (0, -1)]
                 split_idx = 1
                 split_ok = False
-                while split_idx < len(route_ids):
-                    left_route = [0] + route_ids[:split_idx] + [0]
-                    right_route = [0] + route_ids[split_idx:] + [0]
+                while split_idx < len(pure_orders):
+                    left_orders = pure_orders[:split_idx]
+                    right_orders = pure_orders[split_idx:]
+                    left_route = [0] + left_orders + [0]
+                    right_route = [0] + right_orders + [0]
                     left_times = trip_times[:split_idx]
                     right_times = trip_times[split_idx:]
                     if _trip_shift_ok(left_route, left_times) and _trip_shift_ok(
@@ -798,10 +777,21 @@ def solve(raw_data, time_limit=900, seed=42):
                     continue
             else:
                 vid += 1
-                vehicle_output.append({"id": vid, "route": trip, "time": trip_times})
+                clean_route = [0 if n == -1 else n for n in trip]
+                vehicle_output.append(
+                    {"id": vid, "route": clean_route, "time": trip_times}
+                )
     for lid, route in enumerate(best_solution.loader_routes):
         if route:
             loader_output.append({"id": lid + 1, "route": route})
+
+    output_sol = Solution()
+    output_sol.vehicle_routes = [v["route"] for v in vehicle_output]
+    output_sol.loader_routes = [loader["route"] for loader in loader_output]
+    output_sol.unserved_optional = set(best_solution.unserved_optional)
+    output_cost, output_valid, _ = evaluator.evaluate(output_sol)
+    if output_valid:
+        best_cost = output_cost
 
     result = {
         "vehicles": vehicle_output,
