@@ -24,7 +24,7 @@ interface Props {
 }
 
 function formatRoute(route: number[]): string {
-  return ["Depot", ...route.filter((n) => n !== 0).map(String), "Depot"].join(" → ");
+  return route.map((n) => (n === 0 ? "Depot" : String(n))).join(" → ");
 }
 
 function formatLoaderRoute(route: number[]): string {
