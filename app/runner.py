@@ -71,7 +71,7 @@ async def run_solver(
         result = {
             k: v
             for k, v in result.items()
-            if k not in ("_cost", "_evaluator", "unserved_optional", "objective_value")
+            if k not in ("_cost", "_evaluator", "objective_value")
         }
 
         validation_status = None
