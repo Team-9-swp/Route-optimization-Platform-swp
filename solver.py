@@ -237,7 +237,9 @@ class Evaluator:
         return t - vehicle_times[first] < self.problem.loader_shift_length - 1e-6
 
     def evaluate(self, solution):
-        all_visited = [n for r in solution.vehicle_routes for n in r if n not in (0, -1)]
+        all_visited = [
+            n for r in solution.vehicle_routes for n in r if n not in (0, -1)
+        ]
         if len(all_visited) != len(set(all_visited)):
             return float("inf"), False, {}
         served = set(all_visited)
@@ -333,8 +335,7 @@ def solve_vehicles_pyvrp(
     for i in range(M):
         for j in range(M):
             d = math.sqrt(
-                (coords[i][0] - coords[j][0]) ** 2
-                + (coords[i][1] - coords[j][1]) ** 2
+                (coords[i][0] - coords[j][0]) ** 2 + (coords[i][1] - coords[j][1]) ** 2
             )
             dist_mat[i, j] = round(d, 2)
             dur_mat[i, j] = round(d / problem.vehicle_speed, 2)
@@ -349,9 +350,9 @@ def solve_vehicles_pyvrp(
                     ) * loader_penalty_weight
 
     SCALE = 100
-    dist_mat_scaled = np.round(
-        dist_mat * problem.weights["fuel_cost"] * SCALE
-    ).astype(np.int64)
+    dist_mat_scaled = np.round(dist_mat * problem.weights["fuel_cost"] * SCALE).astype(
+        np.int64
+    )
     dur_mat_scaled = np.round(dur_mat * SCALE).astype(np.int64)
 
     penalty_val = problem.weights["optional_order_penalty"] * penalty_scale
@@ -436,7 +437,7 @@ def solve_vehicles_pyvrp(
         for trip in route.trips():
             if len(pyvrp_route) > 1:
                 pyvrp_route[-1] = -1
-            
+
             for client_idx in trip.visits():
                 order_id = client_idx - 1
                 pyvrp_route.append(order_id)
@@ -611,9 +612,7 @@ class LoaderSA:
         return False
 
 
-def run_pipeline(
-    problem, evaluator, params, time_limit, pyvrp_cap, seed=None
-):
+def run_pipeline(problem, evaluator, params, time_limit, pyvrp_cap, seed=None):
     solver_time = min(time_limit * params["pyvrp_time_frac"], pyvrp_cap)
     sa_time = max(time_limit - solver_time - 2.0, min(10.0, time_limit * 0.2))
 
@@ -693,9 +692,7 @@ def solve(raw_data, time_limit=900, seed=42):
     optimizer.minimize(objective)
 
     remaining_time = time_limit * 0.6
-    print(
-        f"\nStarting Deep Convergence Phase ({remaining_time:.0f}s)..."
-    )
+    print(f"\nStarting Deep Convergence Phase ({remaining_time:.0f}s)...")
 
     final_sol = run_pipeline(
         problem,
@@ -781,7 +778,9 @@ def solve(raw_data, time_limit=900, seed=42):
             else:
                 vid += 1
                 clean_route = [0 if n == -1 else n for n in trip]
-                vehicle_output.append({"id": vid, "route": clean_route, "time": trip_times})
+                vehicle_output.append(
+                    {"id": vid, "route": clean_route, "time": trip_times}
+                )
     for lid, route in enumerate(best_solution.loader_routes):
         if route:
             loader_output.append({"id": lid + 1, "route": route})
