@@ -27,6 +27,12 @@ function formatRoute(route: number[]): string {
   return ["Depot", ...route.filter((n) => n !== 0).map(String), "Depot"].join(" → ");
 }
 
+function formatLoaderRoute(route: number[]): string {
+  const orders = route.filter((n) => n !== 0);
+  if (orders.length === 0) return "";
+  return [...orders.map(String), orders[0]].join(" → ");
+}
+
 interface InputOrder {
   id: number;
   x: number;
@@ -893,7 +899,7 @@ export function JobDetail({ id, navigate }: Props) {
                               fontFamily: "'JetBrains Mono', monospace",
                             }}
                           >
-                            {formatRoute(row.route)}
+                            {formatLoaderRoute(row.route)}
                           </td>
                         </tr>
                       ))}
