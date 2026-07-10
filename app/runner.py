@@ -68,7 +68,7 @@ async def run_solver(
             return
 
         objective_value = _extract_objective_value(result)
-        result = {k: v for k, v in result.items() if k not in ("_cost", "unserved_optional", "objective_value")}
+        result = {k: v for k, v in result.items() if k not in ("_cost", "_evaluator", "unserved_optional", "objective_value")}
 
         validation_status = None
         validation_report = None
