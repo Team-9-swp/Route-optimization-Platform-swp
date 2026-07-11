@@ -55,6 +55,7 @@ export function NewJob({ navigate }: Props) {
   const [json, setJson] = useState("");
   const [name, setName] = useState("");
   const [seed, setSeed] = useState("42");
+  const [timeLimit, setTimeLimit] = useState("");
   const [autoValidate, setAutoValidate] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -72,12 +73,24 @@ export function NewJob({ navigate }: Props) {
       setError("Invalid JSON — please check the Instance JSON field.");
       return;
     }
+
+    let timeLimitNum: number | undefined;
+    if (timeLimit.trim() !== "") {
+      const n = Number(timeLimit);
+      if (!Number.isFinite(n) || n <= 0) {
+        setError("Time limit must be a positive number of seconds, or left blank to use the default.");
+        return;
+      }
+      timeLimitNum = n;
+    }
+
     setSubmitting(true);
     try {
       const response = await submitJob(instance, {
         seed: Number(seed) || 42,
         name: name || undefined,
         autoValidate,
+        timeLimit: timeLimitNum,
       });
       navigate({ name: "job-detail", id: response.job_id });
     } catch (err) {
@@ -143,7 +156,7 @@ export function NewJob({ navigate }: Props) {
             </label>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 mb-5">
+          <div className="grid grid-cols-3 gap-4 mb-5">
             <div>
               <label style={{ display: "block", marginBottom: 6, fontSize: 14, fontWeight: 600, color: "#111827" }}>
                 Name <span style={{ color: "#9CA3AF", fontWeight: 400 }}>(optional)</span>
@@ -165,6 +178,21 @@ export function NewJob({ navigate }: Props) {
                 type="number"
                 value={seed}
                 onChange={(e) => setSeed(e.target.value)}
+                className="w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2"
+                style={{ border: "1px solid #E5E7EB", background: "#F9FAFB", color: "#111827" }}
+              />
+            </div>
+            <div>
+              <label style={{ display: "block", marginBottom: 6, fontSize: 14, fontWeight: 600, color: "#111827" }}>
+                Time limit (s) <span style={{ color: "#9CA3AF", fontWeight: 400 }}>(optional)</span>
+              </label>
+              <input
+                type="number"
+                value={timeLimit}
+                onChange={(e) => setTimeLimit(e.target.value)}
+                placeholder="default"
+                min={1}
+                step={1}
                 className="w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2"
                 style={{ border: "1px solid #E5E7EB", background: "#F9FAFB", color: "#111827" }}
               />
