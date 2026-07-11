@@ -1,6 +1,22 @@
 # Route Optimization Platform
 
-A logistics optimization system for the BIA CVRPTW problem variant. The product provides a FastAPI backend, PostgreSQL-backed job history, a PyVRP/Nevergrad solver pipeline, validation, skipped optional order reporting, and a React web interface.
+A logistics optimization system for the **BIA CVRPTW** problem variant. The product provides a FastAPI backend, PostgreSQL-backed job history, a PyVRP/Nevergrad solver pipeline, hard-constraint validation, skipped optional order reporting, and a React web interface for dispatchers.
+
+- **Current version:** [`v1.3.0`](https://github.com/Team-9-swp/Route-optimization-Platform-swp/releases/tag/v1.3.0) (MVP v2) on protected `main`.
+- **Status:** Runnable as a Docker Compose stack. A university-VM deployment exists but is reachable only from the Innopolis campus network; an agreed tunnel may be used during live sessions.
+
+## Access and documentation
+
+| What | Where |
+|---|---|
+| Hosted documentation site | https://team-9-swp.github.io/Route-optimization-Platform-swp/ |
+| Current product access & handover | [docs/customer-handover.md](./docs/customer-handover.md) |
+| Run / access instructions | [Quick Start](#quick-start) and [docs/deployment.md](./docs/deployment.md) |
+| API reference (Swagger) | `http://localhost:8000/docs` once running |
+| Contributing | [CONTRIBUTING.md](./CONTRIBUTING.md) |
+| Agent guidance | [AGENTS.md](./AGENTS.md) |
+
+Key maintained documentation: [architecture](./docs/architecture/README.md), [interface spec](./docs/interface.md), [quality requirements](./docs/quality-requirements.md), [testing strategy](./docs/testing.md), [development process](./docs/development-process.md), [roadmap](./docs/roadmap.md), and [user acceptance tests](./docs/user-acceptance-tests.md).
 
 ## Quick Start
 
