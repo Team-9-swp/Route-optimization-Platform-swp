@@ -9,7 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+
 - Manual solver time limit: the New Job page now has a "Time limit (seconds)" field that is sent to the backend via the existing `time_limit` parameter; leaving it blank keeps the backend default.
+- Gantt schedule visualization: a new "Schedule" tab on the Job Detail page shows each vehicle's shift and order arrival times as a Gantt chart.
 
 ## [1.3.0] - 2026-07-05
 
