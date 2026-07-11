@@ -3,6 +3,7 @@ import { ArrowLeft, CheckCircle2, Download, RotateCcw, MapPin, XCircle, Loader2 
 import { getJob, getJobSolution } from "../../api/jobs";
 import type { Job } from "../../types";
 import type { Page } from "../App";
+import { GanttSchedule } from "./GanttSchedule";
 
 interface VehicleRoute {
   id: number;
@@ -15,7 +16,7 @@ interface LoaderRoute {
   route: number[];
 }
 
-const TABS = ["Routes", "Validation", "Raw JSON"] as const;
+const TABS = ["Routes", "Schedule", "Validation", "Raw JSON"] as const;
 type Tab = (typeof TABS)[number];
 
 interface Props {
@@ -24,7 +25,13 @@ interface Props {
 }
 
 function formatRoute(route: number[]): string {
-  return ["Depot", ...route.filter((n) => n !== 0).map(String), "Depot"].join(" → ");
+  return route.map((n) => (n === 0 ? "Depot" : String(n))).join(" → ");
+}
+
+function formatLoaderRoute(route: number[]): string {
+  const orders = route.filter((n) => n !== 0);
+  if (orders.length === 0) return "";
+  return [...orders.map(String), orders[0]].join(" → ");
 }
 
 interface InputOrder {
@@ -893,13 +900,23 @@ export function JobDetail({ id, navigate }: Props) {
                               fontFamily: "'JetBrains Mono', monospace",
                             }}
                           >
-                            {formatRoute(row.route)}
+                            {formatLoaderRoute(row.route)}
                           </td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
                 )}
+              </div>
+            )}
+
+            {activeTab === "Schedule" && (
+              <div>
+                <h3 style={{ color: "#111827", fontSize: 14, fontWeight: 600, margin: "0 0 12px 0" }}>Schedule</h3>
+                <p style={{ fontSize: 13, color: "#6B7280", margin: "0 0 12px 0" }}>
+                  Gantt view of each vehicle's shift and order arrival times, reconstructed from the solver schedule.
+                </p>
+                <GanttSchedule vehicles={vehicles} inputData={job.input_data} />
               </div>
             )}
 

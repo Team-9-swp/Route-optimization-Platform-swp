@@ -155,7 +155,9 @@ This document defines end-user-facing acceptance test scenarios for the Route Op
 | 2026-07-02 | Customer | Passed — all historical jobs accessible after restart. Persistence confirmed. Skipped orders data preserved. | Private UAT recording (submitted via Moodle) |
 | 2026-07-10 | Customer | Passed — Week 6 trial reconfirmed. Dashboard lists all jobs; historical data complete after restart. Customer confirmed acceptance. | Private UAT recording (submitted via Moodle) |
 
-## Resulting Backlog Items
+Private recording URLs, exact UAT/Sprint Review timecodes, customer identity, and recording permission evidence are submitted through Moodle only and are intentionally excluded from the public repository.
+
+### Resulting Backlog Items
 
 | Feedback or observation | Resulting issue | Public status |
 |---|---|---|

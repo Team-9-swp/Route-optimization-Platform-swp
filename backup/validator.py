@@ -620,11 +620,6 @@ class Validator:
     def _route_dist_calc(self, routes: pd.DataFrame, name: RouteTypes) -> float:
         assert name in ["Vehicle", "Loader"]
 
-        speed = (
-            self.params[NAMES.VEH_SPEED]
-            if name == "Vehicle"
-            else self.params[NAMES.LOAD_SPEED]
-        )
         dist_times = (
             routes.assign(
                 point=routes[NAMES.ROUTE].apply(lambda x: x[:-1]),
@@ -649,20 +644,16 @@ class Validator:
                 suffixes=("_1", "_2"),
             )
             .assign(
-                travel_time=lambda df: strict_round(
-                    strict_round(
-                        np.sqrt(
-                            (df[NAMES.X1] - df[NAMES.X2]) ** 2
-                            + (df[NAMES.Y1] - df[NAMES.Y2]) ** 2
-                        ),
-                        2,
-                    )
-                    / speed,
+                route_dist=lambda df: strict_round(
+                    np.sqrt(
+                        (df[NAMES.X1] - df[NAMES.X2]) ** 2
+                        + (df[NAMES.Y1] - df[NAMES.Y2]) ** 2
+                    ),
                     2,
                 )
             )
         )
-        return strict_round(dist_times["travel_time"].sum(), 2)
+        return strict_round(dist_times["route_dist"].sum(), 2)
 
     def _route_time_calc(self, routes: pd.DataFrame, name: RouteTypes) -> float:
         assert name in ["Vehicle", "Loader"]

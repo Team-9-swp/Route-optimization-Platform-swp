@@ -1,118 +1,44 @@
 # Roadmap
 
-## Current Sprint — Sprint 5 / MVP v2
+The Route Optimization Platform is developed in Sprint increments. Earlier Sprints delivered **MVP v1** (`v1.0.0`) and **MVP v2** ([`v1.3.0`](https://github.com/Team-9-swp/Route-optimization-Platform-swp/releases/tag/v1.3.0)) — a Docker Compose stack with a FastAPI backend, PostgreSQL persistence, a PyVRP/Nevergrad solver, hard-constraint validation, and a React web UI.
 
-**Sprint dates:** 2026-06-29 — 2026-07-05
+Assignment 6 adds two formal Sprint containers: **Sprint 4** (Week 6) produces a stable trial / handover-candidate release, and **Sprint 5** (Week 7) uses the customer's trial feedback to deliver the final course version, **MVP v3**. The selected Sprint Backlog items live in the issue tracker, assigned to the Sprint milestones; this roadmap links them rather than duplicating their content.
 
-**Sprint Goal:** Deliver MVP v2 with improved solution usability and maintainability by fixing validator-compatible JSON export, improving loader workload distribution, adding Gantt schedule visualization, investigating stronger optimization approaches, documenting the architecture and development process, and automating deployment from the protected main branch.
+## Sprint 4 — Week 6 Trial Release and Transition Readiness
 
-### Planned MVP v2 product work
+- **Milestone:** [Sprint 4 — Week 6 Trial Release and Transition Readiness](https://github.com/Team-9-swp/Route-optimization-Platform-swp/milestone/8)
+- **Dates:** 2026-07-06 — 2026-07-12
+- **Sprint Goal:** Deliver a stable Week 6 trial / handover-candidate release that the customer and TA can access, review the customer-facing documentation, execute UAT, discuss transition readiness, and identify follow-up work for Week 7.
+- **Focus:** Produce a customer-accessible trial increment together with handover documentation, UAT / Sprint Review / transition-readiness evidence, and a clear Week 7 follow-up scope.
 
-- Validator-compatible solution JSON export.
-- Improved loader workload balance.
-- Gantt schedule visualization.
-- Known bug fix, with reproduction details required before implementation starts.
-- Solver pipeline and greedy-stage analysis, using closed issues [#23](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/23) and [#97](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/97) only as historical context.
-- Column-generation research spike for the current route-optimization variant.
-- Automatic deployment from protected `main`.
+**Selected Sprint Backlog (linked PBIs):**
 
-### Architecture and process work
+- Planning & release: #154 (refine backlog and plan Sprint 4/5), #155 (deliver Week 6 trial release).
+- Product: #163 (Gantt chart visualization on the frontend), #171 (manual solver time limit on the New Job page), #166 (route optimization algorithm improvement for the trial).
+- Customer-facing documentation: #161 (polish README, CONTRIBUTING, AGENTS), #162 (maintain `docs/customer-handover.md`).
+- Customer trial, UAT & review: #164 (Week 6 customer trial and transition-readiness discussion), #157 (update and execute Week 6 UAT scenarios), #165 (Week 6 Sprint Review summary/transcript).
+- Sprint events & reporting: #158 (Week 6 retrospective), #159 (Week 6 reflection and LLM report), #160 (Week 6 presentation slides and rehearsal video), #156 (Week 6 public report and Moodle evidence).
 
-- Maintained development-process and configuration-management documentation.
-- Static, dynamic, and deployment architecture views.
-- At least three linked Architecture Decision Records.
-- Extended tests, quality evidence, and Definition of Done for MVP v2.
-- Hosted documentation site.
+**Expected outcome:** A customer-accessible Week 6 trial increment with updated documentation, a handover draft, the Gantt chart and time-limit controls, UAT / Sprint Review / transition-readiness evidence, and the Week 6 public report and Moodle evidence.
 
-### Sprint delivery evidence
+## Sprint 5 — Week 7 Final Delivery (MVP v3)
 
-- Customer-accessible MVP v2.
-- New and updated UAT scenarios.
-- Recorded Sprint Review and customer UAT.
-- Public sanitized demo video.
-- Week 5 public report.
-- SemVer release mapped to MVP v2.
+Sprint 5 will be planned in detail after the Week 6 customer trial. Its Sprint milestone will be created from the confirmed Week 7 scope; the areas below are the expected follow-up, to be refined from customer feedback, UAT results, and transition-readiness blockers.
 
-### Planning and traceability notes
+- **Sprint Goal (draft):** Complete follow-up maintenance, final transition, and delivery of the final course version, **MVP v3**.
+- **Dates:** Week 7 (to be confirmed with the Sprint 5 milestone).
 
-- The selected Sprint 5 PBIs are planned for the `Sprint 5 — MVP v2` milestone. GitHub Project field and view setup requires project-scope access.
-- Every selected PBI must include a clear expected outcome, testable acceptance criteria, Story Points, implementer, different reviewer, priority, MVP version `MVP v2`, and Work Status `To Do`.
-- Completion is measured by accepted, tested, reviewed, and Done Sprint outcomes, not by the number of created issues.
+**Expected Week 7 follow-up areas:**
 
-## Previous Sprint: Assignment 4 - Quality, Reliability, and Customer Feedback
+- Resolve Week 6 customer feedback and remaining transition blockers.
+- Complete remaining algorithm improvements and product fixes.
+- Finalize product access and the transition status; update `docs/customer-handover.md`.
+- Publish the final **MVP v3** SemVer release (higher precedence than the Week 6 trial release) from protected `main`.
+- Record the public sanitized MVP v3 demo video.
+- Prepare the Week 7 public report and Moodle evidence.
 
-**Sprint dates:** 22 June 2026 - 3 July 2026
+## Final course outcome
 
-**Sprint Goal:** Deliver a more reliable and verifiable Route Optimization Platform by addressing selected customer feedback, preserving submitted jobs across restarts, improving solver robustness, and enforcing automated quality gates through tests and CI.
+By the end of Week 7, the product should reach **MVP v3**: a runnable and accessible Route Optimization Platform with updated customer-facing documentation, current handover documentation, verified access instructions, final UAT / Sprint Review evidence, a public sanitized demo video, and a final SemVer release from the protected default branch.
 
-### Selected Sprint Outcomes
-
-| Outcome | Current public status |
-|---|---|
-| Add a skipped optional orders report for completed solutions. | Implemented through solver/API/frontend result data and linked to [#13](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/13). |
-| Persist jobs and results so they survive application restarts. | Implemented with PostgreSQL-backed `app/repository.py` and linked to [#85](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/85). |
-| Fix solver parameter handling and prevent internal tracebacks from being exposed through the API. | Implemented; `max_restarts` is removed and safe error QRTs inject internal failures. |
-| Define measurable quality requirements using distinct ISO/IEC 25010 sub-characteristics. | Implemented in `docs/quality-requirements.md`. |
-| Automate at least one quality requirement test for each quality requirement. | Implemented under `tests/quality/`; protected-main CI passed all required QRTs. |
-| Add unit tests, integration tests, critical-module coverage reporting, and an additional automated QA check. | Implemented in workflow and tests; protected-main CI reports 94% total `app/` coverage and Bandit passed. |
-| Configure CI quality gates and protected-default-branch rules. | CI workflow updated; branch-protection evidence still requires organization-admin verification. |
-| Update deployment access and create a SemVer release for the Sprint increment. | GitHub Release `v1.2.0` is published from protected `main`; deployment/customer access verification remains open. |
-| Conduct customer UAT and preserve sanitized evidence. | The 27 June recorded customer session included UAT-01, UAT-02, and UAT-03; private recording URL, timecodes, and permission evidence are Moodle-only. |
-| Conduct Sprint Review and preserve evidence. | The 27 June recorded customer session included Sprint Review discussion and customer UAT execution; public notes are sanitized. |
-| Prepare the Week 4 report, public demo video, and project presentation. | Public report index, screenshots, demo video link, and `presentation.pdf` are included. |
-
-### Scope Rationale
-
-The Sprint prioritizes customer value, product reliability, and risk reduction. Persistent storage and skipped-order reporting respond directly to customer needs. Automated tests, QRTs, coverage, CI, and branch-protection requirements reduce regression risk and become maintained project assets for later Sprints.
-
-### Deferred Work
-
-- Broad solver refactoring for guaranteed feasibility and performance on very large instances remains in [#23](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/23).
-- Deeper baseline comparison, greedy-stage impact analysis, and repeated-run reproducibility remain follow-up solver-quality work.
-- Authentication, multi-tenancy, resource quotas, and asynchronous worker queues are outside Assignment 4 scope.
-- Automatic job retention and cleanup policies are deferred.
-- Deployment observability and backup procedures remain future production-readiness work.
-
-## Previous Increment: MVP v1 - API, Frontend, and Docker
-
-MVP v1 was released as `v1.0.0`. It delivered the REST API, React SPA, route visualization, solution validation, configurable solver controls, and Docker Compose packaging for the API and frontend.
-
-The `v1.1.0` release contains Assignment 4 planning and quality-documentation work. GitHub Release `v1.2.0` contains the final Assignment 4 increment and was published from protected `main`.
-
-## Expected next increment
-
-Work likely to continue after Sprint 5 includes solver redesign if the greedy-stage analysis shows that fixed early decisions materially reduce quality, deferred column-generation implementation if the research spike is accepted, performance improvements on larger scenarios, deployment hardening beyond the first automatic protected-`main` workflow, and customer feedback that is not completed in MVP v2.
-
-### Expected Work
-
-- Continue any MVP v2 customer feedback not completed during Sprint 5.
-- Refine solver performance targets using reproducible benchmark datasets and fixed random seeds.
-- Decide whether to redesign the solver pipeline around more joint optimization.
-- Turn the column-generation spike into an implementation PBI only if the ADR decision accepts or proposes that direction.
-- Improve solution quality, execution time, and loader balance without bypassing maintained quality gates.
-- Harden deployment observability, logging, rollback, backup, and recovery procedures.
-
-## Future Direction: Production Readiness
-
-- Authentication and role-based access control.
-- Multi-tenancy and resource quotas.
-- Asynchronous worker queue.
-- Database backup, restore, and migration procedures.
-- Deployment monitoring and operational alerts.
-- Stronger security and performance testing.
-
-## Maintained Quality and Automation Assets
-
-The following assets remain mandatory for later project work:
-
-- `docs/quality-requirements.md`
-- `docs/quality-requirement-tests.md`
-- `docs/testing.md`
-- `docs/definition-of-done.md`
-- automated unit and integration tests
-- automated quality requirement tests
-- critical-module coverage checks
-- CI quality gates
-- protected-default-branch required checks once organization-admin verification is complete
-
-Later PBIs must maintain or strengthen these assets instead of disabling or bypassing them.
+No speculative post-course version planning is included. Remaining work, if any, will be documented as limitations, blockers, or follow-up items in `docs/customer-handover.md` and the Week 7 report.

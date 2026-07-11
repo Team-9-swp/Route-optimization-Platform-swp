@@ -19,4 +19,10 @@ Closes #
 - [ ] Code reviewed
 - [ ] Tests reviewed
 - [ ] Documentation updated if needed
-- [ ] CHANGELOG.md updated (or not applicable)
+
+## CHANGELOG
+
+Select exactly one:
+
+- [ ] Added or updated a user-visible entry in `CHANGELOG.md`
+- [ ] Not applicable because this change is not user-visible
