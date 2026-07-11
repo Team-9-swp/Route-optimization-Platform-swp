@@ -16,21 +16,13 @@ This document defines end-user-facing acceptance test scenarios for the Route Op
 
 ## Active Scenarios
 
-| ID | Title | Status | Priority | Traceability |
-|---|---|---|---|---|
-| UAT-01 | Submit a delivery instance and receive an optimised solution | Passed | High | US-01a, US-01b, US-02, US-07, US-08; QR-FC-01 |
-| UAT-02 | Validate a custom solution through the validator | Passed | High | US-03; QR-FC-01 |
-| UAT-03 | Retrieve previously submitted solutions from history | Passed | High | US-08; QR-RE-01 |
-| UAT-04 | View route visualization for each vehicle and loader | Passed | High | US-10; QR-FC-01 |
-| UAT-05 | Review the skipped optional orders report | Passed | Medium | US-09 |
-
-## Active Scenarios
-
-| ID | Title | Public result | Priority | Traceability |
-|---|---|---|---|---|
-| UAT-01 | Submit a delivery instance and receive an optimized solution | Passed in the 27 June combined Sprint Review/UAT session | High | US-01a, US-01b, US-02, US-07, US-08; QR-FC-01 |
-| UAT-02 | Validate a custom solution through the validator | Passed in the 27 June combined Sprint Review/UAT session | High | US-03; QR-FC-01; QR-SE-01 |
-| UAT-03 | Retrieve previously submitted solutions from history | Passed in the 27 June combined Sprint Review/UAT session | High | US-08; QR-RE-01 |
+| ID | Title | Status | Last result | Priority | Traceability |
+|---|---|---|---|---|---|
+| UAT-01 | Submit a delivery instance and receive an optimized solution | Active | Passed (27 June combined Sprint Review/UAT session) | High | US-01a, US-01b, US-02, US-07, US-08; QR-FC-01 |
+| UAT-02 | Validate a custom solution through the validator | Active | Passed (27 June combined Sprint Review/UAT session) | High | US-03; QR-FC-01; QR-SE-01 |
+| UAT-03 | Retrieve previously submitted solutions from history | Active | Passed (27 June combined Sprint Review/UAT session) | High | US-08; QR-RE-01 |
+| UAT-04 | View route visualization for each vehicle and loader | Active | Passed | High | US-10; QR-FC-01 |
+| UAT-05 | Review the skipped optional orders report | Active | Passed | Medium | US-09 |
 
 ## UAT-01: Submit a Delivery Instance and Receive an Optimized Solution
 
@@ -154,39 +146,25 @@ This document defines end-user-facing acceptance test scenarios for the Route Op
 
 ### Execution Record
 
-| Field | Value |
-|---|---|
-| Execution date | 27 June 2026 |
-| Customer role | Customer representative |
-| Public result | Passed according to sanitized combined Sprint Review/UAT notes |
-| Sanitized public evidence | A recorded 27 June customer session included Sprint Review discussion and UAT execution; repository contains only this sanitized summary. |
-| Private evidence required | Recording URL, exact UAT/Sprint Review timecodes, and recording permission evidence for Moodle/private submission. |
+| Date | Tester | Result | Evidence |
+|---|---|---|---|
+| 2026-06-27 | Customer | Passed — dashboard displayed all previous jobs. Completed job details (solution, validation, map) fully accessible. | Private UAT recording (submitted via Moodle) |
+| 2026-07-02 | Customer | Passed — all historical jobs accessible after restart. Persistence confirmed. Skipped orders data preserved. | Private UAT recording (submitted via Moodle) |
 
-## Resulting Backlog Items
+Private recording URLs, exact UAT/Sprint Review timecodes, customer identity, and recording permission evidence are submitted through Moodle only and are intentionally excluded from the public repository.
+
+### Resulting Backlog Items
 
 | Feedback or observation | Resulting issue | Public status |
 |---|---|---|
 | Customer access must be reliable outside the university network or explicitly agreed through another method. | [#90](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/90) | Still open until deployment/access criteria are verified. |
 | Combined Sprint Review/UAT evidence must remain available privately without exposing customer identity or links publicly. | [#91](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/91), [#92](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/92) | Private recording details are supplied through Moodle only and are intentionally excluded from the repository. |
 
-1. The Dashboard shows all previously submitted jobs with their status, name, and submission time.
-2. Clicking a completed job opens the full **Job Detail** view with:
-   - the original solution data;
-   - validation status;
-   - route map and route tables;
-   - skipped optional orders report if applicable.
-3. After an application restart, previously completed jobs remain accessible and their data is unchanged.
-
-Do not commit the following to the public repository:
-
-| Date | Tester | Result | Evidence |
-|---|---|---|---|
-| 2026-06-27 | Customer | Passed — dashboard displayed all previous jobs. Completed job details (solution, validation, map) fully accessible. | Private UAT recording (submitted via Moodle) |
-| 2026-07-02 | Customer | Passed — all historical jobs accessible after restart. Persistence confirmed. Skipped orders data preserved. | Private UAT recording (submitted via Moodle) |
-
 ---
 
 ## UAT-04: View route visualization for each vehicle and loader
+
+**Stable ID:** UAT-04
 
 **Title:** View route visualization for each vehicle and loader
 
@@ -246,6 +224,8 @@ Do not commit the following to the public repository:
 ---
 
 ## UAT-05: Review the skipped optional orders report
+
+**Stable ID:** UAT-05
 
 **Title:** Review the skipped optional orders report
 

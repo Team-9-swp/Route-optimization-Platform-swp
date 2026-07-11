@@ -37,3 +37,17 @@ body:
       label: Acceptance criteria for the fix
     validations:
       required: true
+  - type: input
+    id: implementer
+    attributes:
+      label: Implementer
+      description: GitHub username of the person responsible for doing the work.
+    validations:
+      required: true
+  - type: input
+    id: reviewer
+    attributes:
+      label: Reviewer
+      description: GitHub username of a different team member who will review the work.
+    validations:
+      required: true

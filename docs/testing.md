@@ -137,16 +137,16 @@ The Assignment 5 test strategy covers all Assignment 4 areas plus:
 
 ## Verified CI Evidence (MVP v2)
 
-Latest protected-main evidence after `MVP v2` release:
+Pinned protected-`main` evidence at commit `a0eb94e` (CI run [#29111485259](https://github.com/Team-9-swp/Route-optimization-Platform-swp/actions/runs/29111485259), 2026-07-10):
 
 | Evidence | Result | Link |
 |---|---|---|
-| CI Pipeline | All checks passing on `main` | See latest [CI run](https://github.com/Team-9-swp/Route-optimization-Platform-swp/actions/workflows/ci.yml) |
-| Backend job | Passed | See backend job in latest CI run |
-| Frontend job | Passed | See frontend job in latest CI run |
-| QRTs | All passing (`15 passed`) | See backend job QRT step |
-| Coverage artifact | Uploaded | See coverage-report artifact in latest run |
-| Link Check | Passing | See [Link Check workflow](https://github.com/Team-9-swp/Route-optimization-Platform-swp/actions/workflows/lychee.yml) |
+| CI Pipeline | All checks passing on `main` at `a0eb94e` | [CI run 29111485259](https://github.com/Team-9-swp/Route-optimization-Platform-swp/actions/runs/29111485259) |
+| Backend job | Passed | [Backend job in run 29111485259](https://github.com/Team-9-swp/Route-optimization-Platform-swp/actions/runs/29111485259) |
+| Frontend job | Passed | [Frontend job in run 29111485259](https://github.com/Team-9-swp/Route-optimization-Platform-swp/actions/runs/29111485259) |
+| QRTs | All passing (`15 passed`) | See backend job QRT step in run 29111485259 |
+| Coverage artifact | Uploaded | See coverage-report artifact in run 29111485259 |
+| Link Check | Passing | [Link Check workflow](https://github.com/Team-9-swp/Route-optimization-Platform-swp/actions/workflows/lychee.yml) |
 
 ## Critical Modules and Coverage (MVP v2)
 

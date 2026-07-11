@@ -4,10 +4,10 @@
 
 The product exposes two interfaces:
 
-1. **Web user interface (primary interface for MVP v1)** — a React + TypeScript single-page application for dispatchers and managers. The interactive prototype is published on Figma.
+1. **Web user interface (primary interface)** — a React + TypeScript single-page application for dispatchers and managers. The interactive prototype is published on Figma.
 2. **REST API (supporting)** — a FastAPI service that the web UI consumes. The API can also be used directly by technical users and integrations.
 
-The current MVP v0 implements the REST API. The web UI is in design (Figma prototype) and will be implemented in the next iteration.
+The current increment (`v1.3.0` / MVP v2) implements the React web UI and the REST API, with PostgreSQL-backed persistent job history, solution export, standalone validation, and a health endpoint. The Figma prototype remains the original design reference.
 
 ### Interactive prototype
 
@@ -75,7 +75,7 @@ The Figma file is publicly viewable (not editable) and will remain accessible un
 
 ### Authentication
 
-No authentication is required in MVP v0 and the initial MVP v1 iteration.
+No authentication is required in the current course increment.
 
 ### Endpoints
 
@@ -88,6 +88,9 @@ Submit a problem instance to the solver.
 | Name | Type | Default | Description |
 |------|------|---------|-------------|
 | `seed` | integer | `42` | Random seed for reproducible runs. |
+| `time_limit` | number | backend default | Solver wall-clock budget in seconds (must be > 0). |
+| `name` | string | — | Optional human-readable job name. |
+| `auto_validate` | boolean | `false` | Validate the solution automatically once the solver finishes. |
 
 **Request body:** raw instance JSON (see `Assignment_02.md` for the input format).
 
@@ -144,6 +147,32 @@ Retrieve a job by ID.
 }
 ```
 
+#### `GET /jobs`
+
+List submitted jobs (paginated).
+
+**Query parameters:** `page` (default 1), `page_size` (default 25), `sort_desc` (default true).
+
+**Response (200 OK):** `{ "items": [JobResponse, ...], "total", "page", "page_size" }`.
+
+#### `POST /validate`
+
+Validate an instance/solution pair independently of the solver.
+
+**Request body:** `{ "instance": <instance JSON>, "solution": { "vehicles": [...], "loaders": [...] } }`.
+
+**Response (200 OK):** `{ "passed": true, "objective_value": <number>, "violations": [], "report": {...} }`. A failing solution returns `passed: false` with a list of violation strings in `violations`.
+
+#### `GET /jobs/{job_id}/solution` and `GET /jobs/{job_id}/export`
+
+Return a validator-compatible solution (`vehicles`, `loaders`, `unserved_optional`) for a completed job, dropping internal-only fields. Returns `404` for a missing job and `400` for a non-completed job. (`/solution` is the canonical path; `/export` is kept as an alias.)
+
+#### `GET /health`
+
+Liveness probe used by deployment and Docker health checks.
+
+**Response (200 OK):** `{ "status": "ok" }`.
+
 ### OpenAPI and Postman artifacts
 
 - OpenAPI specification: [`api/openapi.yaml`](../api/openapi.yaml)
@@ -160,12 +189,14 @@ The solver accepts the JSON instance format described in `Assignment_02.md` and 
 
 ## Implemented vs. planned
 
-| Capability | MVP v0 | MVP v1 (planned) |
-|------------|--------|------------------|
-| `POST /solve` | Implemented | Implemented |
-| `GET /jobs/{job_id}` | Implemented | Implemented |
-| `GET /jobs` listing | Not implemented | Planned |
-| `POST /validate` | Not implemented | Planned |
-| `GET /health` | Not implemented | Planned |
-| Web UI prototype | Figma prototype | Implemented as React app in MVP v1 |
-| Persistent storage | Not implemented | Planned (PostgreSQL) |
+| Capability | MVP v1 | MVP v2 (`v1.3.0`, current) |
+|------------|--------|----------------------------|
+| `POST /solve` (with `seed`, `time_limit`, `name`, `auto_validate`) | Implemented | Implemented |
+| `GET /jobs/{job_id}` (with `loaders`, `unserved_optional`) | Implemented | Implemented |
+| `GET /jobs` listing | Implemented | Implemented |
+| `POST /validate` | Implemented | Implemented |
+| `GET /health` | Implemented | Implemented |
+| `GET /jobs/{job_id}/solution` and `/export` | — | Implemented |
+| Web UI (Dashboard, New Job, Job Detail with route map, Validate) | Implemented (React SPA) | Implemented |
+| Persistent PostgreSQL storage | Implemented | Implemented |
+| Gantt schedule view on Job Detail | — | In progress (Assignment 6 Sprint 4) |
