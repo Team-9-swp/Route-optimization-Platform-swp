@@ -52,7 +52,7 @@ The diagram shows the supported branch lifecycle:
 - `main` advances only through merges (the trunk). Every node on `main` is a reviewed, CI-checked commit.
 - A feature or documentation branch (`docs/...`, `feat/...`, `fix/...`) is created from the latest `main`.
 - Work is committed on the branch in small, reviewable increments.
-- The branch lands on `main` via a pull request merge (`PR #N`, `PR #M`). Squash-and-merge or rebase-and-merge keeps `main` linear and readable.
+- The branch lands on `main` via a pull request merge (`PR #N`, `PR #M`). **Merge commits** are used (squash and rebase merging are disabled) so the merge, the reviewed branch, and the `Closes #N` link remain visible on `main`.
 - Release tags (`v2.0.0`) are applied to a commit on `main` after the increment is verified.
 
 In practice, the team uses the branch prefixes shown across the repository history:
@@ -70,7 +70,7 @@ Long-lived feature branches are avoided. When a large change is split across man
 All work is traced to a GitHub issue. The flow is:
 
 1. **Create or refine an issue.** Every Product Backlog Item (PBI) and bug has an issue with `Type`, `Expected outcome`, `Acceptance criteria`, `Story Points`, `Priority`, `MVP version`, `Implementer`, a different `Reviewer`, and `Work Status`. Issues are labelled with the assignment sprint (for example `assignment-5`) and MoSCoW priority (for example `priority: must-have`).
-2. **Branch from `main`.** The branch name reflects the issue intent (`feat/...`, `fix/...`, `docs/...`).
+2. **Branch from `main`.** Name the branch `<issue-number>-short-description` (for example `42-add-login-form`). Descriptive type prefixes such as `feat/...`, `fix/...`, or `docs/...` may be used together with the issue number (for example `docs/161-polish-readme`).
 3. **Implement and commit.** Commits reference the issue where useful (`refs #N` or `closes #N` in the PR body).
 4. **Open a pull request.** The PR uses [`.github/pull_request_template.md`](../.github/pull_request_template.md): a Summary of changes, a `Closes #N` line, Testing performed, acceptance-criteria verification, and the reviewer checklist.
 5. **Review by a different team member.** The reviewer must not be the implementer recorded on the issue.
@@ -78,15 +78,19 @@ All work is traced to a GitHub issue. The flow is:
 
 ### Work Status labels
 
-Issues carry a Work Status label so the board reflects reality:
+Issues carry a Work Status label (matching the issue-form dropdown) so the board reflects reality:
 
-- `To Do` — accepted into a Sprint, not started.
-- `In Progress` — being implemented.
-- `Done` — merged, acceptance criteria met, closed.
+- `To Do` — in the Product Backlog, not yet ready to start.
+- `Ready` — selected for the current Sprint, assigned, estimated, has the required description and acceptance criteria, and can be started without major unanswered questions.
+- `In Progress` — work has started on the PBI.
+- `In Review` — the implementation is ready for review and the issue-linked pull request is open or the review is actively happening.
+- `Done` — acceptance criteria and this Definition of Done are satisfied, the issue-linked PR is merged into protected `main`, and the PBI is complete for the Sprint.
+
+A PBI moves to `Ready` only when it has an implementer, a different reviewer, an estimate, and acceptance criteria; it moves to `In Review` only when the pull request is open and CI is green.
 
 ### Milestones and the board
 
-- A **milestone** per Sprint (for example `Sprint 5 — MVP v2`) is the authoritative Sprint container. Issues assigned to the milestone form the Sprint Backlog.
+- A **milestone** per Sprint (for example `Sprint 4 — Week 6 Trial Release and Transition Readiness`) is the authoritative Sprint container. Issues assigned to the milestone form the Sprint Backlog.
 - The **GitHub Project board** (<https://github.com/orgs/Team-9-swp/projects/1>) provides the Product Backlog and Sprint Backlog views with fields for Status, Story Points, MVP Version, MoSCoW priority, and Assignee.
 
 ---
@@ -218,7 +222,7 @@ Schema changes are managed with **Alembic** ([`alembic.ini`](../alembic.ini), [`
 | Artifact | Location | Purpose |
 |---|---|---|
 | Product Backlog and Sprint Backlog | GitHub Project board | Work management and Sprint scope. |
-| Sprint container | GitHub milestone (e.g. `Sprint 5 — MVP v2`) | Selected Sprint PBIs. |
+| Sprint container | GitHub milestone (e.g. `Sprint 4 — Week 6 Trial Release and Transition Readiness`) | Selected Sprint PBIs. |
 | PBIs and bugs | GitHub Issues | Traceable work items with acceptance criteria. |
 | CI pipeline | `.github/workflows/ci.yml` | Automated quality gate. |
 | Quality requirements | [`docs/quality-requirements.md`](quality-requirements.md) | Measurable QR definitions. |

@@ -1,10 +1,11 @@
 # Definition of Done
 
-A Product Backlog Item may be marked as `Done` only when all applicable conditions below are satisfied and the evidence is linked from the issue, pull request, or Week 4 report.
+A Product Backlog Item may be marked as `Done` only when all applicable conditions below are satisfied and the evidence is linked from the issue, pull request, or maintained workflow artifacts.
 
 ## Implementation
 
 * The implementation meets the linked issue acceptance criteria.
+* For a user story, the linked supporting PBIs provide the required implementation, review, and verification evidence; a user story is `Done` only when all linked supporting PBIs needed to satisfy its acceptance criteria are reviewed, merged, and verified.
 * The change is integrated with the current product stack: FastAPI, PostgreSQL-backed `app/repository.py`, the PyVRP/Nevergrad solver, and the React frontend where applicable.
 * Existing public API contracts remain compatible, or the contract change is documented in `README.md`, frontend API code, and `CHANGELOG.md`.
 * No unfinished placeholders, temporary code, known blocking defects, private credentials, or private customer access details remain in tracked files.
@@ -13,7 +14,7 @@ A Product Backlog Item may be marked as `Done` only when all applicable conditio
 
 * Relevant unit tests and integration tests are added or updated.
 * Important cross-component flows are covered where applicable, including API -> service -> PostgreSQL repository, solver -> validator, persistence/recovery, and skipped optional orders.
-* Applicable automated QRTs in `tests/quality/` pass.
+* Applicable automated QRTs in `tests/quality/` pass, or the quality requirements are explicitly documented as not applicable to this change.
 * Critical modules maintain at least 30% line coverage, including `app/service.py`, `app/repository.py`, and `app/api.py`.
 * Manual verification is recorded when automated verification is insufficient.
 * Evidence links are present for tests, coverage, QRTs, customer evidence, release evidence, or deployment evidence as applicable.
@@ -48,7 +49,7 @@ A Product Backlog Item may be marked as `Done` only when all applicable conditio
 * Job detail responses include `loaders` and `unserved_optional` fields for MVP v2 enhanced results.
 * Enhanced job detail tests in `tests/test_api.py` verify loader balance data, Gantt-compatible timeline structure, and Swagger docs availability.
 * The root `README.md` and `CHANGELOG.md` document the export endpoint and any API contract changes.
-* Architecture documentation (`docs/architecture/README.md`) and ADRs (`docs/architecture/adr/`) are updated when the product architecture changes.
+* Architecture documentation (`docs/architecture/README.md`) and ADRs (`docs/architecture/adr/`) are updated when the product architecture changes, or the architecture impact is explicitly documented as not applicable to this change.
 * Development-process documentation (`docs/development-process.md`) is current and linked from root `README.md`.
 * The hosted documentation site reflects the maintained documentation state.
 

@@ -34,6 +34,10 @@ The requirements apply to:
 
 For every valid supported test instance used in automated verification, the solver must return a solution that passes the project validator with **zero hard-constraint violations**.
 
+### Scenario
+
+When the CI test runner solves any valid supported test instance under the standard CI environment, the solver shall return a completed solution that the project validator accepts with **zero hard-constraint violations**.
+
 ### Measurement
 
 The solution is checked by the existing validation logic.
@@ -84,6 +88,10 @@ The solver must also respect the configured execution limit:
 - the solver runtime must not exceed `configured time limit + 10 seconds`;
 - timeout handling must return a controlled job status instead of leaving the job permanently in progress.
 
+### Scenario
+
+When the CI test runner solves the fixed reference instance under the standard GitHub Actions Linux runner with a fixed seed, the solver shall reach a terminal job state within **900 seconds** and within the configured time limit plus 10 seconds.
+
 ### Measurement
 
 Measure elapsed wall-clock time from the start of the solver call until:
@@ -132,6 +140,10 @@ The 900-second CI threshold applies to the fixed Assignment 4 reference fixture,
 
 Submitted jobs and completed results must remain retrievable after the backend application and storage component are recreated using the same persistent database.
 
+### Scenario
+
+When the backend application and storage component are recreated using the same persistent PostgreSQL database after a job has been submitted and completed, the API shall return that job with its original identifier, status, and result unchanged.
+
 ### Measurement
 
 The requirement passes when an automated test:
@@ -179,6 +191,10 @@ Public API responses and stored job error fields must not expose:
 - raw unhandled exception details.
 
 A failed job must expose only a controlled, user-safe error message and error category. Detailed diagnostic information may be written to server-side logs.
+
+### Scenario
+
+When a client triggers a controlled solver failure under normal operation, the API response and stored job error field shall contain only a user-safe error message and shall exclude Python stack traces, absolute internal file paths, source-code locations, environment variables, and credentials.
 
 ### Measurement
 
