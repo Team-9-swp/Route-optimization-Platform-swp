@@ -168,7 +168,7 @@
 | 2 | Customer to run the algorithm from sources and verify against baseline | Customer | Week 7 |
 | 3 | Customer to run the algorithm through the web interface and verify consistency | Customer | Week 7 |
 | 4 | Customer to verify determinant behaviour across multiple runs | Customer | Week 7 |
-| 5 | Team to provide a final release pointer after remaining fixes; release is pending | Team | Week 7 |
+| 5 | Team to provide a release pointer after remaining fixes (completed after the meeting with Week 6 release `v1.4.0`) | Team | Completed after meeting |
 | 6 | Validate the completed Gantt chart during customer-side testing | Team | Week 7 |
 | 7 | Calculation time on dashboard — status confirmed (feature present) | Team | Sprint 4 |
 | 8 | Customer to use Zoom for next meeting due to network limitations | Customer | Week 7 |

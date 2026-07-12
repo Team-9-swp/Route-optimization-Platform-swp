@@ -19,23 +19,24 @@ Assignment 6 adds two formal Sprint containers: **Sprint 4** (Week 6) prepares a
 - Customer trial, UAT & review: #164 (Week 6 customer trial and transition-readiness discussion), #157 (update and execute Week 6 UAT scenarios), #165 (Week 6 Sprint Review summary/transcript).
 - Sprint events & reporting: #158 (Week 6 retrospective), #159 (Week 6 reflection and LLM report), #160 (Week 6 presentation slides and rehearsal video), #156 (Week 6 public report and Moodle evidence).
 
-**Completed / deferred outcome:** The Gantt chart and manual time-limit controls, customer-facing documentation, UAT / Sprint Review / transition-readiness evidence, and the Week 6 public report were completed. Customer-side deployment, the driver return-to-depot cost edge case, and release creation are deferred to Sprint 5; private evidence remains Moodle-only.
+**Completed / deferred outcome:** The Gantt chart and manual time-limit controls, customer-facing documentation, UAT / Sprint Review / transition-readiness evidence, and the Week 6 public report were completed and published with the Week 6 trial / handover-candidate release [`v1.4.0`](https://github.com/Team-9-swp/Route-optimization-Platform-swp/releases/tag/v1.4.0). Customer-side deployment and the driver return-to-depot cost edge case remain Sprint 5 work; private evidence remains Moodle-only.
 
 ## Sprint 5 — Week 7 Final Delivery (MVP v3)
 
-Sprint 5 will be planned in detail after the Week 6 customer trial. Its Sprint milestone will be created from the confirmed Week 7 scope; the areas below are the expected follow-up, to be refined from customer feedback, UAT results, and transition-readiness blockers.
+- **Milestone:** [Sprint 5 — Week 7 Final Transition and MVP v3](https://github.com/Team-9-swp/Route-optimization-Platform-swp/milestone/9)
+- **Dates:** 2026-07-13 — 2026-07-19
+- **Sprint Goal:** Complete follow-up maintenance based on the Week 6 customer trial, resolve remaining product and transition blockers, verify independent customer access, update customer-facing documentation, confirm the final handover outcome, and deliver the final course version, **MVP v3**.
+- **Selected scope:** 13 issues, **58 Story Points**. Duplicate planning issue #182 is excluded; [#183](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/183) is canonical.
 
-- **Sprint Goal (draft):** Complete follow-up maintenance, final transition, and delivery of the final course version, **MVP v3**.
-- **Dates:** 2026-07-13 — 2026-07-19.
+**Selected Sprint 5 issues:**
 
-**Expected Week 7 follow-up areas:**
+- **Planning and maintenance:** [#183 — refine and plan Sprint 5](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/183), [#184 — follow-up maintenance, including the driver return-to-depot cost edge case](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/184), [#185 — automated solver determinism verification](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/185).
+- **Documentation and transition:** [#186 — final customer-facing documentation review](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/186), [#187 — verify final product transition and independent customer access](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/187).
+- **UAT and Sprint Review:** [#188 — Week 7 UAT](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/188), [#189 — Week 7 Sprint Review](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/189).
+- **MVP v3 release and demo:** [#190 — final MVP v3 release](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/190), [#191 — public sanitized MVP v3 demo](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/191).
+- **Retrospective, reflection, reporting, and Demo Day:** [#192 — Week 7 retrospective](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/192), [#193 — reflection and LLM report](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/193), [#194 — Week 7 public report and Moodle evidence](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/194), [#195 — final Demo Day presentation](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/195).
 
-- Resolve Week 6 customer feedback and remaining transition blockers.
-- Complete remaining algorithm improvements and product fixes, including the validator / fuel calculation / driver return-to-depot cost edge case.
-- Finalize product access and the transition status; update `docs/customer-handover.md`.
-- Publish the final **MVP v3** SemVer release (higher precedence than the Week 6 trial release) from protected `main`.
-- Record the public sanitized MVP v3 demo video.
-- Prepare the Week 7 public report and Moodle evidence.
+All selected Sprint 5 issues remain open with Work Status `To Do`. Completion and release evidence will be recorded only after the corresponding Week 7 work is performed.
 
 ## Final course outcome
 

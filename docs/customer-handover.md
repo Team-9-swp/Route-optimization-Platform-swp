@@ -22,7 +22,7 @@ The system has three services: a FastAPI backend (`api`), a PostgreSQL database 
 
 | Item | State |
 |---|---|
-| Latest release | [`v1.3.0`](https://github.com/Team-9-swp/Route-optimization-Platform-swp/releases/tag/v1.3.0) (MVP v2) on protected `main` |
+| Latest release | [`v1.4.0`](https://github.com/Team-9-swp/Route-optimization-Platform-swp/releases/tag/v1.4.0) — Assignment 6 Week 6 trial / handover-candidate release on protected `main` |
 | Source repository | [Team-9-swp/Route-optimization-Platform-swp](https://github.com/Team-9-swp/Route-optimization-Platform-swp) |
 | Repository ownership | Retained by the team (course project). Read access granted to the customer and TA. |
 | Hosted trial deployment | University VM, reachable **only from the Innopolis campus network** |
