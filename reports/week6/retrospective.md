@@ -3,13 +3,13 @@
 **Project:** Route Optimization Platform
 **Team:** Team-9-swp
 **Date:** 2026-07-12
-**Sprint:** Sprint 4 — Determinism & Baseline
+**Sprint:** Sprint 4 — Week 6 Trial Release and Transition Readiness
 
 ## What went well
 
 *   **Determinism fix was straightforward.** The team quickly identified that Nevergrad's internal random seed generation was the root cause of non-deterministic results. Passing our own seed (seed 42) resolved the issue cleanly, demonstrating good understanding of the solver internals.
 *   **Baseline achieved.** Beating the baseline on test case 4 by ~0.5% was a concrete, measurable success that the customer acknowledged and validated during the Sprint Review.
-*   **Customer transition discussion went smoothly.** The meeting with the customer resulted in a clear deployment plan — customer will self-deploy from the `master` branch using a single container with full UI. No ambiguity remained on the delivery format.
+*   **Customer transition discussion went smoothly.** The meeting resulted in a clear plan: the customer will self-deploy from protected `main` in Week 7 using the Docker Compose stack and full UI.
 *   **Effective communication.** The team clearly explained the algorithm's architecture (Nevergrad → PyVRP → greedy loader assignment → simulated annealing) to the customer, building trust in the technical approach.
 
 ## What did not go well
@@ -32,5 +32,5 @@ From the Sprint 5 (Week 5) retrospective, the team identified these action items
 
 1. **Add determinism verification to CI.** Run the solver twice with the same seed and assert identical results. This prevents regressions on the determinism fix. **Owner:** Team. **Target:** Sprint 5.
 2. **Fix driver return-to-depot cost calculation.** Investigate and fix the routes-split-by-zeros edge case where return trips are counted as separate drivers. **Owner:** Algorithm team. **Target:** Sprint 5.
-3. **Complete Gantt chart visualisation.** Ensure the Gantt chart is demonstrable by the end of Sprint 5. **Owner:** Frontend team. **Target:** Sprint 5.
+3. **Validate Gantt chart visualisation.** The implementation is complete; verify it during customer-side testing. **Owner:** Frontend team. **Target:** Sprint 5.
 4. **Verify Zoom access for Week 7 meeting.** Confirm Zoom works for all participants as a backup meeting platform before the next customer meeting. **Owner:** Team lead. **Target:** Before Week 7 meeting.

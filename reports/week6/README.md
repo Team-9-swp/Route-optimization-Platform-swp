@@ -12,8 +12,10 @@
 |---|---|
 | Product Backlog board/view | [Product Backlog](https://github.com/orgs/Team-9-swp/projects/1/views/1) |
 | Sprint Backlog board/view | [Team GitHub Project](https://github.com/orgs/Team-9-swp/projects/1) |
-| Sprint 4 milestone | [Sprint 4 — Determinism & Baseline](https://github.com/Team-9-swp/Route-optimization-Platform-swp/milestone/8) |
+| Sprint 4 milestone | [Sprint 4 — Week 6 Trial Release and Transition Readiness](https://github.com/Team-9-swp/Route-optimization-Platform-swp/milestone/8) |
 | Sprint 4 planning | [Roadmap](../../docs/roadmap.md) |
+| Project entry points | [README](../../README.md), [CONTRIBUTING](../../CONTRIBUTING.md), [AGENTS](../../AGENTS.md) |
+| Hosted documentation | [Documentation site](https://team-9-swp.github.io/Route-optimization-Platform-swp/) |
 | Customer feedback response | [Customer Feedback Response](#customer-feedback-response) |
 | Development process | [Development process](../../docs/development-process.md) |
 | Architecture views | [Architecture documentation](../../docs/architecture/README.md) |
@@ -32,11 +34,11 @@
 
 ## Sprint Goal, Dates, and Scope
 
-**Sprint:** Sprint 4 — Determinism & Baseline
-**Sprint dates:** 2026-07-06 to 2026-07-12
+**Sprint:** Sprint 4 — Week 6 Trial Release and Transition Readiness
+**Sprint dates:** 2026-07-06 — 2026-07-12
 **Total Sprint size:** ~52 Story Points
 
-**Sprint Goal:** Ensure algorithm determinism, beat baseline on test case 4, and prepare stable trial release for customer handover.
+**Sprint Goal:** Deliver a stable Week 6 trial / handover candidate that the customer and TA can access, review the customer-facing documentation, execute UAT, discuss transition readiness, and identify follow-up work for Week 7.
 
 **Scope summary:** Sprint 4 focused on algorithm determinism fix, baseline comparison, driver return-to-depot, Gantt chart visualisation, manual time limit, transition-readiness meeting with the customer, and customer deployment planning.
 
@@ -46,9 +48,9 @@
 - Baseline beaten on test case 4 (~0.5% improvement).
 - Driver return-to-depot implemented.
 - Manual time limit feature implemented.
-- Gantt chart visualisation in progress.
+- Gantt chart visualisation completed ([#163](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/163)).
 - Transition-readiness meeting conducted with customer.
-- Customer deployment plan confirmed (self-deploy from `master` branch).
+- Customer deployment plan confirmed (self-deploy from protected `main` in Week 7; not completed yet).
 - Customer handover documentation updated.
 
 ## Product Access and Run Instructions
@@ -78,13 +80,12 @@ Private recording links, customer identity, credentials, exact timecodes, and pr
 
 | Feedback point | Resulting PBI or issue | Status | Response |
 |---|---|---|---|
-| Algorithm is now deterministic. | [#155](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/155) | Done | Determinism fixed by passing seed 42 to Nevergrad. Customer confirmed. |
-| Baseline beaten on test case 4 by ~0.5%. | [#156](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/156) | Done | Customer will verify independently from sources. |
-| Driver return-to-depot creates a minor cost-calculation edge case. | [#157](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/157) | Done (minor edge case deferred) | Routes split by zeros counted as separate drivers — deferred to Sprint 5. |
+| Algorithm is now deterministic and baseline performance improved. | [#166](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/166) | Done | Fixed-seed behavior and the test-case improvement were reviewed; independent customer verification remains planned. |
+| Driver return-to-depot creates a minor cost-calculation edge case. | Follow-up action tracked in Week 7 planning | Deferred | Validator / fuel calculation for routes split by zeros requires follow-up in Sprint 5. |
 | Customer wants full UI deployment, not just algorithm. | [#162](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/162) | Done | Deploy via single container with interface. |
-| Customer to deploy independently from `master` branch. | [#162](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/162) | Planned — Week 7 | Customer will deploy in Week 7. |
-| Gantt chart visualisation to be completed in Sprint 4. | [#159](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/159) | In progress | Continue work. |
-| Calculation time on dashboard — feature present. | [#160](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/160) | Confirmed | No further action required. |
+| Customer to deploy independently from protected `main`. | [#162](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/162) | Planned — Week 7 | Customer-side deployment has not happened yet. |
+| Gantt chart visualisation. | [#163](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/163) | Done | PBI and implementation are complete. |
+| Manual solver time limit. | [#171](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/171) | Done | Control is available on the New Job page. |
 | Customer may have limited network access next week; use Zoom. | — | Accepted | Use Zoom for Week 7 meeting. |
 
 ## Customer-Facing Documentation Review
@@ -96,7 +97,7 @@ During the Week 6 transition-readiness meeting, the customer provided implicit f
 | Repository transparency | Customer: *"I hope everything is transparent. And I'll be able to do everything independently, without additional consultations, and deploy it."* | Positive — customer trusts the repository is transparent enough for independent work. |
 | Deployment model | Customer: *"I'll deploy it and try then during next week"* and *"spin everything up through a single container without any shamanism"* | Positive — customer understands the single-container deployment model. |
 | Delivery format | Customer: *"With a wrapper, of course"* (full UI, not algorithm-only) | Positive — customer confirmed full UI delivery expectation. |
-| Branch/release guidance | Customer: *"give me a pointer that from such-and-such a branch, such-and-such a release can be taken"* | Partially addressed — team confirmed `master` branch, but no specific release tag was provided yet. |
+| Branch/release guidance | Customer requested a stable source pointer for independent use. | Partially addressed — protected `main` is the source branch; the Week 6 / final release is pending until final fixes are ready. |
 | Deployment instructions | Customer asked: *"how does that happen?"* regarding service transfer | Gap — deployment instructions in `docs/customer-handover.md` and `docs/deployment.md` could be clearer for first-time deployers. |
 | Acceptance criteria | Customer: *"after deployment, will it be enough just to say the words I say? Or do I need to record something again?"* | Partially addressed — team confirmed verbal acceptance is sufficient, but formal acceptance criteria could be documented more clearly. |
 
@@ -109,15 +110,15 @@ The Week 6 meeting confirmed the following transition-readiness status:
 **What is ready:**
 - Algorithm is deterministic and beats the baseline on test case 4.
 - Full UI deployment model confirmed (single container with interface).
-- Customer will self-deploy from the `master` branch.
+- Customer plans to self-deploy from protected `main` in Week 7.
 - Customer has repository access and understands the deployment process.
 
 **What must happen in Week 7:**
-1. Customer to deploy independently from `master` branch and verify the deployment works.
+1. Customer to deploy independently from protected `main` and verify the deployment works.
 2. Customer to run the algorithm from sources and verify against baseline results.
 3. Customer to run the algorithm through the web interface and verify consistency with source-level runs.
-4. Complete Gantt chart visualisation (in progress for Sprint 4).
-5. Fix driver return-to-depot cost-calculation edge case (routes split by zeros).
+4. Validate the completed Gantt chart during customer-side testing.
+5. Fix the validator / fuel calculation / driver return-to-depot cost edge case (routes split by zeros).
 6. Conduct explicit customer-facing documentation review.
 7. Use Zoom for the Week 7 meeting due to customer network limitations.
 
@@ -135,7 +136,7 @@ The Week 6 meeting confirmed the following transition-readiness status:
 
 The Sprint 4 architecture remains consistent with MVP v2: React frontend, FastAPI backend, PostgreSQL persistence, PyVRP/Nevergrad solver, hard-constraint validator, Docker Compose packaging, and GitHub Actions workflows.
 
-Key Sprint 4 changes: determinism fix (seed 42 passed to Nevergrad), driver return-to-depot in solver output, and Gantt chart visualisation in progress.
+Key Sprint 4 changes: determinism fix (seed 42 passed to Nevergrad), driver return-to-depot in solver output, manual time-limit control, and completed Gantt chart visualisation.
 
 ## Architecture and Quality Traceability
 
@@ -176,20 +177,20 @@ The Sprint Review was conducted as a transition-readiness meeting with the custo
 
 | Item | Issue | Sprint 4 decision |
 |---|---|---|
-| Driver return-to-depot cost-calculation fix | [#157](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/157) | Deferred to Sprint 5. |
+| Validator / fuel calculation / driver return-to-depot cost edge case | Follow-up action tracked in Week 7 planning | Deferred to Sprint 5. |
 | Additional solver improvements | — | Deferred to Sprint 5. |
 | Permanent external product access | — | Private access details submitted through Moodle only. |
 
 ## Current Product Status
 
-Sprint 4 is in progress. The algorithm is deterministic and beats the baseline on test case 4. The customer has confirmed the transition-readiness discussion and will self-deploy from the `master` branch in Week 7. The Gantt chart visualisation is in progress for Sprint 4.
+Sprint 4 work described by this report is complete except for explicitly deferred items. The algorithm is deterministic and beats the baseline on test case 4, and the Gantt visualisation and manual time-limit control are complete. Customer-side deployment is planned from protected `main` in Week 7. The Week 6 / final release is pending and will be created only after the remaining final fixes are ready.
 
 ## Next Steps
 
-- Customer to deploy independently from `master` branch in Week 7.
+- Customer to deploy independently from protected `main` in Week 7.
 - Customer to run the algorithm from sources and verify against baseline.
 - Customer to run the algorithm through the web interface and verify consistency.
-- Complete Gantt chart visualisation in Sprint 4.
+- Validate the completed Gantt chart during Week 7 customer-side testing.
 - Address driver return-to-depot cost-calculation edge case in Sprint 5.
 - Use Zoom for Week 7 meeting due to customer network limitations.
 
@@ -205,18 +206,4 @@ Sprint 4 is in progress. The algorithm is deterministic and beats the baseline o
 
 ## Screenshots
 
-Screenshots are stored under `reports/week6/images/`.
-
-> **Note:** Screenshots are pending capture before the Week 6 submission. The following evidence will be captured from the GitHub repository and CI pipeline.
-
-### Sprint milestone
-
-![Sprint 4 milestone](images/sprint4-milestone.png)
-
-### Board or project workflow view
-
-![Sprint 4 board view](images/sprint4-board-view.png)
-
-### Latest protected-default-branch CI run
-
-![Latest protected-main CI run](images/latest-main-ci-run.png)
+Screenshots are submitted through Moodle or will be added before final submission. No private evidence or placeholder image links are included in this public report.

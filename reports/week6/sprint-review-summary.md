@@ -2,7 +2,7 @@
 
 **Project:** Route Optimization Platform
 **Team:** Team 9
-**Sprint:** Sprint 4 — Determinism & Baseline
+**Sprint:** Sprint 4 — Week 6 Trial Release and Transition Readiness
 **Session format:** Sprint Review with customer
 **Session language:** Russian
 **Public evidence type:** Sanitised English summary
@@ -32,14 +32,12 @@ The team reviewed the Sprint 4 goal: ensure algorithm determinism, beat baseline
 
 | Area | Related issue | Review result |
 |---|---|---|
-| Algorithm determinism | #155 | Determinism fixed. Customer confirmed the fix. |
-| Baseline comparison — test case 4 | #156 | Team beat baseline by ~0.5% on test case 4 with seed 42. |
-| Driver return-to-depot | #157 | Implemented; noted a minor cost-calculation edge case (routes split by zeros counted as separate drivers). Validator shows correct numbers. |
-| Manual time limit | #158 | Implemented and released. |
-| Gantt chart visualisation | #159 | In progress for this sprint. |
-| Calculation time on dashboard | #160 | Feature present in UI; status confirmed. |
-| Transition-readiness discussion | #161 | Discussed deployment, repository access, and customer self-deployment plan. |
-| Customer deployment plan | #162 | Customer to deploy independently from `master` branch. |
+| Algorithm determinism and baseline improvement | #166 | Determinism fixed; team beat the baseline by ~0.5% on test case 4 with seed 42. |
+| Driver return-to-depot | Week 7 planning | Implemented; minor validator / fuel cost edge case deferred. |
+| Manual time limit | #171 | Implemented; no new release is claimed. |
+| Gantt chart visualisation | #163 | Completed after the review meeting. |
+| Transition-readiness discussion | #164 | Discussed deployment, repository access, and customer self-deployment plan. |
+| Customer deployment plan | #162 | Customer to deploy independently from protected `main` in Week 7. |
 
 ## Customer Feedback and Decisions
 
@@ -49,9 +47,9 @@ The team reviewed the Sprint 4 goal: ensure algorithm determinism, beat baseline
 | Baseline beaten on test case 4 by ~0.5%. | Accepted. | Customer will verify independently from sources. |
 | Driver return-to-depot creates a minor cost-calculation edge case (routes split by zeros). | Noted. | Fix planned for next sprint. |
 | Customer wants full UI deployment, not just algorithm. | Accepted. | Deploy via single container with interface. |
-| Customer to deploy independently from `master` branch. | Accepted. | Customer will deploy in Week 7. |
+| Customer to deploy independently from protected `main`. | Accepted. | Customer will deploy in Week 7. |
 | Customer will run algorithm from sources and through the interface. | Accepted. | Customer will verify consistency. |
-| Gantt chart visualisation to be completed in this sprint. | Accepted. | Continue work. |
+| Gantt chart visualisation to be completed in this sprint. | Completed after the meeting. | Validate during Week 7 customer-side testing. |
 | Calculation time on dashboard — feature present. | Confirmed. | No further action required. |
 | Customer may have limited network access next week; use Zoom instead of Tele. | Accepted. | Use Zoom for Week 7 meeting. |
 
@@ -65,7 +63,7 @@ The team reviewed the Sprint 4 goal: ensure algorithm determinism, beat baseline
 
 ## Requested Changes
 
-- Complete Gantt chart visualisation for vehicles and loaders.
+- Validate the completed Gantt chart visualisation during Week 7 customer-side testing.
 - Continue preparation for customer handover.
 - Address driver return-to-depot cost-calculation edge case in next sprint.
 
@@ -79,16 +77,14 @@ The team reviewed the Sprint 4 goal: ensure algorithm determinism, beat baseline
 
 | Follow-up item | Status |
 |---|---|
-| Algorithm determinism | Completed — #155 |
-| Baseline comparison test case 4 | Completed — #156 |
-| Driver return-to-depot | Completed — #157 (minor edge case deferred) |
-| Manual time limit | Completed — #158 |
-| Gantt chart visualisation | In progress — #159 |
-| Calculation time on dashboard | Confirmed present — #160 |
-| Transition readiness | Completed — #161 |
+| Algorithm determinism and baseline comparison | Completed — #166 |
+| Driver return-to-depot | Completed; minor edge case tracked in Week 7 planning |
+| Manual time limit | Completed — #171 |
+| Gantt chart visualisation | Completed — #163 |
+| Transition readiness | Completed — #164 |
 | Customer deployment plan | Completed — #162 |
 | Customer self-deployment | Planned — Week 7 |
 
 ## Review Conclusion
 
-The Sprint 4 Review was conducted with the customer. The team demonstrated algorithm determinism, confirmed baseline improvement on test case 4, discussed transition-readiness and deployment plan, and confirmed the Gantt chart is in scope for this sprint. The customer will deploy independently from the `master` branch in Week 7 and verify algorithm results from sources.
+The Sprint 4 Review was conducted with the customer. The team demonstrated algorithm determinism, confirmed baseline improvement on test case 4, and discussed transition readiness and deployment. The Gantt chart was completed after the meeting. The customer will deploy independently from protected `main` in Week 7 and verify algorithm results from sources. The Week 6 / final release remains pending.

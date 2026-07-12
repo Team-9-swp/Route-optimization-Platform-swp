@@ -368,7 +368,6 @@ All 5 scenarios were reconfirmed during the Week 6 trial session. All scenarios 
 | ID | Title | Priority | Notes |
 |---|---|---|---|
 | PBI-W6-01 | Resolve external customer deployment access for Week 7 transition | High | Customer confirmed this is the critical path for transition confirmation. |
-=======
 **Recording:** Private meeting recording (submitted via Moodle)
 
 ### Scenarios confirmed

@@ -42,7 +42,7 @@
 
 2. **Fix driver return-to-depot cost calculation.** Investigate and fix the routes-split-by-zeros edge case. This addresses the late-discovered bug and improves solver output accuracy.
 
-3. **Complete Gantt chart visualisation.** Ensure the Gantt chart is demonstrable by the end of Sprint 5. Assign clear ownership and track progress.
+3. **Validate Gantt chart visualisation.** The implementation completed after the review meeting; verify it during Week 7 customer-side testing.
 
 4. **Improve feature status communication.** Before customer meetings, verify that each feature's implementation status is clearly communicated (implemented vs. planned vs. in-progress). This prevents ambiguity.
 
