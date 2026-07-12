@@ -35,7 +35,7 @@
 ## Sprint Goal, Dates, and Scope
 
 **Sprint:** Sprint 4 — Week 6 Trial Release and Transition Readiness
-**Sprint dates:** 2026-07-06 — 2026-07-12
+**Sprint dates:** 2026-07-06 to 2026-07-12
 **Total Sprint size:** ~52 Story Points
 
 **Sprint Goal:** Deliver a stable Week 6 trial / handover candidate that the customer and TA can access, review the customer-facing documentation, execute UAT, discuss transition readiness, and identify follow-up work for Week 7.
@@ -48,7 +48,7 @@
 - Baseline beaten on test case 4 (~0.5% improvement).
 - Driver return-to-depot implemented.
 - Manual time limit feature implemented.
-- Gantt chart visualisation completed ([#163](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/163)).
+- Gantt chart visualisation implemented and included as Week 6 product evidence ([#163](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/163)).
 - Transition-readiness meeting conducted with customer.
 - Customer deployment plan confirmed (self-deploy from protected `main` in Week 7; not completed yet).
 - Customer handover documentation updated.
@@ -206,4 +206,28 @@ Sprint 4 work described by this report is complete except for explicitly deferre
 
 ## Screenshots
 
-Screenshots are submitted through Moodle or will be added before final submission. No private evidence or placeholder image links are included in this public report.
+### Sprint 4 milestone
+
+![Sprint 4 milestone](images/sprint4-milestone.png)
+
+### Sprint 4 board view
+
+![Sprint 4 board view](images/sprint4-board-view.png)
+
+### Latest protected-main CI run
+
+![Latest protected-main CI run](images/latest-main-ci-run.png)
+
+### Example reviewed issue-linked PR
+
+![Example reviewed issue-linked PR](images/reviewed-pr.png)
+
+### Week 6 report files
+
+![Week 6 report files](images/week6-report-files.png)
+
+### Week 6 release
+
+> Release screenshot will be added after the Week 6 release is created.
+
+![Week 6 release](images/week6-release.png)
