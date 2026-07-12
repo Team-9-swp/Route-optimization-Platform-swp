@@ -11,16 +11,9 @@ This document defines end-user-facing acceptance test scenarios for the Route Op
 - [UAT-02: Validate a custom solution through the validator](#uat-02-validate-a-custom-solution-through-the-validator)
 - [UAT-03: Retrieve previously submitted solutions from history](#uat-03-retrieve-previously-submitted-solutions-from-history)
 - [UAT-04: View route visualization for each vehicle and loader](#uat-04-view-route-visualization-for-each-vehicle-and-loader)
-<<<<<<< HEAD
 - [UAT-05: Reproducible solver results with fixed seed](#uat-05-reproducible-solver-results-with-fixed-seed)
 - [Sprint 5 UAT Summary](#sprint-5-uat-summary)
 - [Week 6 UAT Summary](#week-6-uat-summary)
-=======
-- [UAT-05: Review the skipped optional orders report](#uat-05-review-the-skipped-optional-orders-report)
-- [Sprint 3 UAT Summary](#sprint-3-uat-summary)
-- [Sprint 4 UAT Summary](#sprint-4-uat-summary)
-- [Sprint 5 UAT Summary](#sprint-5-uat-summary)
->>>>>>> e155a28 (Added report and update handover/UAT)
 
 ## Active Scenarios
 
@@ -328,17 +321,12 @@ All 5 scenarios — 3 carry-over from MVP v1 and 2 new for Sprint 5 — passed w
 
 ---
 
-<<<<<<< HEAD
 ## Week 6 UAT Summary
-=======
-## Sprint 4 UAT Summary
->>>>>>> e155a28 (Added report and update handover/UAT)
 
 **Session date:** 2026-07-10
 
 **Tester:** Customer
 
-<<<<<<< HEAD
 **Recording:** Private UAT recording (submitted via Moodle)
 
 ### Scenarios executed
@@ -375,37 +363,3 @@ All 5 scenarios were reconfirmed during the Week 6 trial session. All scenarios 
 | ID | Title | Priority | Notes |
 |---|---|---|---|
 | PBI-W6-01 | Resolve external customer deployment access for Week 7 transition | High | Customer confirmed this is the critical path for transition confirmation. |
-=======
-**Recording:** Private meeting recording (submitted via Moodle)
-
-### Scenarios confirmed
-
-| ID | Title | Result |
-|---|---|---|
-| UAT-01 | Submit a delivery instance and receive an optimised solution | Confirmed — algorithm deterministic with seed 42 |
-| UAT-02 | Validate a custom solution through the validator | Confirmed |
-| UAT-03 | Retrieve previously submitted solutions from history | Confirmed |
-| UAT-04 | View route visualization for each vehicle and loader | Confirmed |
-| UAT-05 | Review the skipped optional orders report | Confirmed |
-
-### Summary of results
-
-| Total | Confirmed | New failures | Notes |
-|---|---|---|---|
-| 5 | 5 | 0 | Determinism fix verified; baseline improvement confirmed |
-
-### Key outcomes
-
-1. **Determinism fix verified.** The customer confirmed that the algorithm now produces identical results when run with the same seed (seed 42). This resolved the non-determinism issue identified in Sprint 3.
-2. **Baseline improvement confirmed.** The team beat the baseline on test case 4 by ~0.5%. The customer will verify this independently by running the algorithm from sources.
-3. **All existing UAT scenarios accepted.** No regressions were identified. The customer confirmed that history viewing, validation, creation, and algorithm launch all work as expected.
-4. **Transition-readiness confirmed.** The customer confirmed the self-deployment plan (deploy from `master` branch using a single container with full UI).
-5. **No new UAT scenarios executed.** This session focused on transition-readiness rather than new feature validation.
-
-### Customer feedback points
-
-1. **Determinism is critical for trust.** The customer emphasised that non-deterministic results undermine confidence in the system. The fix was essential for acceptance.
-2. **Self-deployment is preferred.** The customer wants full control over the deployment, including the ability to modify and fix things independently.
-3. **Full UI deployment required.** The customer wants the complete web interface, not just the algorithm as a library.
-4. **Next meeting via Zoom.** The customer may have limited network access next week and requested Zoom as the meeting platform.
->>>>>>> e155a28 (Added report and update handover/UAT)

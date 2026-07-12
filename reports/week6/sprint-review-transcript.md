@@ -164,12 +164,12 @@
 
 | # | Item | Owner | Due |
 |---|------|-------|-----|
-| 1 | Customer to deploy the project independently from `master` branch | Customer | Week 7 |
+| 1 | Customer to deploy the project independently from protected `main` | Customer | Week 7 |
 | 2 | Customer to run the algorithm from sources and verify against baseline | Customer | Week 7 |
 | 3 | Customer to run the algorithm through the web interface and verify consistency | Customer | Week 7 |
 | 4 | Customer to verify determinant behaviour across multiple runs | Customer | Week 7 |
-| 5 | Team to provide release branch/tag for deployment | Team | Week 7 |
-| 6 | Gantt chart visualisation to be completed in Sprint 4 | Team | Sprint 4 |
+| 5 | Team to provide a final release pointer after remaining fixes; release is pending | Team | Week 7 |
+| 6 | Validate the completed Gantt chart during customer-side testing | Team | Week 7 |
 | 7 | Calculation time on dashboard — status confirmed (feature present) | Team | Sprint 4 |
 | 8 | Customer to use Zoom for next meeting due to network limitations | Customer | Week 7 |
 

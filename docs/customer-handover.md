@@ -26,10 +26,10 @@ The system has three services: a FastAPI backend (`api`), a PostgreSQL database 
 | Source repository | [Team-9-swp/Route-optimization-Platform-swp](https://github.com/Team-9-swp/Route-optimization-Platform-swp) |
 | Repository ownership | Retained by the team (course project). Read access granted to the customer and TA. |
 | Hosted trial deployment | University VM, reachable **only from the Innopolis campus network** |
-| Customer-side deployment | **Planned** — customer to self-deploy from `master` branch in Week 7 |
+| Customer-side deployment | **Planned** — customer to self-deploy from protected `main` in Week 7 |
 | **Handover level reached** | **Ready for independent use** (customer deployment planned) |
 
-**Handover level: `Ready for independent use`.** The product can be built and run independently from the public repository using the instructions below, and a hosted trial instance exists on the university VM. The customer has confirmed they will self-deploy from the `master` branch in Week 7 using a single container with full UI. That transition level depends on the customer successfully completing the self-deployment and verifying the results.
+**Handover level: `Ready for independent use`.** The product can be built and run independently from the public repository using the instructions below, and a hosted trial instance exists on the university VM. The customer has confirmed they will self-deploy from protected `main` in Week 7 using the full Docker Compose stack and web UI. That transition level depends on the customer successfully completing the self-deployment and verifying the results.
 
 ## 3. How the customer accesses and uses the product
 
@@ -121,11 +121,11 @@ Support during the course is provided by the team through the agreed channel. Is
 
 | Action | Blocks full transition? |
 |---|---|
-| Customer to self-deploy from `master` branch and verify deployment | Yes — needed before moving to "Independently used by customer" |
+| Customer to self-deploy from protected `main` and verify deployment with sample data | Yes — needed before moving to "Independently used by customer" |
 | Customer to run the algorithm from sources and verify against baseline | Yes — confirms algorithm results match team's claims |
 | Customer to run the algorithm through the web interface and verify consistency | Yes — confirms UI and algorithm versions are synchronised |
 | Address driver return-to-depot cost-calculation edge case | No — minor edge case, deferred to Sprint 5 |
-| Complete Gantt chart visualisation | No — in progress for Sprint 4 |
+| Verify the completed Gantt chart visualisation during customer-side testing | No — planned for Week 7 validation |
 
 Reaching `Independently used by customer` depends on the customer successfully deploying and running the product independently, which is planned for Week 7.
 
