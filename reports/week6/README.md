@@ -1,70 +1,222 @@
-# Week 6 Report — Trial
+# Week 6 Report — Transition-Readiness Meeting & Sprint Review
 
 ## Project Overview
 
-**Project:** Route Optimization Platform  
-**Team:** Team 9  
-**Week:** 6 (2026-07-06 to 2026-07-12)  
-**Focus:** Customer trial — reconfirm all UAT scenarios after Sprint 5 follow-up fixes; prepare for Week 7 transition confirmation.
+**Project:** Route Optimization Platform
+**Team:** Team 9
+**Short description:** A logistics optimization platform for generating, validating, and reviewing vehicle and loader routes for the BIA CVRPTW problem variant.
 
-## Week 6 Changes Since Sprint 5
+## Assignment 6 Evidence Index
 
-| Area | Commit | Description |
-|---|---|---|
-| Solver determinism | `d3181fe` | Seed `np.random`, use local `Random` for `LoaderSA` to ensure reproducible same-seed results |
-| SA time budget | `da1bb98` | Fix simulated annealing time budget for short time limits (was forcing a minimum of 10s) |
-| Auto-validation race | `6570970` | Move auto-validation before `COMPLETED` status update to fix a race condition in QRT test |
-| Unserved optional in output | `5149b37` | Include `unserved_optional` in solver output result dict |
-| Internal key stripping | `72c14d6` | Strip internal keys (`_cost`, `_evaluator`) before storing result in DB |
+| Requirement area | Public evidence |
+|---|---|
+| Product Backlog board/view | [Product Backlog](https://github.com/orgs/Team-9-swp/projects/1/views/1) |
+| Sprint Backlog board/view | [Team GitHub Project](https://github.com/orgs/Team-9-swp/projects/1) |
+| Sprint 4 milestone | [Sprint 4 — Determinism & Baseline](https://github.com/Team-9-swp/Route-optimization-Platform-swp/milestone/8) |
+| Sprint 4 planning | [Roadmap](../../docs/roadmap.md) |
+| Customer feedback response | [Customer Feedback Response](#customer-feedback-response) |
+| Development process | [Development process](../../docs/development-process.md) |
+| Architecture views | [Architecture documentation](../../docs/architecture/README.md) |
+| ADRs | [ADR index](../../docs/architecture/adr/README.md) |
+| Testing / QA / DoD | [Testing strategy](../../docs/testing.md), [Definition of Done](../../docs/definition-of-done.md) |
+| Quality requirements | [Quality requirements](../../docs/quality-requirements.md) |
+| Quality requirement tests | [Quality requirement tests](../../docs/quality-requirement-tests.md) |
+| UAT | [User Acceptance Tests](../../docs/user-acceptance-tests.md) |
+| Sprint Review summary | [Sprint 4 Review Summary](sprint-review-summary.md) |
+| Sprint Review transcript | [Sanitised Sprint Review Transcript](sprint-review-transcript.md) |
+| Retrospective | [Retrospective](retrospective.md) |
+| Reflection | [Reflection](reflection.md) |
+| LLM usage | [LLM usage report](llm-report.md) |
+| Customer handover | [Customer Handover](../../docs/customer-handover.md) |
+| Changelog | [CHANGELOG.md](../../CHANGELOG.md) |
 
-## UAT Trial Results
+## Sprint Goal, Dates, and Scope
 
-All 5 active UAT scenarios were reconfirmed with the customer during the Week 6 trial session (2026-07-10).
+**Sprint:** Sprint 4 — Determinism & Baseline
+**Sprint dates:** 2026-07-06 to 2026-07-12
+**Total Sprint size:** ~52 Story Points
 
-| ID | Title | Result |
-|---|---|---|
-| UAT-01 | Submit a delivery instance and receive an optimised solution | Passed |
-| UAT-02 | Validate a custom solution through the validator | Passed |
-| UAT-03 | Retrieve previously submitted solutions from history | Passed |
-| UAT-04 | View route visualization for each vehicle and loader | Passed |
-| UAT-05 | Reproducible solver results with fixed seed | Passed |
+**Sprint Goal:** Ensure algorithm determinism, beat baseline on test case 4, and prepare stable trial release for customer handover.
 
-**Summary:** 5/5 passed, 0 failed, 0 blocked. All acceptance criteria remain satisfied.
+**Scope summary:** Sprint 4 focused on algorithm determinism fix, baseline comparison, driver return-to-depot, Gantt chart visualisation, manual time limit, transition-readiness meeting with the customer, and customer deployment planning.
 
-## Customer Feedback Points
+## Delivered Sprint 4 Changes
 
-1. **All 5 scenarios accepted.** The customer confirmed that all acceptance criteria remain satisfied and the product meets the expected behavior for trial use.
-2. **Solver determinism verified.** The customer noted that same-seed reproducibility now works correctly (previously inconsistent in Sprint 5 review), confirming the fix from commits `d3181fe` and `da1bb98`.
-3. **Product access via screen sharing.** The customer acknowledged that external deployment access is still pending but screen sharing remains an acceptable interim method for the trial.
+- Algorithm determinism fixed (seed 42 passed to Nevergrad).
+- Baseline beaten on test case 4 (~0.5% improvement).
+- Driver return-to-depot implemented.
+- Manual time limit feature implemented.
+- Gantt chart visualisation in progress.
+- Transition-readiness meeting conducted with customer.
+- Customer deployment plan confirmed (self-deploy from `master` branch).
+- Customer handover documentation updated.
 
-## Items Still Needing Improvement
+## Product Access and Run Instructions
 
-1. **External customer access.** Deployment access outside the university network is still unresolved and tracked in [#90](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/90). The customer confirmed this is acceptable for the Week 6 trial but expects a resolution for Week 7 transition.
-2. **Route map responsiveness on large instances.** Previously noted SVG rendering lag on large instances remains deferred; acceptable for trial use.
+Public product repository:
 
-## Resulting PBIs and Issues
+- [Route Optimization Platform repository](https://github.com/Team-9-swp/Route-optimization-Platform-swp)
 
-| ID | Title | Priority | Notes |
+Current public run/access instructions:
+
+- [Root README run instructions](../../README.md)
+- [Deployment documentation](../../docs/deployment.md)
+- [Customer handover documentation](../../docs/customer-handover.md)
+
+Private access details, exact deployment access instructions, credentials, recording links, and exact timecodes are submitted through Moodle only.
+
+## Customer Feedback Response
+
+Public sources reviewed:
+
+- [Week 6 Sprint Review transcript](sprint-review-transcript.md)
+- [Week 6 Sprint Review summary](sprint-review-summary.md)
+- [User acceptance tests](../../docs/user-acceptance-tests.md)
+- [Roadmap](../../docs/roadmap.md)
+
+Private recording links, customer identity, credentials, exact timecodes, and private access details are intentionally excluded from this public report.
+
+| Feedback point | Resulting PBI or issue | Status | Response |
 |---|---|---|---|
-| PBI-W6-01 | Resolve external customer deployment access for Week 7 transition | High | Customer confirmed this is the critical path for transition confirmation. |
+| Algorithm is now deterministic. | [#155](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/155) | Done | Determinism fixed by passing seed 42 to Nevergrad. Customer confirmed. |
+| Baseline beaten on test case 4 by ~0.5%. | [#156](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/156) | Done | Customer will verify independently from sources. |
+| Driver return-to-depot creates a minor cost-calculation edge case. | [#157](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/157) | Done (minor edge case deferred) | Routes split by zeros counted as separate drivers — deferred to Sprint 5. |
+| Customer wants full UI deployment, not just algorithm. | [#162](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/162) | Done | Deploy via single container with interface. |
+| Customer to deploy independently from `master` branch. | [#162](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/162) | Planned — Week 7 | Customer will deploy in Week 7. |
+| Gantt chart visualisation to be completed in Sprint 4. | [#159](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/159) | In progress | Continue work. |
+| Calculation time on dashboard — feature present. | [#160](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/160) | Confirmed | No further action required. |
+| Customer may have limited network access next week; use Zoom. | — | Accepted | Use Zoom for Week 7 meeting. |
 
-## Recording and Publication
+## Customer-Facing Documentation Review
 
-**Session format:** Combined UAT trial session with customer  
-**Session language:** Russian  
-**Private evidence:** Recording link, exact timecodes, and permission evidence are submitted through Moodle only.  
-**Public evidence:** This sanitized English report.
+During the Week 6 transition-readiness meeting, the customer provided implicit feedback on the customer-facing documentation set through the discussion. An explicit documentation walkthrough was not conducted during this meeting; it is planned for Week 7.
 
-Private recording links, exact timecodes, customer identity, credentials, and private access details are intentionally excluded from this public report.
+| Documentation area | Customer signal from transcript | Assessment |
+|---|---|---|
+| Repository transparency | Customer: *"I hope everything is transparent. And I'll be able to do everything independently, without additional consultations, and deploy it."* | Positive — customer trusts the repository is transparent enough for independent work. |
+| Deployment model | Customer: *"I'll deploy it and try then during next week"* and *"spin everything up through a single container without any shamanism"* | Positive — customer understands the single-container deployment model. |
+| Delivery format | Customer: *"With a wrapper, of course"* (full UI, not algorithm-only) | Positive — customer confirmed full UI delivery expectation. |
+| Branch/release guidance | Customer: *"give me a pointer that from such-and-such a branch, such-and-such a release can be taken"* | Partially addressed — team confirmed `master` branch, but no specific release tag was provided yet. |
+| Deployment instructions | Customer asked: *"how does that happen?"* regarding service transfer | Gap — deployment instructions in `docs/customer-handover.md` and `docs/deployment.md` could be clearer for first-time deployers. |
+| Acceptance criteria | Customer: *"after deployment, will it be enough just to say the words I say? Or do I need to record something again?"* | Partially addressed — team confirmed verbal acceptance is sufficient, but formal acceptance criteria could be documented more clearly. |
 
-## UAT Documentation
+**Planned action:** Conduct an explicit customer-facing documentation review during the Week 7 meeting, asking the customer to walk through `README.md`, `docs/customer-handover.md`, and `docs/deployment.md` specifically.
 
-Updated UAT scenarios with Week 6 execution records:
+## Transition-Readiness Summary
 
-- [User Acceptance Tests](../../docs/user-acceptance-tests.md)
+The Week 6 meeting confirmed the following transition-readiness status:
+
+**What is ready:**
+- Algorithm is deterministic and beats the baseline on test case 4.
+- Full UI deployment model confirmed (single container with interface).
+- Customer will self-deploy from the `master` branch.
+- Customer has repository access and understands the deployment process.
+
+**What must happen in Week 7:**
+1. Customer to deploy independently from `master` branch and verify the deployment works.
+2. Customer to run the algorithm from sources and verify against baseline results.
+3. Customer to run the algorithm through the web interface and verify consistency with source-level runs.
+4. Complete Gantt chart visualisation (in progress for Sprint 4).
+5. Fix driver return-to-depot cost-calculation edge case (routes split by zeros).
+6. Conduct explicit customer-facing documentation review.
+7. Use Zoom for the Week 7 meeting due to customer network limitations.
+
+**Handover level:** `Ready for independent use` — customer has not yet deployed or operated the product on their side; self-deployment is planned for Week 7.
+
+## Feedback Not Addressed in Sprint 4
+
+| Feedback / item | Reason |
+|---|---|
+| Driver return-to-depot cost-calculation fix | Deferred to Sprint 5 — minor edge case identified during Sprint Review. |
+| Additional solver improvements | Deferred to Sprint 5 — planned for next iteration. |
+| Permanent external product access | Private access details are submitted through Moodle only. |
+
+## Architecture Summary
+
+The Sprint 4 architecture remains consistent with MVP v2: React frontend, FastAPI backend, PostgreSQL persistence, PyVRP/Nevergrad solver, hard-constraint validator, Docker Compose packaging, and GitHub Actions workflows.
+
+Key Sprint 4 changes: determinism fix (seed 42 passed to Nevergrad), driver return-to-depot in solver output, and Gantt chart visualisation in progress.
+
+## Architecture and Quality Traceability
+
+Quality requirements are linked to architecture decisions through:
+
+- solver functional correctness and deterministic behaviour (QR-FC-01);
+- time behaviour and benchmark-aware solver execution (QR-TB-01);
+- recoverability through PostgreSQL-backed persistence (QR-RE-01);
+- safe error handling and public-response confidentiality (QR-SE-01);
+- deployment reliability through protected-main CI/CD and release evidence.
+
+Relevant architecture and decision records:
+
+- [Architecture documentation](../../docs/architecture/README.md)
+- [ADR index](../../docs/architecture/adr/README.md)
+- [Quality requirements](../../docs/quality-requirements.md)
+- [Quality requirement tests](../../docs/quality-requirement-tests.md)
+
+## Testing and CI Status
+
+Public testing and quality evidence:
+
+- [Testing strategy](../../docs/testing.md)
+- [Definition of Done](../../docs/definition-of-done.md)
+- [Quality requirements](../../docs/quality-requirements.md)
+- [Quality requirement tests](../../docs/quality-requirement-tests.md)
+- [CI pipeline](https://github.com/Team-9-swp/Route-optimization-Platform-swp/actions/workflows/ci.yml)
+- [Latest protected-main CI runs](https://github.com/Team-9-swp/Route-optimization-Platform-swp/actions?query=branch%3Amain)
+
+## Sprint Review
+
+- [Sprint 4 Review Summary](sprint-review-summary.md)
+- [Sanitised Sprint Review Transcript](sprint-review-transcript.md)
+
+The Sprint Review was conducted as a transition-readiness meeting with the customer. The public repository contains sanitised English evidence only. Private recording links, exact timecodes, recording permission evidence, customer identity, credentials, and private access details are submitted through Moodle only.
+
+## Deferred and Follow-up Work
+
+| Item | Issue | Sprint 4 decision |
+|---|---|---|
+| Driver return-to-depot cost-calculation fix | [#157](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/157) | Deferred to Sprint 5. |
+| Additional solver improvements | — | Deferred to Sprint 5. |
+| Permanent external product access | — | Private access details submitted through Moodle only. |
+
+## Current Product Status
+
+Sprint 4 is in progress. The algorithm is deterministic and beats the baseline on test case 4. The customer has confirmed the transition-readiness discussion and will self-deploy from the `master` branch in Week 7. The Gantt chart visualisation is in progress for Sprint 4.
 
 ## Next Steps
 
-- Resolve external customer deployment access ([#90](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/90)) for Week 7 transition.
-- Conduct Week 7 transition confirmation session with customer.
-- Prepare Week 7 transition report.
+- Customer to deploy independently from `master` branch in Week 7.
+- Customer to run the algorithm from sources and verify against baseline.
+- Customer to run the algorithm through the web interface and verify consistency.
+- Complete Gantt chart visualisation in Sprint 4.
+- Address driver return-to-depot cost-calculation edge case in Sprint 5.
+- Use Zoom for Week 7 meeting due to customer network limitations.
+
+## Contribution Traceability
+
+| Team member | Assignment 6 responsibility | Issues / evidence | Technical / process contribution |
+|---|---|---|---|
+| Elvina | Parts 1, 2, 9, Week 6 report | Sprint Review evidence, Week 6 reporting | Sprint planning, customer feedback traceability, Sprint Review evidence |
+| Adelia | Parts 7, 10, 11, 12, 13, 14 | Retrospective, reflection, LLM report | Release support, retrospective, reflection, LLM report |
+| Matvey | Part 6 | Testing, QA, Definition of Done | Testing, QA, quality evidence |
+| Aidar | Part 8 | UAT scenarios, transition-readiness meeting | UAT scenarios, customer-facing validation, transition planning |
+| Valera | Parts 3, 4, 5 | Algorithm determinism, solver improvements | Algorithm fixes, solver optimisation, technical deep-dive |
+
+## Screenshots
+
+Screenshots are stored under `reports/week6/images/`.
+
+> **Note:** Screenshots are pending capture before the Week 6 submission. The following evidence will be captured from the GitHub repository and CI pipeline.
+
+### Sprint milestone
+
+![Sprint 4 milestone](images/sprint4-milestone.png)
+
+### Board or project workflow view
+
+![Sprint 4 board view](images/sprint4-board-view.png)
+
+### Latest protected-default-branch CI run
+
+![Latest protected-main CI run](images/latest-main-ci-run.png)
