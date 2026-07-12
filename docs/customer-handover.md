@@ -26,10 +26,10 @@ The system has three services: a FastAPI backend (`api`), a PostgreSQL database 
 | Source repository | [Team-9-swp/Route-optimization-Platform-swp](https://github.com/Team-9-swp/Route-optimization-Platform-swp) |
 | Repository ownership | Retained by the team (course project). Read access granted to the customer and TA. |
 | Hosted trial deployment | University VM, reachable **only from the Innopolis campus network** |
-| Customer-side deployment | **Not yet** operated on the customer side |
-| **Handover level reached** | **Ready for independent use** |
+| Customer-side deployment | **Planned** — customer to self-deploy from `master` branch in Week 7 |
+| **Handover level reached** | **Ready for independent use** (customer deployment planned) |
 
-**Handover level: `Ready for independent use`.** The product can be built and run independently from the public repository using the instructions below, and a hosted trial instance exists on the university VM. It has **not** been deployed or operated on the customer side yet; that transition level depends on the outcome of the Week 6 customer trial.
+**Handover level: `Ready for independent use`.** The product can be built and run independently from the public repository using the instructions below, and a hosted trial instance exists on the university VM. The customer has confirmed they will self-deploy from the `master` branch in Week 7 using a single container with full UI. That transition level depends on the customer successfully completing the self-deployment and verifying the results.
 
 ## 3. How the customer accesses and uses the product
 
@@ -111,20 +111,23 @@ Support during the course is provided by the team through the agreed channel. Is
 ## 9. Known limitations and risks
 
 - The hosted deployment is **campus-network-only**; external customer access requires the customer to be on the network/VPN or use an agreed temporary tunnel.
-- The product has **not** been deployed or operated on the customer side yet.
+- The customer has **not yet** deployed or operated the product on their side; self-deployment is planned for Week 7.
 - Solver quality depends on `time_limit` and instance size; very large or tightly-constrained instances may fail to find a feasible solution.
 - The current Gantt/schedule visualization scope is limited (see roadmap).
+- A minor cost-calculation edge case exists where driver return-to-depot routes split by zeros are counted as separate drivers (deferred to Sprint 5).
 - This is a course project; long-term production hardening (HA, backups, monitoring) is out of scope.
 
 ## 10. Remaining actions and blockers
 
 | Action | Blocks full transition? |
 |---|---|
-| Customer-side trial of the Week 6 release and feedback | Yes — needed before moving beyond "Ready for independent use" |
-| Confirm external access arrangement with the customer (network/VPN or agreed tunnel) | Yes — for reliable off-campus access |
-| Address customer feedback from the Week 6 trial in Week 7 | Possibly — depends on trial findings |
+| Customer to self-deploy from `master` branch and verify deployment | Yes — needed before moving to "Independently used by customer" |
+| Customer to run the algorithm from sources and verify against baseline | Yes — confirms algorithm results match team's claims |
+| Customer to run the algorithm through the web interface and verify consistency | Yes — confirms UI and algorithm versions are synchronised |
+| Address driver return-to-depot cost-calculation edge case | No — minor edge case, deferred to Sprint 5 |
+| Complete Gantt chart visualisation | No — in progress for Sprint 4 |
 
-Reaching `Independently used by customer` or `Deployed or operated on customer side` depends on the customer actually using or deploying the product, which is expected to be clarified during the Week 6 trial and confirmed in Week 7.
+Reaching `Independently used by customer` depends on the customer successfully deploying and running the product independently, which is planned for Week 7.
 
 ## 11. Related documentation
 
