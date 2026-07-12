@@ -14,6 +14,11 @@
 | Sprint Backlog board/view | [Team GitHub Project](https://github.com/orgs/Team-9-swp/projects/1) |
 | Sprint 4 milestone | [Sprint 4 — Week 6 Trial Release and Transition Readiness](https://github.com/Team-9-swp/Route-optimization-Platform-swp/milestone/8) |
 | Sprint 4 planning | [Roadmap](../../docs/roadmap.md) |
+| Week 6 release | [`v1.4.0` — Week 6 trial / handover candidate](https://github.com/Team-9-swp/Route-optimization-Platform-swp/releases/tag/v1.4.0) |
+| Sprint 5 milestone and planning | [Sprint 5 milestone #9](https://github.com/Team-9-swp/Route-optimization-Platform-swp/milestone/9), [canonical planning issue #183](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/183) |
+| Sprint 5 follow-up maintenance | [#184 — follow-up maintenance](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/184), [#185 — determinism verification](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/185) |
+| Sprint 5 transition and review | [#186 — documentation review](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/186), [#187 — final transition](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/187), [#188 — UAT](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/188), [#189 — Sprint Review](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/189) |
+| Sprint 5 final delivery | [#190 — MVP v3 release](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/190), [#191 — sanitized demo](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/191), [#192–#195 — retrospective, reflection, reporting, and Demo Day](https://github.com/Team-9-swp/Route-optimization-Platform-swp/milestone/9) |
 | Project entry points | [README](../../README.md), [CONTRIBUTING](../../CONTRIBUTING.md), [AGENTS](../../AGENTS.md) |
 | Hosted documentation | [Documentation site](https://team-9-swp.github.io/Route-optimization-Platform-swp/) |
 | Customer feedback response | [Customer Feedback Response](#customer-feedback-response) |
@@ -53,6 +58,14 @@
 - Customer deployment plan confirmed (self-deploy from protected `main` in Week 7; not completed yet).
 - Customer handover documentation updated.
 
+## Week 6 Release
+
+- **Release:** [`v1.4.0`](https://github.com/Team-9-swp/Route-optimization-Platform-swp/releases/tag/v1.4.0)
+- **Release type:** Assignment 6 Week 6 trial / handover-candidate release
+- **Source:** protected `main`
+
+This is the Week 6 trial increment. It is not MVP v3; MVP v3 and its final higher-precedence release remain Sprint 5 / Week 7 work.
+
 ## Product Access and Run Instructions
 
 Public product repository:
@@ -81,7 +94,7 @@ Private recording links, customer identity, credentials, exact timecodes, and pr
 | Feedback point | Resulting PBI or issue | Status | Response |
 |---|---|---|---|
 | Algorithm is now deterministic and baseline performance improved. | [#166](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/166) | Done | Fixed-seed behavior and the test-case improvement were reviewed; independent customer verification remains planned. |
-| Driver return-to-depot creates a minor cost-calculation edge case. | Follow-up action tracked in Week 7 planning | Deferred | Validator / fuel calculation for routes split by zeros requires follow-up in Sprint 5. |
+| Driver return-to-depot creates a minor cost-calculation edge case. | [#184](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/184) | Deferred | Validator / fuel calculation for routes split by zeros is part of Sprint 5 follow-up maintenance. |
 | Customer wants full UI deployment, not just algorithm. | [#162](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/162) | Done | Deploy via single container with interface. |
 | Customer to deploy independently from protected `main`. | [#162](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/162) | Planned — Week 7 | Customer-side deployment has not happened yet. |
 | Gantt chart visualisation. | [#163](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/163) | Done | PBI and implementation are complete. |
@@ -97,7 +110,7 @@ During the Week 6 transition-readiness meeting, the customer provided implicit f
 | Repository transparency | Customer: *"I hope everything is transparent. And I'll be able to do everything independently, without additional consultations, and deploy it."* | Positive — customer trusts the repository is transparent enough for independent work. |
 | Deployment model | Customer: *"I'll deploy it and try then during next week"* and *"spin everything up through a single container without any shamanism"* | Positive — customer understands the single-container deployment model. |
 | Delivery format | Customer: *"With a wrapper, of course"* (full UI, not algorithm-only) | Positive — customer confirmed full UI delivery expectation. |
-| Branch/release guidance | Customer requested a stable source pointer for independent use. | Partially addressed — protected `main` is the source branch; the Week 6 / final release is pending until final fixes are ready. |
+| Branch/release guidance | Customer requested a stable source pointer for independent use. | Addressed for Week 6 — protected `main` and trial release [`v1.4.0`](https://github.com/Team-9-swp/Route-optimization-Platform-swp/releases/tag/v1.4.0) are available; the final MVP v3 release remains Week 7 work. |
 | Deployment instructions | Customer asked: *"how does that happen?"* regarding service transfer | Gap — deployment instructions in `docs/customer-handover.md` and `docs/deployment.md` could be clearer for first-time deployers. |
 | Acceptance criteria | Customer: *"after deployment, will it be enough just to say the words I say? Or do I need to record something again?"* | Partially addressed — team confirmed verbal acceptance is sufficient, but formal acceptance criteria could be documented more clearly. |
 
@@ -177,21 +190,23 @@ The Sprint Review was conducted as a transition-readiness meeting with the custo
 
 | Item | Issue | Sprint 4 decision |
 |---|---|---|
-| Validator / fuel calculation / driver return-to-depot cost edge case | Follow-up action tracked in Week 7 planning | Deferred to Sprint 5. |
+| Validator / fuel calculation / driver return-to-depot cost edge case | [#184](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/184) | Deferred to Sprint 5. |
 | Additional solver improvements | — | Deferred to Sprint 5. |
 | Permanent external product access | — | Private access details submitted through Moodle only. |
 
 ## Current Product Status
 
-Sprint 4 work described by this report is complete except for explicitly deferred items. The algorithm is deterministic and beats the baseline on test case 4, and the Gantt visualisation and manual time-limit control are complete. Customer-side deployment is planned from protected `main` in Week 7. The Week 6 / final release is pending and will be created only after the remaining final fixes are ready.
+Sprint 4 delivered the Week 6 trial / handover-candidate release [`v1.4.0`](https://github.com/Team-9-swp/Route-optimization-Platform-swp/releases/tag/v1.4.0). The algorithm is deterministic and beats the baseline on test case 4, and the Gantt visualisation and manual time-limit control are complete. Customer-side deployment and the explicit customer-facing documentation walkthrough remain planned for Week 7. The driver return-to-depot cost edge case remains tracked in [#184](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/184). MVP v3 and its final higher-precedence release remain Sprint 5 / Week 7 work.
 
 ## Next Steps
 
-- Customer to deploy independently from protected `main` in Week 7.
+- Customer to deploy independently from protected `main` in Week 7 ([#187](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/187)).
 - Customer to run the algorithm from sources and verify against baseline.
 - Customer to run the algorithm through the web interface and verify consistency.
 - Validate the completed Gantt chart during Week 7 customer-side testing.
-- Address driver return-to-depot cost-calculation edge case in Sprint 5.
+- Address driver return-to-depot cost-calculation edge case in Sprint 5 ([#184](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/184)).
+- Execute Week 7 UAT and Sprint Review ([#188](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/188), [#189](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/189)).
+- Deliver MVP v3, the final release, and the public sanitized demo ([#190](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/190), [#191](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/191)).
 - Use Zoom for Week 7 meeting due to customer network limitations.
 
 ## Contribution Traceability
@@ -228,6 +243,6 @@ Sprint 4 work described by this report is complete except for explicitly deferre
 
 ### Week 6 release
 
-> Release screenshot will be added after the Week 6 release is created.
+[Week 6 trial / handover-candidate release v1.4.0](https://github.com/Team-9-swp/Route-optimization-Platform-swp/releases/tag/v1.4.0)
 
-![Week 6 release](images/week6-release.png)
+![Week 6 release v1.4.0](images/week6-release.png)
