@@ -226,6 +226,13 @@ class Validator:
         if not self.vehicle_routes.empty:
             self.vehicle_routes = self.vehicle_routes.assign(
                 **{
+                    NAMES.ROUTE: lambda df: df[NAMES.ROUTE].apply(
+                        lambda r: [0 if n == -1 else n for n in r]
+                    ),
+                }
+            )
+            self.vehicle_routes = self.vehicle_routes.assign(
+                **{
                     NAMES.TIME: lambda df: df.apply(
                         lambda row: [
                             strict_round(
@@ -504,10 +511,11 @@ class Validator:
 
     def _correct_capacities(self, routes: pd.DataFrame):
         def route_to_circles(route: list):
-            route = ["-" if i == 0 else i for i in route]
+            clean = [0 if i == -1 else i for i in route]
+            clean = ["-" if i == 0 else i for i in clean]
             circles = [
                 [int(i) for i in group.split()]
-                for group in " ".join(map(str, route)).split("-")
+                for group in " ".join(map(str, clean)).split("-")
                 if group
             ]
             return circles
@@ -526,7 +534,7 @@ class Validator:
                 on="circles",
                 how="left",
             )
-            .groupby(NAMES.ID)
+            .groupby([NAMES.ID, "circles_num"])
             .agg({NAMES.VOLUME: "sum"})
             .query(f"{NAMES.VOLUME} > {self.params[NAMES.VEH_CAPACITY]}")
         )
