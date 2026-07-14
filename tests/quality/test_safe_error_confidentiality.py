@@ -46,9 +46,9 @@ FORBIDDEN_PATTERNS = [
 def _assert_no_forbidden_leaks(text: str) -> None:
     lowered = text.lower()
     for pattern in FORBIDDEN_PATTERNS:
-        assert pattern.lower() not in lowered, (
-            f"Forbidden pattern leaked in response: {pattern!r}"
-        )
+        assert (
+            pattern.lower() not in lowered
+        ), f"Forbidden pattern leaked in response: {pattern!r}"
 
 
 @pytest.mark.integration
@@ -82,9 +82,9 @@ def test_qrt_se_01_a_solver_failure_produces_safe_job_error(client, monkeypatch)
     error_text = data.get("error", "")
     assert error_text
     _assert_no_forbidden_leaks(error_text)
-    assert "internal crash" not in error_text, (
-        "Original exception message must not be exposed"
-    )
+    assert (
+        "internal crash" not in error_text
+    ), "Original exception message must not be exposed"
 
 
 @pytest.mark.integration

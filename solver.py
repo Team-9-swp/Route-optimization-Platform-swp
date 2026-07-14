@@ -467,7 +467,9 @@ def solve_vehicles_pyvrp(
                     o["loader_service_time"] / problem.loader_shift_length
                 ) * problem.weights["loader_salary"] + o[
                     "loader_service_time"
-                ] * problem.weights["loader_work"]
+                ] * problem.weights[
+                    "loader_work"
+                ]
             capacity_est = (o["volume"] / problem.vehicle_capacity) * vs * 0.5
             discount = fuel_est + loader_est + capacity_est
             if N <= 200:
@@ -668,7 +670,9 @@ def solve_vehicles_ortools_routing(
                     o["loader_service_time"] / problem.loader_shift_length
                 ) * problem.weights["loader_salary"] + o[
                     "loader_service_time"
-                ] * problem.weights["loader_work"]
+                ] * problem.weights[
+                    "loader_work"
+                ]
             capacity_est = (o["volume"] / problem.vehicle_capacity) * vs * 0.5
             discount = fuel_est + loader_est + capacity_est
             if N <= 200:
@@ -1352,7 +1356,9 @@ class OrtoolsCpsatClusterOptimizer:
             for i in range(n):
                 for j in range(n):
                     if i != j:
-                        edge_l[(loader, i, j)] = model.NewBoolVar(f"el_{loader}_{i}_{j}")
+                        edge_l[(loader, i, j)] = model.NewBoolVar(
+                            f"el_{loader}_{i}_{j}"
+                        )
 
         al_vars = {}
         aleq_vars = {}
@@ -1415,7 +1421,8 @@ class OrtoolsCpsatClusterOptimizer:
                 if orders_data[i]["loader_cnt"] == 0:
                     continue
                 model.Add(
-                    sum(aleq_vars[(loader, i, idx)] for idx in range(len(assign_l[i]))) <= 8
+                    sum(aleq_vars[(loader, i, idx)] for idx in range(len(assign_l[i])))
+                    <= 8
                 )
 
         obj_terms = []
@@ -1429,7 +1436,11 @@ class OrtoolsCpsatClusterOptimizer:
             used = model.NewBoolVar(f"used_l_{loader}")
             model.AddMaxEquality(
                 used,
-                [al_vars[(loader, i)] for i in range(n) if orders_data[i]["loader_cnt"] > 0],
+                [
+                    al_vars[(loader, i)]
+                    for i in range(n)
+                    if orders_data[i]["loader_cnt"] > 0
+                ],
             )
             obj_terms.append(used * int(self.problem.weights["loader_salary"]))
 
