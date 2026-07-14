@@ -234,30 +234,34 @@ class Validator:
             self.vehicle_routes = self.vehicle_routes.assign(
                 **{
                     NAMES.TIME: lambda df: df.apply(
-                        lambda row: [
-                            strict_round(
-                                row[NAMES.TIME][0]
-                                - strict_round(
-                                    self._dist_to_depot(row[NAMES.ROUTE][1])
-                                    / self.params[NAMES.VEH_SPEED],
-                                    2,
-                                ),
-                                2,
-                            )
-                        ]
-                        + row[NAMES.TIME]
-                        + [
-                            strict_round(
-                                row[NAMES.TIME][-1]
-                                + strict_round(
-                                    self._dist_to_depot(row[NAMES.ROUTE][-2])
-                                    / self.params[NAMES.VEH_SPEED],
+                        lambda row: (
+                            [
+                                strict_round(
+                                    row[NAMES.TIME][0]
+                                    - strict_round(
+                                        self._dist_to_depot(row[NAMES.ROUTE][1])
+                                        / self.params[NAMES.VEH_SPEED],
+                                        2,
+                                    ),
                                     2,
                                 )
-                                + self.orders.loc[row[NAMES.ROUTE][-2], NAMES.VEH_ST],
-                                2,
-                            )
-                        ],
+                            ]
+                            + row[NAMES.TIME]
+                            + [
+                                strict_round(
+                                    row[NAMES.TIME][-1]
+                                    + strict_round(
+                                        self._dist_to_depot(row[NAMES.ROUTE][-2])
+                                        / self.params[NAMES.VEH_SPEED],
+                                        2,
+                                    )
+                                    + self.orders.loc[
+                                        row[NAMES.ROUTE][-2], NAMES.VEH_ST
+                                    ],
+                                    2,
+                                )
+                            ]
+                        ),
                         axis=1,
                     ),
                 }
@@ -436,9 +440,9 @@ class Validator:
         if name == "Vehicle":
             points = points.assign(
                 in_window=lambda df: df.apply(
-                    lambda row: row[NAMES.TIME_WDW][0]
-                    <= row["time"]
-                    <= row[NAMES.TIME_WDW][1],
+                    lambda row: (
+                        row[NAMES.TIME_WDW][0] <= row["time"] <= row[NAMES.TIME_WDW][1]
+                    ),
                     axis=1,
                 )
             )

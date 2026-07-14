@@ -33,8 +33,7 @@ def test_qrt_pe_01_a_fixed_benchmark_completion_time(instance):
 
     assert solution is not None, "Solver did not return a solution"
     assert elapsed <= PERFORMANCE_THRESHOLD_SECONDS, (
-        f"Benchmark took {elapsed:.2f}s, threshold is "
-        f"{PERFORMANCE_THRESHOLD_SECONDS}s"
+        f"Benchmark took {elapsed:.2f}s, threshold is {PERFORMANCE_THRESHOLD_SECONDS}s"
     )
 
     result = validate_solution(instance, solution)
@@ -54,6 +53,5 @@ def test_qrt_pe_01_b_configured_time_limit(instance):
 
     assert solution is not None
     assert elapsed <= configured_limit + 10, (
-        f"Solver ran for {elapsed:.2f}s, allowed maximum is "
-        f"{configured_limit + 10}s"
+        f"Solver ran for {elapsed:.2f}s, allowed maximum is {configured_limit + 10}s"
     )
