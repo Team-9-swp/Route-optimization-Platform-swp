@@ -221,7 +221,7 @@ class Evaluator:
                 if t not in (0, -1):
                     tw_start, tw_end = obi[t]["time_window"]
                     actual = current_time if current_time > tw_start else tw_start
-                    if actual > tw_end + 0.5:
+                    if actual > tw_end + 1e-6:
                         if debug:
                             print(f"      [DEBUG] TW violation at node {t}: actual={actual:.2f} > tw_end={tw_end}")
                         return False, [], 0.0
