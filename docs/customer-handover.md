@@ -22,14 +22,17 @@ The system has three services: a FastAPI backend (`api`), a PostgreSQL database 
 
 | Item | State |
 |---|---|
-| Latest release | [`v1.4.0`](https://github.com/Team-9-swp/Route-optimization-Platform-swp/releases/tag/v1.4.0) — Assignment 6 Week 6 trial / handover-candidate release on protected `main` |
+| Latest release | [`v1.5.0`](https://github.com/Team-9-swp/Route-optimization-Platform-swp/releases/tag/v1.5.0) — **MVP v3**, the final Assignment 6 course release on protected `main` |
 | Source repository | [Team-9-swp/Route-optimization-Platform-swp](https://github.com/Team-9-swp/Route-optimization-Platform-swp) |
 | Repository ownership | Retained by the team (course project). Read access granted to the customer and TA. |
 | Hosted trial deployment | University VM, reachable **only from the Innopolis campus network** |
-| Customer-side deployment | **Planned** — customer to self-deploy from protected `main` in Week 7 |
-| **Handover level reached** | **Ready for independent use** (customer deployment planned) |
+| Customer-side deployment | **Planned** — customer to self-deploy from protected `main` using the full Docker Compose stack and web UI |
+| **Handover level reached** | **Ready for independent use** |
+| **Customer-confirmation status** | **Accepted with follow-up items** |
 
-**Handover level: `Ready for independent use`.** The product can be built and run independently from the public repository using the instructions below, and a hosted trial instance exists on the university VM. The customer has confirmed they will self-deploy from protected `main` in Week 7 using the full Docker Compose stack and web UI. That transition level depends on the customer successfully completing the self-deployment and verifying the results.
+**Handover level: `Ready for independent use`.** The product can be built and run independently from the public repository using the instructions below, and a hosted trial instance exists on the university VM. The customer has engaged with the trial release and the self-deployment model; full independent customer deployment remains a follow-up item.
+
+**Customer-confirmation status: `Accepted with follow-up items`.** The customer reviewed the Week 6 trial release, acknowledged the solver baseline, and accepted the self-deployment transition model. The outstanding follow-up items are listed in [§10](#10-remaining-actions-and-blockers). The Week 7 customer interview re-confirmation is recorded in the Week 7 report; if that confirmation is still pending at submission, this status is treated as a documented follow-up rather than implicit full acceptance.
 
 ## 3. How the customer accesses and uses the product
 
@@ -111,23 +114,22 @@ Support during the course is provided by the team through the agreed channel. Is
 ## 9. Known limitations and risks
 
 - The hosted deployment is **campus-network-only**; external customer access requires the customer to be on the network/VPN or use an agreed temporary tunnel.
-- The customer has **not yet** deployed or operated the product on their side; self-deployment is planned for Week 7.
+- The customer has **not yet** deployed or operated the product on their side; self-deployment remains a follow-up item after the course.
 - Solver quality depends on `time_limit` and instance size; very large or tightly-constrained instances may fail to find a feasible solution.
 - The current Gantt/schedule visualization scope is limited (see roadmap).
-- A minor cost-calculation edge case exists where driver return-to-depot routes split by zeros are counted as separate drivers (deferred to Sprint 5).
 - This is a course project; long-term production hardening (HA, backups, monitoring) is out of scope.
 
 ## 10. Remaining actions and blockers
 
 | Action | Blocks full transition? |
 |---|---|
-| Customer to self-deploy from protected `main` and verify deployment with sample data | Yes — needed before moving to "Independently used by customer" |
+| Customer to self-deploy from protected `main` and verify deployment with sample data | Yes — needed before moving to "Independently used customer" |
 | Customer to run the algorithm from sources and verify against baseline | Yes — confirms algorithm results match team's claims |
 | Customer to run the algorithm through the web interface and verify consistency | Yes — confirms UI and algorithm versions are synchronised |
-| Address driver return-to-depot cost-calculation edge case | No — minor edge case, deferred to Sprint 5 |
-| Verify the completed Gantt chart visualisation during customer-side testing | No — planned for Week 7 validation |
+| Customer-side validation of the completed Gantt chart visualisation | No — planned for customer-side testing |
+| Re-confirm handover acceptance at the Week 7 customer interview | No — confirmation status is `Accepted with follow-up items` pending the Week 7 interview |
 
-Reaching `Independently used by customer` depends on the customer successfully deploying and running the product independently, which is planned for Week 7.
+The driver return-to-depot cost edge case (Sprint 4 follow-up) was resolved in `v1.5.0`: multi-trip vehicle routes that return to the depot and continue are now counted as a single driver/vehicle in both the solver cost and the validator output. Reaching `Independently used by customer` depends on the customer successfully deploying and running the product independently.
 
 ## 11. Related documentation
 

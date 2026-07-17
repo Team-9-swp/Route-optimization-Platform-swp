@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-07-17
+
+### Added
+
+- Solver execution time is now surfaced in the web interface so dispatchers can see how long a job took to complete.
+- `reports/week7/` Sprint 5 evidence: Week 7 retrospective and final-transition report artifacts.
+- Automated solver determinism verification guarding the Week 6 determinism fix.
+
+### Fixed
+
+- Driver return-to-depot cost edge case: vehicle routes that return to the depot and continue (routes split by depot `0` markers) are no longer counted as separate drivers/vehicles in the cost and validator output. Multi-trip routes for a single vehicle are now counted once.
+
+### Changed
+
+- Final Assignment 6 transition to **MVP v3**: `README.md`, `docs/customer-handover.md`, and `docs/roadmap.md` updated to reflect the final course version, handover level, and customer-confirmation status.
+- Moved the final released entries out of `[Unreleased]` into this dated SemVer section.
+
 ## [1.4.0] - 2026-07-12
 
 ### Added

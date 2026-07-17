@@ -1,8 +1,8 @@
 # Roadmap
 
-The Route Optimization Platform is developed in Sprint increments. Earlier Sprints delivered **MVP v1** (`v1.0.0`) and **MVP v2** ([`v1.3.0`](https://github.com/Team-9-swp/Route-optimization-Platform-swp/releases/tag/v1.3.0)) — a Docker Compose stack with a FastAPI backend, PostgreSQL persistence, a PyVRP/Nevergrad solver, hard-constraint validation, and a React web UI.
+The Route Optimization Platform is developed in Sprint increments. Earlier Sprints delivered **MVP v1** (`v1.0.0`) and **MVP v2** ([`v1.3.0`](https://github.com/Team-9-swp/Route-optimization-Platform-swp/releases/tag/v1.3.0)) — a Docker Compose stack with a FastAPI backend, PostgreSQL persistence, a PyVRP/Nevergrad solver, hard-constraint validation, and a React web UI. Assignment 6 then delivered the Week 6 trial release [`v1.4.0`](https://github.com/Team-9-swp/Route-optimization-Platform-swp/releases/tag/v1.4.0) and the final course version, **MVP v3** ([`v1.5.0`](https://github.com/Team-9-swp/Route-optimization-Platform-swp/releases/tag/v1.5.0)).
 
-Assignment 6 adds two formal Sprint containers: **Sprint 4** (Week 6) prepares a stable trial / handover candidate, and **Sprint 5** (Week 7) uses the customer's trial feedback to deliver the final course version, **MVP v3**. The selected Sprint Backlog items live in the issue tracker, assigned to the Sprint milestones; this roadmap links them rather than duplicating their content.
+Assignment 6 used two formal Sprint containers: **Sprint 4** (Week 6) produced a stable trial / handover candidate, and **Sprint 5** (Week 7) used the customer's trial feedback to deliver the final course version, **MVP v3**. The selected Sprint Backlog items live in the issue tracker, assigned to the Sprint milestones; this roadmap links them rather than duplicating their content.
 
 ## Sprint 4 — Week 6 Trial Release and Transition Readiness
 
@@ -36,10 +36,10 @@ Assignment 6 adds two formal Sprint containers: **Sprint 4** (Week 6) prepares a
 - **MVP v3 release and demo:** [#190 — final MVP v3 release](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/190), [#191 — public sanitized MVP v3 demo](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/191).
 - **Retrospective, reflection, reporting, and Demo Day:** [#192 — Week 7 retrospective](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/192), [#193 — reflection and LLM report](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/193), [#194 — Week 7 public report and Moodle evidence](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/194), [#195 — final Demo Day presentation](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/195).
 
-All selected Sprint 5 issues remain open with Work Status `To Do`. Completion and release evidence will be recorded only after the corresponding Week 7 work is performed.
+**Delivered outcome (MVP v3):** Sprint 5 follow-up maintenance, the driver return-to-depot cost fix, solver execution time surfaced in the web UI, automated solver determinism verification, final customer-facing documentation, and the Week 7 Sprint Review / UAT / retrospective evidence were completed and published with the final course release [`v1.5.0`](https://github.com/Team-9-swp/Route-optimization-Platform-swp/releases/tag/v1.5.0) (**MVP v3**). Customer-side independent deployment remains a documented follow-up item; private evidence remains Moodle-only.
 
 ## Final course outcome
 
-By the end of Week 7, the product should reach **MVP v3**: a runnable and accessible Route Optimization Platform with updated customer-facing documentation, current handover documentation, verified access instructions, final UAT / Sprint Review evidence, a public sanitized demo video, and a final SemVer release from the protected default branch.
+By the end of Week 7 the product reached **MVP v3** ([`v1.5.0`](https://github.com/Team-9-swp/Route-optimization-Platform-swp/releases/tag/v1.5.0)): a runnable and accessible Route Optimization Platform with updated customer-facing documentation, current handover documentation, verified access instructions, final UAT / Sprint Review evidence, a public sanitized demo video, and a final SemVer release from the protected default branch. The reached handover level and customer-confirmation status are stated in [`docs/customer-handover.md`](customer-handover.md) and the [Week 7 report](../reports/week7/README.md).
 
-No speculative post-course version planning is included. Remaining work, if any, will be documented as limitations, blockers, or follow-up items in `docs/customer-handover.md` and the Week 7 report.
+No speculative post-course version planning is included. Remaining work is documented as limitations, blockers, or follow-up items in `docs/customer-handover.md` and the Week 7 report.
