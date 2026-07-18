@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Improved interactive vehicle and loader route visualization with route selection, stable colours, top-three filtering, sorting, route details, and focused map controls.
+- Interactive vehicle and loader schedule with layer controls, lane selection, tooltips, and zoom.
+- Actual solver execution duration on Job Detail, calculated from the existing job timestamps.
+- Restored JSON problem-instance upload on New Job with file selection, drag-and-drop, validation, filename feedback, and readable errors.
+
+### Changed
+
+- Job Detail and its validation result display finite Objective values with two decimal places without changing stored or downloaded values.
+
+## [1.4.0] - 2026-07-12
+
+### Added
+
+- Manual solver time limit: the New Job page now has a "Time limit (seconds)" field that is sent to the backend via the existing `time_limit` parameter; leaving it blank keeps the backend default.
+- Gantt schedule visualization: a new "Schedule" tab on the Job Detail page shows each vehicle's shift and order arrival times as a Gantt chart.
+- Customer handover documentation and Week 6 transition-readiness, Sprint Review, UAT, retrospective, reflection, and LLM evidence.
+- Contributor and coding-agent guidance in `CONTRIBUTING.md` and `AGENTS.md`.
+
+### Changed
+
+- Updated customer-facing documentation and repository entry points for transition readiness.
+- Improved deterministic solver behavior and Week 6 trial handling.
+
 ## [1.3.0] - 2026-07-05
 
 ### Added
@@ -104,7 +129,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - JobDetail route map: custom SVG zoom/pan, per-route visibility filter, color legend and body-scroll lock on hover.
 
-[Unreleased]: https://github.com/Team-9-swp/Route-optimization-Platform-swp/compare/v1.3.0...HEAD
+[Unreleased]: https://github.com/Team-9-swp/Route-optimization-Platform-swp/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/Team-9-swp/Route-optimization-Platform-swp/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/Team-9-swp/Route-optimization-Platform-swp/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/Team-9-swp/Route-optimization-Platform-swp/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/Team-9-swp/Route-optimization-Platform-swp/compare/v1.0.0...v1.1.0

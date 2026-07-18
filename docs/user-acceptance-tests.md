@@ -11,8 +11,14 @@ This document defines end-user-facing acceptance test scenarios for the Route Op
 - [UAT-02: Validate a custom solution through the validator](#uat-02-validate-a-custom-solution-through-the-validator)
 - [UAT-03: Retrieve previously submitted solutions from history](#uat-03-retrieve-previously-submitted-solutions-from-history)
 - [UAT-04: View route visualization for each vehicle and loader](#uat-04-view-route-visualization-for-each-vehicle-and-loader)
+- [UAT-05: Reproducible solver results with fixed seed](#uat-05-reproducible-solver-results-with-fixed-seed)
+- [Sprint 5 UAT Summary](#sprint-5-uat-summary)
+- [Week 6 UAT Summary](#week-6-uat-summary)
+- [Week 7 Review Record](#week-7-review-record)
 - [UAT-05: Review the skipped optional orders report](#uat-05-review-the-skipped-optional-orders-report)
 - [Sprint 3 UAT Summary](#sprint-3-uat-summary)
+- [Sprint 4 UAT Summary](#sprint-4-uat-summary)
+- [Sprint 5 UAT Summary](#sprint-5-uat-summary)
 
 ## Active Scenarios
 
@@ -22,15 +28,7 @@ This document defines end-user-facing acceptance test scenarios for the Route Op
 | UAT-02 | Validate a custom solution through the validator | Passed | High | US-03; QR-FC-01 |
 | UAT-03 | Retrieve previously submitted solutions from history | Passed | High | US-08; QR-RE-01 |
 | UAT-04 | View route visualization for each vehicle and loader | Passed | High | US-10; QR-FC-01 |
-| UAT-05 | Review the skipped optional orders report | Passed | Medium | US-09 |
-
-## Active Scenarios
-
-| ID | Title | Public result | Priority | Traceability |
-|---|---|---|---|---|
-| UAT-01 | Submit a delivery instance and receive an optimized solution | Passed in the 27 June combined Sprint Review/UAT session | High | US-01a, US-01b, US-02, US-07, US-08; QR-FC-01 |
-| UAT-02 | Validate a custom solution through the validator | Passed in the 27 June combined Sprint Review/UAT session | High | US-03; QR-FC-01; QR-SE-01 |
-| UAT-03 | Retrieve previously submitted solutions from history | Passed in the 27 June combined Sprint Review/UAT session | High | US-08; QR-RE-01 |
+| UAT-05 | Reproducible solver results with fixed seed | Passed | Medium | US-06 |
 
 ## UAT-01: Submit a Delivery Instance and Receive an Optimized Solution
 
@@ -80,6 +78,7 @@ This document defines end-user-facing acceptance test scenarios for the Route Op
 |---|---|---|---|
 | 2026-06-27 | Customer | Passed — all expected results confirmed. Solution completed, auto-validated as valid, route map and tables displayed correctly. | Private UAT recording (submitted via Moodle) |
 | 2026-07-02 | Customer | Passed — all original results confirmed. Skipped optional orders report now correctly displayed alongside existing detail. | Private UAT recording (submitted via Moodle) |
+| 2026-07-10 | Customer | Passed — Week 6 trial reconfirmed. All expected results unchanged; solution completes, auto-validates, route map and tables display correctly. Customer confirmed acceptance. | Private UAT recording (submitted via Moodle) |
 
 ## UAT-02: Validate a Custom Solution Through the Validator
 
@@ -119,6 +118,7 @@ This document defines end-user-facing acceptance test scenarios for the Route Op
 |---|---|---|---|
 | 2026-06-27 | Customer | Passed — both valid and invalid solutions correctly identified. Valid solution displayed green status; invalid solution showed specific violation details. No internal details exposed. | Private UAT recording (submitted via Moodle) |
 | 2026-07-02 | Customer | Passed — validator continues to work correctly with no regressions. | Private UAT recording (submitted via Moodle) |
+| 2026-07-10 | Customer | Passed — Week 6 trial reconfirmed. Valid and invalid solutions correctly identified; no internal details exposed. Customer confirmed acceptance. | Private UAT recording (submitted via Moodle) |
 
 ## UAT-03: Retrieve Previously Submitted Solutions from History
 
@@ -154,45 +154,28 @@ This document defines end-user-facing acceptance test scenarios for the Route Op
 
 ### Execution Record
 
-| Field | Value |
-|---|---|
-| Execution date | 27 June 2026 |
-| Customer role | Customer representative |
-| Public result | Passed according to sanitized combined Sprint Review/UAT notes |
-| Sanitized public evidence | A recorded 27 June customer session included Sprint Review discussion and UAT execution; repository contains only this sanitized summary. |
-| Private evidence required | Recording URL, exact UAT/Sprint Review timecodes, and recording permission evidence for Moodle/private submission. |
+| Date | Tester | Result | Evidence |
+|---|---|---|---|
+| 2026-06-27 | Customer | Passed — dashboard displayed all previous jobs. Completed job details (solution, validation, map) fully accessible. | Private UAT recording (submitted via Moodle) |
+| 2026-07-02 | Customer | Passed — all historical jobs accessible after restart. Persistence confirmed. Skipped orders data preserved. | Private UAT recording (submitted via Moodle) |
+| 2026-07-10 | Customer | Passed — Week 6 trial reconfirmed. Dashboard lists all jobs; historical data complete after restart. Customer confirmed acceptance. | Private UAT recording (submitted via Moodle) |
 
-## Resulting Backlog Items
+Private recording URLs, exact UAT/Sprint Review timecodes, customer identity, and recording permission evidence are submitted through Moodle only and are intentionally excluded from the public repository.
+
+### Resulting Backlog Items
 
 | Feedback or observation | Resulting issue | Public status |
 |---|---|---|
 | Customer access must be reliable outside the university network or explicitly agreed through another method. | [#90](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/90) | Still open until deployment/access criteria are verified. |
 | Combined Sprint Review/UAT evidence must remain available privately without exposing customer identity or links publicly. | [#91](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/91), [#92](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/92) | Private recording details are supplied through Moodle only and are intentionally excluded from the repository. |
 
-1. The Dashboard shows all previously submitted jobs with their status, name, and submission time.
-2. Clicking a completed job opens the full **Job Detail** view with:
-   - the original solution data;
-   - validation status;
-   - route map and route tables;
-   - skipped optional orders report if applicable.
-3. After an application restart, previously completed jobs remain accessible and their data is unchanged.
-
-Do not commit the following to the public repository:
-
-| Date | Tester | Result | Evidence |
-|---|---|---|---|
-| 2026-06-27 | Customer | Passed — dashboard displayed all previous jobs. Completed job details (solution, validation, map) fully accessible. | Private UAT recording (submitted via Moodle) |
-| 2026-07-02 | Customer | Passed — all historical jobs accessible after restart. Persistence confirmed. Skipped orders data preserved. | Private UAT recording (submitted via Moodle) |
-
 ---
 
-## UAT-04: View route visualization for each vehicle and loader
+## UAT-04: View Route Visualization for Each Vehicle and Loader
+
+**Stable ID:** UAT-04
 
 **Title:** View route visualization for each vehicle and loader
-
-**Status:** Passed
-
-**Priority:** High
 
 **Traceability:**
 - User story: [US-10 — Route visualization](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/14)
@@ -203,7 +186,7 @@ Do not commit the following to the public repository:
 1. The application is running.
 2. A completed job exists with vehicle and loader routes (e.g. from UAT-01).
 
-### Test steps
+### Steps
 
 1. Open the web interface at `http://localhost:3000`.
 2. Navigate to the **Dashboard**.
@@ -224,7 +207,7 @@ Do not commit the following to the public repository:
 8. View the **Vehicle Routes** table below the map — verify route sequences and start times.
 9. View the **Loader Routes** table below the map — verify route sequences.
 
-### Expected results
+### Expected Result
 
 1. The route map displays all vehicle routes as dashed polylines and loader routes as solid polylines.
 2. Each vehicle route is drawn in a distinct color from the vehicle palette.
@@ -237,61 +220,60 @@ Do not commit the following to the public repository:
 9. The route tables below the map accurately list stop sequences and times.
 10. When all routes are hidden, a placeholder message is displayed: *"No route data available for the selected layer."*
 
-### Execution history
+### Execution Record
 
 | Date | Tester | Result | Evidence |
 |---|---|---|---|
 | 2026-07-02 | Customer | Passed — route map displayed all vehicle and loader routes in distinct colors. Zoom, pan, and filter controls worked correctly. The customer confirmed the visualization makes route analysis practical. | Private UAT recording (submitted via Moodle) |
+| 2026-07-10 | Customer | Passed — Week 6 trial reconfirmed. Route map, filters, and tables function correctly. Customer confirmed acceptance. | Private UAT recording (submitted via Moodle) |
 
 ---
 
-## UAT-05: Review the skipped optional orders report
+## UAT-05: Reproducible Solver Results with Fixed Seed
 
-**Title:** Review the skipped optional orders report
+**Stable ID:** UAT-05
 
-**Status:** Passed
-
-**Priority:** Medium
+**Title:** Reproducible solver results with fixed seed
 
 **Traceability:**
-- User story: [US-09 — Skipped optional orders report](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/13)
+- User story: [US-06 — Reproducible random seed](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/10)
 
 ### Preconditions
 
 1. The application is running.
-2. A problem instance JSON that includes at least one optional order (`"optional": 1`) is available.
+2. A problem instance JSON (e.g. `test_cases/t1.json`) is available.
 
-### Test steps
+### Steps
 
-#### Part A — Scenario with skipped optional orders
+#### Part A — Deterministic results with the same seed
 
 1. Open the web interface at `http://localhost:3000`.
 2. Navigate to the **New Job** page.
-3. Upload or paste a problem instance that contains optional orders (e.g. an instance where the time window or capacity constraints may cause some optional orders to be skipped).
-4. Submit the job.
-5. Wait for the solver to complete.
-6. Open the completed job from the **Dashboard**.
-7. Observe the area above the route map for the **Skipped optional orders** banner.
+3. Upload or paste the problem instance JSON.
+4. Set **Seed** to `42` and **Name** to `"Run A"`.
+5. Submit the job and wait for completion.
+6. Open the completed job and record the objective value and route structure.
+7. Repeat steps 2–6 with **Seed** still `42` and **Name** set to `"Run B"`.
+8. Compare the results of Run A and Run B.
 
-#### Part B — Scenario where all optional orders are served
+#### Part B — Different seed produces a different result
 
-8. Upload an instance where all optional orders fit within constraints.
-9. Submit the job.
-10. Open the completed job.
-11. Observe that no skipped orders banner appears, or a message says *"No optional orders were skipped."*
+9. Submit a third run with **Seed** set to a different value (e.g. `123`) and **Name** set to `"Run C"`.
+10. Wait for completion and compare objective value and route structure with Run A.
 
-### Expected results
+### Expected Result
 
-1. For Part A: a yellow banner is displayed with the heading **Skipped optional orders** followed by a comma-separated list of skipped order IDs.
-2. For Part B: either no banner is shown or a neutral message indicates no orders were skipped.
-3. The skipped orders list is consistent with the solver's objective function (which includes a penalty per skipped optional order).
-4. Downloading the job JSON via the **Download JSON** button includes the `unserved_optional` field in the result data.
+1. **Part A:** Run A and Run B produce identical objective values and identical route structures (vehicle routes, loader routes, unserved optional orders).
+2. **Part B:** Run C may produce a different objective value or route structure compared to Run A, confirming that the seed influences the randomized parts of the solver.
+3. The **Seed** field is visible in the **Job Detail** header.
+4. The seed parameter is accepted by the API and persisted with the job record.
 
-### Execution history
+### Execution Record
 
 | Date | Tester | Result | Evidence |
 |---|---|---|---|
-| 2026-07-02 | Customer | Passed — skipped optional orders correctly identified and displayed in a clear yellow banner. The customer confirmed this addresses prior feedback about transparency in which orders were not served. | Private UAT recording (submitted via Moodle) |
+| 2026-07-02 | Customer | Passed — same seed produced identical results across two runs; different seed produced a different route structure. The customer confirmed that reproducibility enables consistent benchmarking and debugging. | Private UAT recording (submitted via Moodle) |
+| 2026-07-10 | Customer | Passed — Week 6 trial reconfirmed. Same seed produces identical results; different seed yields different routes. Customer confirmed acceptance. | Private UAT recording (submitted via Moodle) |
 
 ---
 
@@ -311,7 +293,7 @@ Do not commit the following to the public repository:
 | UAT-02 | Validate a custom solution through the validator | Passed |
 | UAT-03 | Retrieve previously submitted solutions from history | Passed |
 | UAT-04 | View route visualization for each vehicle and loader | Passed |
-| UAT-05 | Review the skipped optional orders report | Passed |
+| UAT-05 | Reproducible solver results with fixed seed | Passed |
 
 ### Summary of results
 
@@ -319,7 +301,7 @@ Do not commit the following to the public repository:
 |---|---|---|---|
 | 5 | 5 | 0 | 0 |
 
-All 5 scenarios — 3 carry-over from MVP v1 and 2 new for Sprint 3 — passed without critical failures.
+All 5 scenarios — 3 carry-over from MVP v1 and 2 new for Sprint 5 — passed without critical failures.
 
 ### Customer feedback points
 
@@ -341,3 +323,69 @@ All 5 scenarios — 3 carry-over from MVP v1 and 2 new for Sprint 3 — passed w
 | PBI-UAT-01 | Add one-click job export (input + result + validation) | Medium | Customer requested offline review capability. |
 | PBI-UAT-02 | Optimize route map SVG rendering for large instances | Low | Acceptable for MVP v2; needed for scalability. |
 | PBI-UAT-03 | Add coordinate axis labels to route map | Low | Nice-to-have for advanced analysis. |
+
+---
+
+## Week 6 UAT Summary
+
+**Session date:** 2026-07-10
+
+**Tester:** Customer
+
+**Recording:** Private UAT recording (submitted via Moodle)
+
+### Scenarios executed
+
+| ID | Title | Result |
+|---|---|---|
+| UAT-01 | Submit a delivery instance and receive an optimised solution | Passed |
+| UAT-02 | Validate a custom solution through the validator | Passed |
+| UAT-03 | Retrieve previously submitted solutions from history | Passed |
+| UAT-04 | View route visualization for each vehicle and loader | Passed |
+| UAT-05 | Reproducible solver results with fixed seed | Passed |
+
+### Summary of results
+
+| Total | Passed | Failed | Blocked |
+|---|---|---|---|
+| 5 | 5 | 0 | 0 |
+
+All 5 scenarios were reconfirmed during the Week 6 trial session. All scenarios passed — no regressions were observed since the Sprint 5 UAT (2026-07-02).
+
+### Customer feedback points
+
+1. **All 5 scenarios accepted.** The customer confirmed that all acceptance criteria remain satisfied and the product meets the expected behavior for trial use.
+2. **Solver determinism verified.** The customer noted that same-seed reproducibility now works correctly (previously inconsistent in Sprint 5 review), confirming the fix from commits `d3181fe` and `da1bb98`.
+3. **Product access via screen sharing.** The customer acknowledged that external deployment access is still pending but screen sharing remains an acceptable interim method for the trial.
+
+### Items still needing improvement
+
+1. **External customer access.** Deployment access outside the university network is still unresolved and tracked in [#90](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/90). The customer confirmed this is acceptable for the Week 6 trial but expects a resolution for Week 7 transition.
+2. **Route map responsiveness on large instances.** Previously noted SVG rendering lag on large instances remains deferred; acceptable for trial use.
+
+### Resulting PBIs and issues for the Product Backlog
+
+| ID | Title | Priority | Notes |
+|---|---|---|---|
+| PBI-W6-01 | Resolve external customer deployment access for Week 7 transition | High | Customer confirmed this is the critical path for transition confirmation. |
+
+---
+
+## Week 7 Review Record
+
+**Session date:** 2026-07-16
+
+**Evidence type:** Sanitized meeting notes derived from the private recording transcript. This was a discussion/review record, not a complete customer execution of the final product.
+
+| Changed behavior or transition topic | Result | Evidence and follow-up |
+|---|---|---|
+| Actual execution-duration display on Job Detail | Not executed — discussed | The team told the customer the duration display had been added. No customer-side execution was recorded. Implementation evidence is [PR #205](https://github.com/Team-9-swp/Route-optimization-Platform-swp/pull/205). |
+| Two-decimal Objective display | Not executed — discussed | The team told the customer rounding had been added to avoid long floating-point tails. No customer-side execution was recorded. Implementation evidence is [PR #205](https://github.com/Team-9-swp/Route-optimization-Platform-swp/pull/205). |
+| Finished interactive route and schedule visualization | Blocked — follow-up review required | The visualization was still being finalized and was not demonstrated in its finished state during the meeting. Follow-up remains in [#188](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/188). Later team type-check/build evidence is not customer UAT. |
+| Customer-side reproduction and transition | Not executed | The customer emphasized reproducing the product and obtaining comparable results in their own internal/local environment. Successful customer-side deployment or operation is not verified; follow-up remains in [#187](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/187). |
+
+**Handover level:** `Ready for independent use`
+
+**Customer-confirmation status:** `Accepted with follow-up items`
+
+The discussion supports readiness and usefulness, but it does not replace customer execution of the changed behavior. Private recording links, exact timecodes, customer identity, and consent evidence remain outside the public repository.
