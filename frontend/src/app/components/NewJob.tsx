@@ -86,13 +86,13 @@ export function NewJob({ navigate }: Props) {
 
     setSubmitting(true);
     try {
-      const response = await submitJob(instance, {
+      await submitJob(instance, {
         seed: Number(seed) || 42,
         name: name || undefined,
         autoValidate,
         timeLimit: timeLimitNum,
       });
-      navigate({ name: "job-detail", id: response.job_id });
+      navigate({ name: "dashboard" });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to submit job");
     } finally {
