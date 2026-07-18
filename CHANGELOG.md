@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Improved interactive vehicle and loader route visualization with route selection, stable colours, top-three filtering, sorting, route details, and focused map controls.
+- Interactive vehicle and loader schedule with layer controls, lane selection, tooltips, and zoom.
+- Actual solver execution duration on Job Detail, calculated from the existing job timestamps.
+- Restored JSON problem-instance upload on New Job with file selection, drag-and-drop, validation, filename feedback, and readable errors.
+
+### Changed
+
+- Job Detail and its validation result display finite Objective values with two decimal places without changing stored or downloaded values.
+
 ## [1.4.0] - 2026-07-12
 
 ### Added
