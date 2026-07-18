@@ -25,21 +25,32 @@ Assignment 6 adds two formal Sprint containers: **Sprint 4** (Week 6) prepares a
 
 - **Milestone:** [Sprint 5 — Week 7 Final Transition and MVP v3](https://github.com/Team-9-swp/Route-optimization-Platform-swp/milestone/9)
 - **Dates:** 2026-07-13 — 2026-07-19
-- **Sprint Goal:** Complete follow-up maintenance based on the Week 6 customer trial, resolve remaining product and transition blockers, verify independent customer access, update customer-facing documentation, confirm the final handover outcome, and deliver the final course version, **MVP v3**.
-- **Selected scope:** 13 issues, **58 Story Points**. Duplicate planning issue #182 is excluded; [#183](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/183) is canonical.
+- **Sprint Goal:** Complete Week 6 follow-up maintenance, improve the final user-facing workflow, document the actual transition state, and prepare a verified final course increment for **MVP v3**.
+- **Canonical selected size:** **73 Story Points**. The calculation counts #183 and #185–#195 as the course-task scope (53 SP), excludes duplicate #182 and treats #184 as a non-additive coordination wrapper, then adds the concrete product PBIs #201 (3 SP), #202 (1 SP), #203 (8 SP), #204 (5 SP), and #206 (3 SP), for another 20 SP. This preserves #204 as the canonical concrete maintenance PBI without counting the overlapping #184 wrapper twice.
 
-**Selected Sprint 5 issues:**
+**Live metadata state (audited 2026-07-19):** #182–#195, #201, #202, #203, #204, and #206 are assigned to milestone 9 and are present in the `Route Optimizer Backlog` Project. Status, assignee, Story Points, MVP Version, MoSCoW, milestone, and issue type are populated where supported. The Project's system `Reviewers` field is not editable for issue items; reviewer evidence remains in issue bodies and merged PR reviews. The existing `Sprint 5 Backlog` view still has the stale `Sprint 5 — MVP v2` filter because GitHub's available ProjectV2 API exposes no view-update mutation; the view therefore requires the documented manual filter change.
 
-- **Planning and maintenance:** [#183 — refine and plan Sprint 5](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/183), [#184 — follow-up maintenance, including the driver return-to-depot cost edge case](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/184), [#185 — automated solver determinism verification](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/185).
-- **Documentation and transition:** [#186 — final customer-facing documentation review](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/186), [#187 — verify final product transition and independent customer access](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/187).
-- **UAT and Sprint Review:** [#188 — Week 7 UAT](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/188), [#189 — Week 7 Sprint Review](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/189).
-- **MVP v3 release and demo:** [#190 — final MVP v3 release](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/190), [#191 — public sanitized MVP v3 demo](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/191).
-- **Retrospective, reflection, reporting, and Demo Day:** [#192 — Week 7 retrospective](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/192), [#193 — reflection and LLM report](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/193), [#194 — Week 7 public report and Moodle evidence](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/194), [#195 — final Demo Day presentation](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/195).
+### Completed product PBIs
 
-All selected Sprint 5 issues remain open with Work Status `To Do`. Completion and release evidence will be recorded only after the corresponding Week 7 work is performed.
+- [#201 — actual execution duration on Job Detail](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/201) (3 SP), merged in [PR #205](https://github.com/Team-9-swp/Route-optimization-Platform-swp/pull/205).
+- [#202 — two-decimal Objective presentation on Job Detail and its validation result](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/202) (1 SP), merged in [PR #205](https://github.com/Team-9-swp/Route-optimization-Platform-swp/pull/205).
+- [#203 — interactive vehicle/loader route plan and schedule](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/203) (8 SP), merged in [PR #205](https://github.com/Team-9-swp/Route-optimization-Platform-swp/pull/205).
+- [#206 — restored JSON file upload](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/206) (3 SP), merged in [PR #207](https://github.com/Team-9-swp/Route-optimization-Platform-swp/pull/207).
+
+### In progress or blocked
+
+- **Planning:** [#183](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/183) is the canonical planning task. The roadmap, milestone, Project items, and supported fields are updated; only the unsupported API update of the stale `Sprint 5 Backlog` view filter remains.
+- **Maintenance and verification:** coordination wrapper [#184](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/184), verification task [#185](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/185), and canonical concrete cost-fix PBI [#204](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/204) remain open. #184 is tracked but is not added to the Story Point total separately from #204.
+- **Documentation, transition, and UAT:** [#186](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/186), [#187](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/187), and [#188](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/188) remain open because customer-side deployment/reproduction, the final visualization review, and complete documentation acceptance are not verified.
+- **Sprint Review:** [#189](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/189) has a sanitized public transcript and summary. Recording and sanitized-transcript publication permission are confirmed; private recording details and Moodle-only activity timecodes still require private submission evidence.
+- **Final delivery work:** [#190](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/190), [#191](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/191), [#192](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/192), [#193](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/193), [#194](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/194), and [#195](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/195) remain selected work. No reliable evidence identifies #194's actual implementer, so its ownership remains unassigned pending manual team confirmation; its report scope was not performed here.
+
+The closed duplicate [#182](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/182) remains in milestone history but is excluded from canonical scope and totals.
 
 ## Final course outcome
 
-By the end of Week 7, the product should reach **MVP v3**: a runnable and accessible Route Optimization Platform with updated customer-facing documentation, current handover documentation, verified access instructions, final UAT / Sprint Review evidence, a public sanitized demo video, and a final SemVer release from the protected default branch.
+The implemented MVP v3 candidate adds the interactive vehicle/loader route plan and schedule, actual execution duration, readable Objective presentation, and restored JSON upload while preserving the API, database, and saved jobs. The current handover level is **Ready for independent use** and the customer-confirmation status is **Accepted with follow-up items**.
+
+Final MVP v3 release, customer-side reproduction evidence, finished-visualization review, public demo, and remaining course artifacts are still required before the final course outcome can be described as complete.
 
 No speculative post-course version planning is included. Remaining work, if any, will be documented as limitations, blockers, or follow-up items in `docs/customer-handover.md` and the Week 7 report.
