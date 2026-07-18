@@ -129,9 +129,14 @@ export function Dashboard({ navigate }: Props) {
                   </td>
                   <td style={{ padding: "14px 16px" }}>
                     <button
-                      onClick={() => navigate({ name: "job-detail", id: job.job_id })}
-                      className="flex items-center gap-1 text-sm font-medium hover:underline"
-                      style={{ color: "#2563EB", background: "none", border: "none", cursor: "pointer", padding: 0 }}
+                      onClick={() => {
+                        if (job.status === "completed") navigate({ name: "job-detail", id: job.job_id });
+                      }}
+                      disabled={job.status !== "completed"}
+                      aria-label={job.status === "completed" ? `View job ${job.job_id}` : `Job ${job.job_id} is not completed yet`}
+                      title={job.status === "completed" ? "View completed job" : "Available when the solver has completed"}
+                      className="flex items-center gap-1 text-sm font-medium enabled:hover:underline disabled:opacity-40"
+                      style={{ color: "#2563EB", background: "none", border: "none", cursor: job.status === "completed" ? "pointer" : "not-allowed", padding: 0 }}
                     >
                       <Eye size={14} />
                       View
