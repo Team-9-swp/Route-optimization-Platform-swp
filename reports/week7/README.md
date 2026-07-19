@@ -134,8 +134,38 @@ The table uses public GitHub usernames only. Private identity fields and univers
 
 ## Screenshot evidence
 
-The required Week 7 screenshots will be added before the final Moodle submission. Screenshot evidence is tracked in issue [#194](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/194) and is intentionally not represented by placeholder or fabricated image files.
+The following sanitized screenshots provide the public Week 7 visual evidence. They contain public GitHub metadata or local product URLs only; they do not demonstrate customer-side deployment or expose private access instructions.
+
+### Sprint 5 board view
+
+![Sprint 5 board filtered to the Week 7 milestone](images/sprint5-board-view.png)
+
+The board screenshot records the Project fields and issue status visible at capture time. It is planning/traceability evidence, not SemVer release evidence.
+
+### Sprint 5 milestone
+
+![Sprint 5 Week 7 milestone](images/sprint5-milestone.png)
+
+The milestone screenshot records the closed-item view visible at capture time. The latest published GitHub Release remains `v1.4.0`; closing a release issue does not itself publish a release.
+
+### Reviewed implementation PR
+
+![Reviewed and merged PR 205](images/reviewed-pr-205.png)
+
+PR #205 shows an issue-linked implementation, checks, review by a different participant, and merge evidence for the route-visualization work.
+
+### Local product access
+
+![Final product route-plan view on localhost](images/final-product-access.png)
+
+The local product view shows a completed and validated job, execution duration, Objective presentation, and the interactive route plan. It does not claim customer-side operation.
+
+### Local API health check
+
+![Local API health endpoint returning status ok](images/final-deployment-health.png)
+
+The health screenshot verifies the local `GET /health` response only. It is not evidence of customer-side or public production deployment.
 
 ## Final product status
 
-The final Assignment 6 product state is prepared, the customer documentation and reached handover scope are accepted, and the public sanitized demo is available. The final SemVer release, screenshot set, commit-hash permalinks, and private Moodle wrapper remain pending; private slides/rehearsal evidence stays outside the public repository.
+The final Assignment 6 product state is prepared, the customer documentation and reached handover scope are accepted, the public sanitized demo is available, and the public screenshot set is included above. The final SemVer release remains unpublished; stable commit permalinks and private Moodle/slides/rehearsal evidence stay outside the public repository.
