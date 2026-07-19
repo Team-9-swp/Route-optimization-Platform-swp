@@ -133,6 +133,12 @@ The table uses public GitHub usernames only. Private identity fields and univers
 
 The following sanitized screenshots provide the public Week 7 visual evidence. They contain public GitHub metadata or local product URLs only; they do not demonstrate customer-side deployment or expose private access instructions.
 
+### Published MVP v3 release
+
+![Published v1.5.0 MVP v3 GitHub Release](images/final-release-v1.5.0.png)
+
+The release screenshot records the published [`v1.5.0 — MVP v3`](https://github.com/Team-9-swp/Route-optimization-Platform-swp/releases/tag/v1.5.0) GitHub Release and its public release notes.
+
 ### Sprint 5 board view
 
 ![Sprint 5 board filtered to the Week 7 milestone](images/sprint5-board-view.png)
