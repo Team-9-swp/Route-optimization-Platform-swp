@@ -74,7 +74,7 @@ The customer confirmed the sufficiency of the root README, handover record, depl
 | Clarify handover and support end | [#186](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/186) | Done | Support boundary and final acceptance are documented in the handover. |
 | Customer-side reproduction with comparable results | [#187](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/187) | Not executed | Readiness and documentation are accepted, but independent customer operation is not claimed. |
 
-Deferred or non-executed feedback is not presented as completed UAT. Customer-side reproduction remains outside the available public evidence, and final SemVer packaging remains open in [#190](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/190).
+Deferred or non-executed feedback is not presented as completed UAT. Customer-side reproduction remains outside the available public evidence; final SemVer packaging is recorded in [#190](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/190).
 
 ## Week 7 UAT summary
 
@@ -110,11 +110,8 @@ The link was verified without authentication as a Google Drive view/download for
 
 ## Release status
 
-- **Final SemVer MVP v3 release:** Pending — tracked in [#190](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/190).
-- **Latest published release:** [`v1.4.0`](https://github.com/Team-9-swp/Route-optimization-Platform-swp/releases/tag/v1.4.0).
-- **Changelog:** [Unreleased changes](../../CHANGELOG.md#unreleased).
-
-No link to a future release is included.
+- **Final SemVer MVP v3 release:** [`v1.5.0`](https://github.com/Team-9-swp/Route-optimization-Platform-swp/releases/tag/v1.5.0), tracked in [#190](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/190).
+- **Changelog:** [`1.5.0` changes](../../CHANGELOG.md#150---2026-07-19).
 
 ## Demo Day preparation
 
@@ -146,7 +143,7 @@ The board screenshot records the Project fields and issue status visible at capt
 
 ![Sprint 5 Week 7 milestone](images/sprint5-milestone.png)
 
-The milestone screenshot records the closed-item view visible at capture time. The latest published GitHub Release remains `v1.4.0`; closing a release issue does not itself publish a release.
+The milestone screenshot records the closed-item view visible at capture time. It is planning/traceability evidence; the separate [`v1.5.0` GitHub Release](https://github.com/Team-9-swp/Route-optimization-Platform-swp/releases/tag/v1.5.0) is the release evidence.
 
 ### Reviewed implementation PR
 
@@ -168,4 +165,4 @@ The health screenshot verifies the local `GET /health` response only. It is not 
 
 ## Final product status
 
-The final Assignment 6 product state is prepared, the customer documentation and reached handover scope are accepted, the public sanitized demo is available, and the public screenshot set is included above. The final SemVer release remains unpublished; stable commit permalinks and private Moodle/slides/rehearsal evidence stay outside the public repository.
+The final Assignment 6 product state is published as [`v1.5.0`](https://github.com/Team-9-swp/Route-optimization-Platform-swp/releases/tag/v1.5.0), the customer documentation and reached handover scope are accepted, the public sanitized demo is available, and the public screenshot set is included above. Private Moodle/slides/rehearsal evidence stays outside the public repository.

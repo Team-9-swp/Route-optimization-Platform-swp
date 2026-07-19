@@ -5,7 +5,7 @@ This file is the predictable instruction file for coding agents working in this 
 ## Repository at a glance
 
 - **Product:** Route Optimization Platform for the BIA CVRPTW variant — FastAPI backend, PostgreSQL persistence, PyVRP/Nevergrad solver (`solver.py`), hard-constraint validator (`backup/validator.py`, exposed via `app/validation.py`), and a React + TypeScript + Vite frontend under `frontend/`.
-- **Default branch:** `main` (protected, always deployable). Releases are SemVer `vX.Y.Z` tags from `main`; latest is `v1.4.0`.
+- **Default branch:** `main` (protected, always deployable). Releases are SemVer `vX.Y.Z` tags from `main`; latest is `v1.5.0`.
 - **Source of truth for process:** [`docs/development-process.md`](./docs/development-process.md).
 
 ## Key locations

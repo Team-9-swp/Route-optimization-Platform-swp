@@ -33,7 +33,7 @@ The prepared final product state corresponds to **MVP v3**: it includes the inte
 
 - **Handover level:** `Ready for independent use`
 - **Customer-confirmation status:** `Accepted`
-- **Latest published release:** `v1.4.0`
-- **Final MVP v3 SemVer packaging/release:** Pending — tracked in [#190](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/190)
+- **Latest published release:** [`v1.5.0`](https://github.com/Team-9-swp/Route-optimization-Platform-swp/releases/tag/v1.5.0)
+- **Final MVP v3 SemVer packaging/release:** Completed through [#190](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/190)
 
-No speculative post-course version is planned here. Remaining work is limited to actual open evidence/release tasks and documented operational limitations, not a fabricated future release.
+No speculative post-course version is planned here. Remaining work is limited to actual open evidence tasks and documented operational limitations, not a fabricated future release.

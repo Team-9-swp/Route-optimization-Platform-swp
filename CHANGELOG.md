@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-07-19
+
 ### Added
 
 - Improved interactive vehicle and loader route visualization with route selection, stable colours, top-three filtering, sorting, route details, and focused map controls.
@@ -129,7 +131,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - JobDetail route map: custom SVG zoom/pan, per-route visibility filter, color legend and body-scroll lock on hover.
 
-[Unreleased]: https://github.com/Team-9-swp/Route-optimization-Platform-swp/compare/v1.4.0...HEAD
+[Unreleased]: https://github.com/Team-9-swp/Route-optimization-Platform-swp/compare/v1.5.0...HEAD
+[1.5.0]: https://github.com/Team-9-swp/Route-optimization-Platform-swp/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/Team-9-swp/Route-optimization-Platform-swp/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/Team-9-swp/Route-optimization-Platform-swp/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/Team-9-swp/Route-optimization-Platform-swp/compare/v1.1.0...v1.2.0
