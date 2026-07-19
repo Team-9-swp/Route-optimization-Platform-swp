@@ -1,75 +1,61 @@
 # Sprint Retrospective — Week 7 (Sprint 5)
 
-> **DRAFT — to be completed during the Week 7 Sprint Retrospective.**
-> This artifact is prepared in advance with the Sprint 5 context that is
-> already known. The inspection sections (`What went well`, `What did not go
-> well`, and the final `Action points`) record the team's actual observations
-> and must be filled **after** the Sprint Review, before this draft banner is
-> removed.
-
 **Project:** Route Optimization Platform
-**Team:** Team-9-swp
+
 **Sprint:** Sprint 5 — Week 7 Final Transition and MVP v3
+
 **Sprint dates:** 2026-07-13 — 2026-07-19
+
 **Milestone:** [Sprint 5 — Week 7 Final Transition and MVP v3](https://github.com/Team-9-swp/Route-optimization-Platform-swp/milestone/9)
 
-## Sprint context
-
-- **Sprint Goal (from roadmap):** Complete follow-up maintenance based on the
-  Week 6 customer trial, resolve remaining product and transition blockers,
-  verify independent customer access, update customer-facing documentation,
-  confirm the final handover outcome, and deliver the final course version,
-  **MVP v3**.
-- **Selected scope:** 13 issues, 58 Story Points (canonical planning issue
-  [#183](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/183)).
-- **Intended release:** [`v1.5.0`](https://github.com/Team-9-swp/Route-optimization-Platform-swp/releases)
-  (MVP v3), SemVer-higher than the Week 6 trial release `v1.4.0`, from protected
-  `main`.
+**Canonical selected size:** `73 Story Points`, documented in [#183](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/183)
 
 ## What went well
 
-<!-- Complete after the Sprint Review. -->
+- The final user-facing workflow improved materially: actual execution duration, two-decimal Objective presentation, interactive route/schedule views, and JSON upload were merged through [PR #205](https://github.com/Team-9-swp/Route-optimization-Platform-swp/pull/205) and [PR #207](https://github.com/Team-9-swp/Route-optimization-Platform-swp/pull/207).
+- Solver follow-up work was merged through [PR #200](https://github.com/Team-9-swp/Route-optimization-Platform-swp/pull/200), and the linked maintenance issues [#184](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/184) and [#204](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/204) were closed.
+- The team kept readiness separate from customer-side operation. The final handover record states `Ready for independent use` without claiming an unverified customer deployment.
+- The customer confirmed that the customer-facing documentation, transition model, final corrections, and reached handover scope are sufficient and accepted.
+- The public evidence set uses sanitized documents and a separately verified public demo link; private recording/access information remains outside the repository.
 
 ## What did not go well
 
-<!-- Complete after the Sprint Review. -->
+- Sprint planning needed correction from the earlier 58 SP figure to the canonical **73 Story Points**, and overlapping wrapper/concrete issues made the total harder to audit.
+- The improved visualization was not ready for customer execution during the recorded Sprint Review. Later merge and build evidence is team verification, not customer UAT.
+- Customer-side deployment and independent result reproduction were not executed, so a stronger transition level cannot be supported.
+- Several issue bodies were closed with stale `To Do` or `In Progress` fields, creating inconsistent evidence that required final cleanup.
+- [#185](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/185) was closed with checked criteria, but final repository inspection did not locate a dedicated same-seed-twice regression test by name. Issue closure and inspectable code evidence should have been reconciled before completion.
+- Final release, screenshot, and Moodle packaging work did not fit into this documentation PR and remains explicitly open in [#190](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/190) and [#194](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/194).
 
-## What the team changed or attempted to change based on the previous Sprint Retrospective, and what results they observed
+## What changed based on the Week 6 retrospective
 
-From the [Week 6 (Sprint 4) retrospective](../week6/retrospective.md), the team
-carried these action items into Sprint 5. The planned resolution for each is
-recorded below; the **observed result** must be confirmed when this section is
-finalized.
+The [Week 6 retrospective](../week6/retrospective.md) identified determinism protection, the return-to-depot cost edge case, visualization validation, and meeting/access preparation.
 
-1. **Add determinism verification to CI** (Week 6 action, owner: Team, target:
-   Sprint 5). Run the solver twice with the same seed and assert identical
-   results to protect the Week 6 determinism fix.
-   - Planned work item:
-     [#185 — automated solver determinism verification](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/185).
-   - **Observed result:** _(to confirm)_.
+1. **Determinism verification:** [#185](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/185) is closed, but the expected dedicated regression test is not readily identifiable in the repository. The result is an evidence-quality gap, not a basis for a stronger claim.
+2. **Return-to-depot maintenance:** solver changes were merged in [PR #200](https://github.com/Team-9-swp/Route-optimization-Platform-swp/pull/200), and [#204](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/204) is closed with its acceptance criteria checked.
+3. **Visualization:** the implementation was expanded and merged in [PR #205](https://github.com/Team-9-swp/Route-optimization-Platform-swp/pull/205). The observed result is team-verified functionality, while customer-executed finished-product UAT remains absent.
+4. **Review evidence:** a sanitized [summary](sprint-review-summary.md) and [transcript](sprint-review-transcript.md) were prepared. Exact timecodes and the private recording remain Moodle-only.
 
-2. **Fix driver return-to-depot cost calculation** (Week 6 action, owner:
-   Algorithm team, target: Sprint 5). Investigate and fix the edge case where
-   vehicle routes split by depot returns (zeros) are counted as separate
-   drivers.
-   - Planned work item:
-     [#184 — Sprint 5 follow-up maintenance](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/184).
-   - **Observed result:** _(to confirm)_.
+## Observations and results
 
-3. **Validate the Gantt chart visualisation** (Week 6 action, owner: Frontend
-   team, target: Sprint 5). The implementation was reported complete in Week 6;
-   verify it during customer-side testing.
-   - **Observed result:** _(to confirm)_.
+- Small presentation improvements mattered alongside algorithm work: duration and Objective formatting directly improve interpretability without changing stored result values.
+- Closing issues is not sufficient traceability when the issue body, code, test name, and PR links disagree. Final audits must check all four.
+- The customer can accept documentation and the reached transition scope while still intending to reproduce the product later. Acceptance, readiness, and operation are different evidence categories.
+- A final course increment can be prepared before its SemVer packaging exists. Release status must follow the actual tag/release, not the planned version name.
 
-4. **Verify Zoom access for the Week 7 meeting** (Week 6 action, owner: Team
-   lead, target: before the Week 7 meeting). Confirm Zoom works for all
-   participants as a backup meeting platform.
-   - **Observed result:** _(to confirm)_.
+## Lessons from final transition and handover
 
-## Action points
+- State the support boundary, access model, operational limitations, and evidence classification in the handover itself; do not rely on meeting context.
+- Keep administrative confirmation separate from technical follow-up. Customer acceptance is closed, while customer-side execution remains an optional follow-up and technical limitations remain visible.
+- Public artifacts should link sanitized evidence and clearly point private recording, identity, and exact-time evidence to the private submission channel.
 
-<!-- This is the final Sprint of the course, so action points are framed as
-     post-course follow-ups rather than a next-Sprint backlog. Add one or two
-     concrete follow-up actions after the retrospective. -->
+## Lessons from final product delivery
 
-_To be added after the Week 7 Sprint Retrospective._
+- Merge current `main` before finalizing evidence so reports describe the actual product, not an obsolete branch snapshot.
+- Treat release packaging as its own gated activity. A prepared MVP v3 product state does not imply that a final tag or GitHub Release exists.
+- Plan evidence work early enough to capture screenshots, stable permalinks, and customer execution while the relevant environment is available.
+
+## Post-course maintenance recommendations
+
+1. Add or clearly identify a fast automated regression that runs the solver twice with the same fixture/seed and compares objective, vehicle routes, loader routes, and unserved optional orders; link the exact test from [#185](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/185).
+2. Maintain the Docker Compose quick start, troubleshooting steps, dependency updates, and security patches; record any reproducible post-course defects as sanitized GitHub issues without promising indefinite operational support.

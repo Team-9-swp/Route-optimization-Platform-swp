@@ -28,11 +28,11 @@ The system has three services: a FastAPI backend (`api`), a PostgreSQL database 
 | Hosted trial deployment | University VM, reachable **only from the Innopolis campus network** |
 | Customer-side deployment | **Not verified** — the customer expects to reproduce the product in their own environment |
 | **Handover level reached** | **Ready for independent use** |
-| **Customer-confirmation status** | **Accepted with follow-up items** |
+| **Customer-confirmation status** | **Accepted** |
 
 **Handover level: `Ready for independent use`.** The source repository and Docker Compose instructions are the main handover path. The product can be built and run independently, but customer-side deployment or operation has not been verified.
 
-**Customer-confirmation status: `Accepted with follow-up items`.** The customer gave positive overall feedback and expects to reproduce results in their own environment. Follow-up remains for customer-side reproduction, review of the finished visualization, explicit support-window documentation, and open product/deployment work.
+**Customer-confirmation status: `Accepted`.** The customer confirmed that the current customer-facing documentation is sufficient, the run/deployment guidance and transition model are clear, the final changes and product state are accepted, and the documented package is suitable for the reached level of independent use. This acceptance does not assert that the customer deployed, operated, health-checked, or reproduced results from the product independently.
 
 ## 3. How the customer accesses and uses the product
 
@@ -121,19 +121,19 @@ The product is configured through environment variables and the Compose files; *
 - The hosted deployment is **campus-network-only**; external customer access requires the customer to be on the network/VPN or use an agreed temporary tunnel.
 - The customer has **not been verified** as having deployed or operated the product on their side.
 - Solver quality depends on `time_limit` and instance size; very large or tightly-constrained instances may fail to find a feasible solution.
-- The finished interactive route and schedule visualization was not demonstrated to the customer during the 2026-07-16 meeting and needs follow-up review.
-- A minor cost-calculation edge case exists where driver return-to-depot routes split by zeros are counted as separate drivers (deferred to Sprint 5).
+- The finished interactive route and schedule visualization was not demonstrated to the customer during the 2026-07-16 meeting; the implementation is team-verified but not customer-executed UAT.
 - This is a course project; long-term production hardening (HA, backups, monitoring) is out of scope.
 
 ## 10. Remaining actions and blockers
 
 | Classification | Follow-up item | Current evidence or action |
 |---|---|---|
-| Team-side | Provide the final merged visualization for customer review | The finished visualization was not shown during the Week 7 meeting; track through [#188](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/188). |
-| Team-side | Resolve or explicitly defer the driver return-to-depot Objective issue | Tracked by [#204](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/204). |
-| Team-side | Keep run, troubleshooting, limitations, and support-end documentation current through final delivery | Track documentation review in [#186](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/186). |
+| Technical limitation | Finished-visualization customer execution is not recorded | The implementation is merged in [PR #205](https://github.com/Team-9-swp/Route-optimization-Platform-swp/pull/205); the Week 7 review record remains conservative. |
+| Technical limitation | Final SemVer packaging is not published | The final product state is prepared, but release creation remains tracked in open [#190](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/190). |
 | Customer-side | Run the repository/Compose stack and compare representative results with the team's results | Customer expectation was discussed, but successful reproduction is not yet inspectable; track transition evidence in [#187](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/187). |
 | External | Customer network, environment, and organizational timing may affect deployment or follow-up contact | Record concrete environment problems in #187 without publishing private access details. |
+
+Administrative confirmation items are closed: the customer accepted the documentation set, transition model, final handover, and final corrections. Customer-side execution remains a follow-up activity rather than a blocker to that acceptance.
 
 Reaching `Independently used by customer` requires inspectable evidence that the customer ran the product independently. Reaching `Deployed or operated on customer side` additionally requires customer-side deployment or operational evidence. Neither stronger level is claimed here.
 
