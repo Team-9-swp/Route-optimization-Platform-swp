@@ -4,7 +4,8 @@
 - **Participants:** customer representative and project team members
 - **Public evidence type:** sanitized English summary
 - **Handover level:** `Ready for independent use`
-- **Customer-confirmation status:** `Accepted with follow-up items`
+- **Customer-confirmation status at the meeting:** `Accepted with follow-up items`
+- **Final customer-confirmation status:** `Accepted`
 
 Private recording links, exact timecodes, customer identity, credentials, and private access details are intentionally excluded.
 
@@ -31,12 +32,14 @@ Reproducibility remained important: the customer wanted the product to run succe
 
 The customer asked how follow-up contact and support would work after delivery. The support duration and the point when regular team support ends were not clearly documented. The customer recommended explicitly documenting final transfer and the end of support.
 
-The conservative classification is:
+The conservative classification recorded at the meeting was:
 
 - **Handover level:** `Ready for independent use`
 - **Customer-confirmation status:** `Accepted with follow-up items`
 
 No claim is made that the customer independently used, deployed, or operated the final product.
+
+After the meeting, the customer confirmed the sufficiency of the customer-facing documentation, transition model, final handover, final corrections, and Assignment 6 result. The final status is therefore `Accepted`. This later administrative confirmation does not convert customer-side deployment or product scenarios into executed evidence.
 
 ## Customer feedback
 
@@ -46,15 +49,15 @@ The customer gave positive overall feedback about the collaboration and the proj
 
 | Classification | Action | Tracking |
 |---|---|---|
-| Team-side | Provide the finished visualization for customer review. | [#188](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/188) |
-| Team-side | Document the support window and the end of regular support. | [#186](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/186), [`docs/customer-handover.md`](../../docs/customer-handover.md) |
+| Team-side | Provide the finished visualization for customer review. | Implementation merged in [PR #205](https://github.com/Team-9-swp/Route-optimization-Platform-swp/pull/205); customer execution was not recorded. |
+| Team-side | Document the support window and the end of regular support. | Completed in [#186](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/186) and [`docs/customer-handover.md`](../../docs/customer-handover.md). |
 | Customer-side | Run/reproduce the product in the customer's environment and compare representative results. | [#187](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/187) |
-| Team-side | Resolve or explicitly defer remaining algorithm/product work, including the driver return-to-depot Objective issue. | [#204](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/204) |
+| Team-side | Resolve or explicitly defer remaining algorithm/product work, including the driver return-to-depot Objective issue. | Closed in [#204](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/204), with solver changes merged in [PR #200](https://github.com/Team-9-swp/Route-optimization-Platform-swp/pull/200). |
 | External | Record environment or network constraints if they affect customer-side reproduction. | [#187](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/187) |
 
 ## Risks and limitations
 
-- Finished-visualization customer UAT is not complete.
+- Finished-visualization customer execution is not recorded; repository verification is team-side evidence.
 - Customer-side deployment, operation, and result reproduction are not verified.
-- The exact support window needs to be communicated with final delivery.
-- Open algorithm, release, demo, and course-evidence tasks remain outside this Sprint Review artifact.
+- The support boundary is documented in the final handover.
+- The final SemVer release and public-report screenshot/Moodle evidence remain outside this Sprint Review artifact.

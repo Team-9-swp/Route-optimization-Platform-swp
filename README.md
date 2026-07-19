@@ -2,7 +2,8 @@
 
 A logistics optimization system for the **BIA CVRPTW** problem variant. The product provides a FastAPI backend, PostgreSQL-backed job history, a PyVRP/Nevergrad solver pipeline, hard-constraint validation, skipped optional order reporting, and a React web interface for dispatchers.
 
-- **Current version:** [`v1.4.0`](https://github.com/Team-9-swp/Route-optimization-Platform-swp/releases/tag/v1.4.0) — Assignment 6 Week 6 trial / handover-candidate release on protected `main`.
+- **Current published version:** [`v1.4.0`](https://github.com/Team-9-swp/Route-optimization-Platform-swp/releases/tag/v1.4.0) — Assignment 6 Week 6 trial / handover-candidate release on protected `main`.
+- **Final course state:** The Assignment 6 / MVP v3 product state has been prepared on `main`; the final SemVer release is tracked separately in [#190](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/190).
 - **Status:** Runnable as a Docker Compose stack. A university-VM deployment exists but is reachable only from the Innopolis campus network; an agreed tunnel may be used during live sessions.
 
 ## Access and documentation
@@ -142,7 +143,7 @@ An externally reachable tunnel such as ngrok may be used only as an agreed acces
 ngrok http 3000
 ```
 
-Issue [#90](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/90) remains the tracking item for deployment/customer access. The latest published release is [`v1.4.0`](https://github.com/Team-9-swp/Route-optimization-Platform-swp/releases/tag/v1.4.0), the Assignment 6 Week 6 trial / handover candidate from protected `main`.
+Issue [#90](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/90) remains the tracking item for deployment/customer access. The latest published release is [`v1.4.0`](https://github.com/Team-9-swp/Route-optimization-Platform-swp/releases/tag/v1.4.0); final MVP v3 SemVer packaging remains pending in [#190](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/190).
 
 Automatic deployment from protected `main` runs after CI passes; see [docs/deployment.md](./docs/deployment.md) for the pipeline, required secrets, manual redeploy, and rollback.
 
@@ -153,6 +154,7 @@ Automatic deployment from protected `main` runs after CI passes; see [docs/deplo
 - [Week 4 Assignment 4 public submission index](./reports/week4/README.md)
 - [Week 5 Assignment 5 public report](./reports/week5/README.md)
 - [Week 6 Assignment 6 public report](./reports/week6/README.md)
+- [Week 7 Assignment 6 public report (MVP v3)](./reports/week7/README.md)
 - [Quality requirements](./docs/quality-requirements.md)
 - [Quality requirement tests](./docs/quality-requirement-tests.md)
 - [Testing strategy and status](./docs/testing.md)

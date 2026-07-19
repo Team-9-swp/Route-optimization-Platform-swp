@@ -424,13 +424,29 @@ All 5 scenarios were reconfirmed during the Week 6 trial session. All scenarios 
 
 | Changed behavior or transition topic | Result | Evidence and follow-up |
 |---|---|---|
-| Actual execution-duration display on Job Detail | Not executed — discussed | The team told the customer the duration display had been added. No customer-side execution was recorded. Implementation evidence is [PR #205](https://github.com/Team-9-swp/Route-optimization-Platform-swp/pull/205). |
-| Two-decimal Objective display | Not executed — discussed | The team told the customer rounding had been added to avoid long floating-point tails. No customer-side execution was recorded. Implementation evidence is [PR #205](https://github.com/Team-9-swp/Route-optimization-Platform-swp/pull/205). |
-| Finished interactive route and schedule visualization | Blocked — follow-up review required | The visualization was still being finalized and was not demonstrated in its finished state during the meeting. Follow-up remains in [#188](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/188). Later team type-check/build evidence is not customer UAT. |
+| Actual execution-duration display on Job Detail | Discussed | The team told the customer the duration display had been added. No customer-side execution was recorded. Implementation evidence is [PR #205](https://github.com/Team-9-swp/Route-optimization-Platform-swp/pull/205). |
+| Two-decimal Objective display | Discussed | The team told the customer rounding had been added to avoid long floating-point tails. No customer-side execution was recorded. Implementation evidence is [PR #205](https://github.com/Team-9-swp/Route-optimization-Platform-swp/pull/205). |
+| Finished interactive route and schedule visualization | Blocked | The visualization was still being finalized and was not demonstrated in its finished state during the meeting. The merged implementation is team-verified; that does not turn it into customer-executed UAT. |
 | Customer-side reproduction and transition | Not executed | The customer emphasized reproducing the product and obtaining comparable results in their own internal/local environment. Successful customer-side deployment or operation is not verified; follow-up remains in [#187](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/187). |
 
 **Handover level:** `Ready for independent use`
 
-**Customer-confirmation status:** `Accepted with follow-up items`
+**Customer-confirmation status at the Sprint Review:** `Accepted with follow-up items`
 
 The discussion supports readiness and usefulness, but it does not replace customer execution of the changed behavior. Private recording links, exact timecodes, customer identity, and consent evidence remain outside the public repository.
+
+### Final Week 7 confirmation
+
+| Confirmation area | Result | Scope |
+|---|---|---|
+| Customer-facing documentation set | Reviewed/Accepted | Root README, handover, deployment, usage, troubleshooting/support, and known limitations were confirmed sufficient. |
+| Reached handover scope and transition model | Reviewed/Accepted | The customer accepted `Ready for independent use` and the documented source/Compose handover path. |
+| Final corrections and Assignment 6 result | Reviewed/Accepted | The final changes and reached product state were accepted. |
+| Merged product behavior | Team-verified | Repository CI/build/test evidence verifies merged changes; this is not relabelled as customer execution. |
+| Customer-side deployment and independent reproduction | Not executed | No inspectable customer-side execution evidence is available. |
+
+**Final handover level:** `Ready for independent use`
+
+**Final customer-confirmation status:** `Accepted`
+
+The final confirmation closes the documentation and administrative acceptance questions. It does not change any product scenario to `Passed by customer` unless the customer actually executed that scenario.
