@@ -118,7 +118,7 @@ No link to a future release is included.
 
 ## Demo Day preparation
 
-Issue [#195](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/195) records the prepared narrative, short pre-recorded demo, speaking-part distribution, Q&A responsibilities, and private slide-deck deliverables. The public repository does not contain the private slide PDF or rehearsal evidence, so this report does not claim an inspectable completed rehearsal.
+Issue [#195](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/195) records the presentation structure, short pre-recorded demo, speaking-part distribution, Q&A responsibilities, and rehearsal preparation. The final slide-deck state, private PDF, seven-minute version, and completed rehearsal are not verified in the public evidence and remain open in #195.
 
 ## Contribution traceability
 
