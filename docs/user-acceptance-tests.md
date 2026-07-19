@@ -7,17 +7,15 @@ This document defines end-user-facing acceptance test scenarios for the Route Op
 ## Table of Contents
 
 - [Active Scenarios](#active-scenarios)
-- [UAT-01: Submit a delivery instance and receive an optimised solution](#uat-01-submit-a-delivery-instance-and-receive-an-optimised-solution)
+- [UAT-01: Submit a delivery instance and receive an optimized solution](#uat-01-submit-a-delivery-instance-and-receive-an-optimized-solution)
 - [UAT-02: Validate a custom solution through the validator](#uat-02-validate-a-custom-solution-through-the-validator)
 - [UAT-03: Retrieve previously submitted solutions from history](#uat-03-retrieve-previously-submitted-solutions-from-history)
 - [UAT-04: View route visualization for each vehicle and loader](#uat-04-view-route-visualization-for-each-vehicle-and-loader)
-- [UAT-05: Reproducible solver results with fixed seed](#uat-05-reproducible-solver-results-with-fixed-seed)
+- [UAT-05: Review the skipped optional orders report](#uat-05-review-the-skipped-optional-orders-report)
+- [UAT-06: Reproducible solver results with fixed seed](#uat-06-reproducible-solver-results-with-fixed-seed)
 - [Sprint 5 UAT Summary](#sprint-5-uat-summary)
 - [Week 6 UAT Summary](#week-6-uat-summary)
-- [UAT-05: Review the skipped optional orders report](#uat-05-review-the-skipped-optional-orders-report)
-- [Sprint 3 UAT Summary](#sprint-3-uat-summary)
-- [Sprint 4 UAT Summary](#sprint-4-uat-summary)
-- [Sprint 5 UAT Summary](#sprint-5-uat-summary)
+- [Week 7 Review Record](#week-7-review-record)
 
 ## Active Scenarios
 
@@ -27,7 +25,8 @@ This document defines end-user-facing acceptance test scenarios for the Route Op
 | UAT-02 | Validate a custom solution through the validator | Passed | High | US-03; QR-FC-01 |
 | UAT-03 | Retrieve previously submitted solutions from history | Passed | High | US-08; QR-RE-01 |
 | UAT-04 | View route visualization for each vehicle and loader | Passed | High | US-10; QR-FC-01 |
-| UAT-05 | Reproducible solver results with fixed seed | Passed | Medium | US-06 |
+| UAT-05 | Review the skipped optional orders report | Passed | Medium | US-09 |
+| UAT-06 | Reproducible solver results with fixed seed | Passed | Medium | US-06 |
 
 ## UAT-01: Submit a Delivery Instance and Receive an Optimized Solution
 
@@ -228,9 +227,55 @@ Private recording URLs, exact UAT/Sprint Review timecodes, customer identity, an
 
 ---
 
-## UAT-05: Reproducible Solver Results with Fixed Seed
+## UAT-05: Review the Skipped Optional Orders Report
 
 **Stable ID:** UAT-05
+
+**Title:** Review the skipped optional orders report
+
+**Traceability:**
+- User story: [US-09 — Skipped optional orders report](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/13)
+
+### Preconditions
+
+1. The application is running.
+2. A problem instance JSON that includes at least one optional order (`"optional": 1`) is available.
+
+### Steps
+
+#### Part A — Scenario with skipped optional orders
+
+1. Open the web interface at `http://localhost:3000`.
+2. Navigate to the **New Job** page.
+3. Upload or paste a problem instance that contains optional orders and may leave some unserved because of its constraints.
+4. Submit the job and wait for completion.
+5. Open the completed job from the **Dashboard**.
+6. Review the **Skipped optional orders** banner above the route map.
+
+#### Part B — Scenario where all optional orders are served
+
+7. Submit an instance where all optional orders fit within constraints.
+8. Open the completed job.
+9. Confirm that no skipped-orders warning is shown, or that the interface states that no optional orders were skipped.
+
+### Expected Result
+
+1. For Part A, a warning identifies the skipped optional order IDs.
+2. For Part B, no warning is shown or a neutral message confirms that no optional orders were skipped.
+3. The report is consistent with the solver result's `unserved_optional` data.
+4. Downloaded job JSON includes `unserved_optional` in the result data.
+
+### Execution Record
+
+| Date | Tester | Result | Evidence |
+|---|---|---|---|
+| 2026-07-02 | Customer | Passed — skipped optional orders were identified and displayed clearly; the customer confirmed that this addressed the earlier transparency feedback. | Private UAT recording (submitted via Moodle) |
+
+---
+
+## UAT-06: Reproducible Solver Results with Fixed Seed
+
+**Stable ID:** UAT-06
 
 **Title:** Reproducible solver results with fixed seed
 
@@ -292,15 +337,16 @@ Private recording URLs, exact UAT/Sprint Review timecodes, customer identity, an
 | UAT-02 | Validate a custom solution through the validator | Passed |
 | UAT-03 | Retrieve previously submitted solutions from history | Passed |
 | UAT-04 | View route visualization for each vehicle and loader | Passed |
-| UAT-05 | Reproducible solver results with fixed seed | Passed |
+| UAT-05 | Review the skipped optional orders report | Passed |
+| UAT-06 | Reproducible solver results with fixed seed | Passed |
 
 ### Summary of results
 
 | Total | Passed | Failed | Blocked |
 |---|---|---|---|
-| 5 | 5 | 0 | 0 |
+| 6 | 6 | 0 | 0 |
 
-All 5 scenarios — 3 carry-over from MVP v1 and 2 new for Sprint 5 — passed without critical failures.
+All 6 scenarios passed without critical failures. The stable IDs now preserve skipped-orders reporting as UAT-05 and identify fixed-seed reproducibility separately as UAT-06.
 
 ### Customer feedback points
 
@@ -341,7 +387,7 @@ All 5 scenarios — 3 carry-over from MVP v1 and 2 new for Sprint 5 — passed w
 | UAT-02 | Validate a custom solution through the validator | Passed |
 | UAT-03 | Retrieve previously submitted solutions from history | Passed |
 | UAT-04 | View route visualization for each vehicle and loader | Passed |
-| UAT-05 | Reproducible solver results with fixed seed | Passed |
+| UAT-06 | Reproducible solver results with fixed seed | Passed |
 
 ### Summary of results
 
@@ -367,3 +413,24 @@ All 5 scenarios were reconfirmed during the Week 6 trial session. All scenarios 
 | ID | Title | Priority | Notes |
 |---|---|---|---|
 | PBI-W6-01 | Resolve external customer deployment access for Week 7 transition | High | Customer confirmed this is the critical path for transition confirmation. |
+
+---
+
+## Week 7 Review Record
+
+**Session date:** 2026-07-16
+
+**Evidence type:** Sanitized meeting notes derived from the private recording transcript. This was a discussion/review record, not a complete customer execution of the final product.
+
+| Changed behavior or transition topic | Result | Evidence and follow-up |
+|---|---|---|
+| Actual execution-duration display on Job Detail | Not executed — discussed | The team told the customer the duration display had been added. No customer-side execution was recorded. Implementation evidence is [PR #205](https://github.com/Team-9-swp/Route-optimization-Platform-swp/pull/205). |
+| Two-decimal Objective display | Not executed — discussed | The team told the customer rounding had been added to avoid long floating-point tails. No customer-side execution was recorded. Implementation evidence is [PR #205](https://github.com/Team-9-swp/Route-optimization-Platform-swp/pull/205). |
+| Finished interactive route and schedule visualization | Blocked — follow-up review required | The visualization was still being finalized and was not demonstrated in its finished state during the meeting. Follow-up remains in [#188](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/188). Later team type-check/build evidence is not customer UAT. |
+| Customer-side reproduction and transition | Not executed | The customer emphasized reproducing the product and obtaining comparable results in their own internal/local environment. Successful customer-side deployment or operation is not verified; follow-up remains in [#187](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/187). |
+
+**Handover level:** `Ready for independent use`
+
+**Customer-confirmation status:** `Accepted with follow-up items`
+
+The discussion supports readiness and usefulness, but it does not replace customer execution of the changed behavior. Private recording links, exact timecodes, customer identity, and consent evidence remain outside the public repository.

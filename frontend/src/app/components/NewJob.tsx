@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Upload, Loader2, AlertCircle } from "lucide-react";
 import { submitJob } from "../../api/jobs";
 import type { Page } from "../App";
@@ -59,6 +59,29 @@ export function NewJob({ navigate }: Props) {
   const [autoValidate, setAutoValidate] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [uploadedFileName, setUploadedFileName] = useState("");
+  const [isDraggingFile, setIsDraggingFile] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  async function loadJsonFile(file?: File) {
+    if (!file) return;
+    setError("");
+    if (!file.name.toLowerCase().endsWith(".json") && file.type !== "application/json") {
+      setError("Please select a JSON file.");
+      return;
+    }
+    try {
+      const text = await file.text();
+      JSON.parse(text);
+      setJson(text);
+      setUploadedFileName(file.name);
+    } catch (reason) {
+      setUploadedFileName("");
+      setError(reason instanceof SyntaxError ? "The selected file does not contain valid JSON." : "Could not read the selected file.");
+    } finally {
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  }
 
   async function handleSubmit() {
     setError("");
@@ -86,13 +109,13 @@ export function NewJob({ navigate }: Props) {
 
     setSubmitting(true);
     try {
-      const response = await submitJob(instance, {
+      await submitJob(instance, {
         seed: Number(seed) || 42,
         name: name || undefined,
         autoValidate,
         timeLimit: timeLimitNum,
       });
-      navigate({ name: "job-detail", id: response.job_id });
+      navigate({ name: "dashboard" });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to submit job");
     } finally {
@@ -135,25 +158,38 @@ export function NewJob({ navigate }: Props) {
             <label style={{ display: "block", marginBottom: 6, fontSize: 14, fontWeight: 600, color: "#111827" }}>
               Upload JSON file
             </label>
-            <label
-              className="flex items-center gap-2 cursor-pointer rounded-lg px-4 py-3 border-2 border-dashed transition-colors"
-              style={{ borderColor: "#D1D5DB", color: "#6B7280", fontSize: 14 }}
+            <input
+              ref={fileInputRef}
+              id="instance-json-file"
+              type="file"
+              accept=".json,application/json"
+              style={{ display: "none" }}
+              onChange={(event) => void loadJsonFile(event.target.files?.[0])}
+            />
+            <button
+              type="button"
+              className="flex w-full items-center gap-2 rounded-lg border-2 border-dashed px-4 py-3 text-left transition-colors"
+              style={{
+                borderColor: isDraggingFile ? "#2563EB" : "#D1D5DB",
+                background: isDraggingFile ? "#EFF6FF" : "transparent",
+                color: "#6B7280",
+                cursor: "pointer",
+                fontSize: 14,
+              }}
+              onClick={() => fileInputRef.current?.click()}
+              onDragEnter={(event) => { event.preventDefault(); setIsDraggingFile(true); }}
+              onDragOver={(event) => { event.preventDefault(); event.dataTransfer.dropEffect = "copy"; setIsDraggingFile(true); }}
+              onDragLeave={(event) => { event.preventDefault(); if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setIsDraggingFile(false); }}
+              onDrop={(event) => {
+                event.preventDefault();
+                setIsDraggingFile(false);
+                void loadJsonFile(event.dataTransfer.files?.[0]);
+              }}
+              aria-label="Upload instance JSON file"
             >
               <Upload size={16} />
-              <span>Click to upload or drag and drop</span>
-              <input
-                type="file"
-                accept=".json"
-                className="sr-only"
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (!file) return;
-                  const reader = new FileReader();
-                  reader.onload = (ev) => setJson(ev.target?.result as string ?? "");
-                  reader.readAsText(file);
-                }}
-              />
-            </label>
+              <span>{uploadedFileName ? `Loaded: ${uploadedFileName}` : "Click to upload or drag and drop a JSON file"}</span>
+            </button>
           </div>
 
           <div className="grid grid-cols-3 gap-4 mb-5">
