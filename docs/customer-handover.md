@@ -22,7 +22,7 @@ The system has three services: a FastAPI backend (`api`), a PostgreSQL database 
 
 | Item | State |
 |---|---|
-| Latest release | [`v1.4.0`](https://github.com/Team-9-swp/Route-optimization-Platform-swp/releases/tag/v1.4.0) — Assignment 6 Week 6 trial / handover-candidate release on protected `main` |
+| Latest release | [`v1.5.0`](https://github.com/Team-9-swp/Route-optimization-Platform-swp/releases/tag/v1.5.0) — final Assignment 6 / MVP v3 release from protected `main` |
 | Source repository | [Team-9-swp/Route-optimization-Platform-swp](https://github.com/Team-9-swp/Route-optimization-Platform-swp) |
 | Repository ownership | Retained by the team (course project). Read access granted to the customer and TA. |
 | Hosted trial deployment | University VM, reachable **only from the Innopolis campus network** |
@@ -129,7 +129,6 @@ The product is configured through environment variables and the Compose files; *
 | Classification | Follow-up item | Current evidence or action |
 |---|---|---|
 | Technical limitation | Finished-visualization customer execution is not recorded | The implementation is merged in [PR #205](https://github.com/Team-9-swp/Route-optimization-Platform-swp/pull/205); the Week 7 review record remains conservative. |
-| Technical limitation | Final SemVer packaging is not published | The final product state is prepared, but release creation remains tracked in open [#190](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/190). |
 | Customer-side | Run the repository/Compose stack and compare representative results with the team's results | Customer expectation was discussed, but successful reproduction is not yet inspectable; track transition evidence in [#187](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/187). |
 | External | Customer network, environment, and organizational timing may affect deployment or follow-up contact | Record concrete environment problems in #187 without publishing private access details. |
 

@@ -25,7 +25,7 @@
 - Customer-side deployment and independent result reproduction were not executed, so a stronger transition level cannot be supported.
 - Several issue bodies were closed with stale `To Do` or `In Progress` fields, creating inconsistent evidence that required final cleanup.
 - [#185](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/185) was closed with checked criteria, but final repository inspection did not locate a dedicated same-seed-twice regression test by name. Issue closure and inspectable code evidence should have been reconciled before completion.
-- Final release, screenshot, and Moodle packaging work did not fit into this documentation PR and remains explicitly open in [#190](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/190) and [#194](https://github.com/Team-9-swp/Route-optimization-Platform-swp/issues/194).
+- Final release and screenshot work did not fit into the original documentation PR and was completed in the follow-up release packaging; Moodle-only evidence remains outside the public repository.
 
 ## What changed based on the Week 6 retrospective
 
